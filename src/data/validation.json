@@ -1,0 +1,69 @@
+{
+  "generated": "2026-11-14",
+  "checks": [
+    {
+      "id": "ephemeris-horizons",
+      "title": "Sun and Earth direction from a lunar site",
+      "reference": "NASA JPL Horizons observer tables",
+      "result": "Largest angular difference: Sun 0.0078 deg, Earth 0.0034 deg.",
+      "detail": "6 site-and-period cases, 13220 table rows in total (Sun and Earth rows counted separately). Each row is the azimuth and elevation Horizons gives for a point on the Moon's surface; we recompute it with the in-browser engine and measure the angle between the two directions. The Sun is 0.53 deg wide, so a 0.01 deg difference is about 2% of its diameter.",
+      "status": "pass"
+    },
+    {
+      "id": "terrain-grid-read",
+      "title": "Terrain grids are read correctly",
+      "reference": "NASA Moon Trek elevation service (NASA Goddard study sites)",
+      "result": "Ground heights at five study sites agree within 16 m (largest) on heights of 775 m to 6386 m.",
+      "detail": "Ours / expected, metres: 1943 / 1945; 775 / 791; 1646 / 1638; 4794 / 4790; 6386 / 6402. The expected values came from a 30 m grid resampled to 200 m, so differences of this size are expected. Second check, run for the illumination comparison: our ground height at 21 polar sites against Moon Trek's 30 m LOLA elevation service (LRO_LOLA_DEM_SPole75_30mp_v04_SP), same coordinate mapping as the illumination comparison: median difference 1.5 m, largest 49.9 m (a steep crater-rim point where an 80 m and a 30 m grid sample a different slope). This also confirms the coordinate convention used to query the NASA maps.",
+      "status": "pass"
+    },
+    {
+      "id": "skyline-synthetic",
+      "title": "Skyline from synthetic terrain",
+      "reference": "Analytic geometry",
+      "result": "Flat sphere gives -0.087 deg at 2 m and -0.194 deg at 10 m (geometric dip -0.087 and -0.194 deg); a mountain due north peaks at azimuth 0 deg and one due east at 91 deg.",
+      "detail": "The flat case is a sphere of radius 1737.4 km with no relief, viewed from -85 deg latitude; every azimuth should sit at the dip -acos(R / (R + h)). The mountains are 2000 m high, 10 km away, 2 km wide, and their skyline reaches 11.3 deg (north) and 11.3 deg (east). The test passes if the peak lies within 1 deg of the true azimuth; the terrain grid used here has 500 m pixels, which at 10 km distance is 2.9 deg wide, so a peak 1 deg off is below the grid's own resolution.",
+      "status": "pass"
+    },
+    {
+      "id": "mission-im1",
+      "title": "IM-1 Odysseus: Sun reaches the horizon",
+      "reference": "NASA JPL Horizons at 80.13 S, 1.44 E",
+      "result": "Engine: Sun centre 0.63 deg at 2024-03-03 00:00 UTC and -1.46 deg at 2024-03-04 00:00 UTC (Horizons: +0.6 and -1.5 deg). It crosses the smooth horizon at 2024-03-03 08:11 UTC.",
+      "detail": "Smooth sphere, no terrain, observer 2 m above ground; the smooth horizon at 2 m is -0.087 deg below level. The Horizons values are quoted to 0.1 deg. The check shows the engine places the Sun's setting at the right day and within about 1 hour of the Horizons elevation track; it does not test the terrain, which at the real landing point is Malapert A and its surroundings.",
+      "status": "pass"
+    },
+    {
+      "id": "mission-blue-ghost-1",
+      "title": "Blue Ghost Mission 1: length of the lunar day",
+      "reference": "Firefly Aerospace mission report (about 346 hours of daylight operations)",
+      "result": "Engine: sunset 347.8 hours after landing at 2025-03-02 08:34 UTC, 18.56 N, 61.81 E; the mission reported about 346 hours (difference 1.8 hours, 0.5%).",
+      "detail": "Smooth sphere with no terrain, observer 2 m above ground; \"up\" means at least half the Sun's disc above the horizon. The mission figure is rounded and counts operations, not the exact sunset time, so this is a plausibility check on the length of the lunar day, not a precision test.",
+      "status": "pass"
+    },
+    {
+      "id": "average-sunlight",
+      "title": "Average sunlight against NASA Goddard maps",
+      "reference": "NASA Goddard average Sun visibility maps (Mazarico et al. 2011 method, 2016 release), read from NASA Moon Trek",
+      "result": "Like-for-like, observer on the ground (0 m), 23 sites: correlation 0.98, median absolute difference 1.3 percentage points, mean difference (ours minus NASA) +2.0 points; largest difference Malapert Massif (NASA Goddard study site 23): ours 18.2%, NASA 4.6% (+13.6 points). At 2 m (shipped masks): correlation 0.97, median 3.8 points, mean +6.8 points, largest +26.0 points.",
+      "detail": "Quantity compared: share of time with any part of the Sun's disc above the skyline (NASA's definition), averaged over 18.6 years from 2020-01-01 every 2 hours (81523 samples; NASA uses hourly steps over a full nutation cycle but gives no calendar dates). NASA's maps are for the ground surface, so the 0 m skylines are the like-for-like comparison; they were computed directly from the LOLA 80 m and 240 m grids with the same code as the shipped masks, which are unchanged. At 2 m the largest difference is Connecting Ridge (NASA Goddard study site 1) — highest point within 8 km: ours 91.2%, NASA 65.2% (+26.0 points). At 10 m: correlation 0.89, median absolute difference 5.7 points, 5 sites more than 30 points apart. Rank correlation at 0 m 0.99. Crest points (5 derived highest-pixel sites): mean difference +7.5 points at 0 m against +15.6 at 2 m; other sites +0.5 at 0 m and +4.4 at 2 m. Observer height therefore explains about 52% of the crest difference at 2 m, and a mean difference of +7.5 points remains at crests. Remaining limitation: an 80 m grid cannot see relief smaller than about 80 m, so sunlight at ridge crests may be overestimated. Differences at 0 m range from -11.5 to +13.6 points over all sites; negative values occur where our rounded coordinates fall off the NASA crest. Mean disc fraction instead of any-part share at 0 m: correlation 0.98, median 0.9 points. Sites use the finest NASA map that covers them: 60 m (20 sites), 120 m (1), 240 m (2). Other caveats: NASA's maps are on a 60 m to 240 m grid and, per NASA's documentation, contain linear artefacts from the DEM; our site coordinates are rounded, so at ridge crests a 100 m shift changes the skyline by degrees. Status is 'note': ranking and median agreement are good, but the largest single-site difference is 14 points.",
+      "status": "note"
+    },
+    {
+      "id": "average-earth",
+      "title": "Average Earth visibility against NASA Goddard maps",
+      "reference": "NASA Goddard average Earth visibility maps (Mazarico et al. 2011 method, 2016 release), read from NASA Moon Trek",
+      "result": "Like-for-like, observer on the ground (0 m), 23 sites: correlation 1.00, median absolute difference 0.3 percentage points, mean difference (ours minus NASA) +0.1 points; largest difference Shackleton-de Gerlache connecting ridge (LROC point): ours 40.1%, NASA 53.5% (-13.4 points). At 2 m (shipped masks): correlation 0.99, median 0.4 points, mean +3.2 points, largest +22.6 points.",
+      "detail": "Quantity compared: share of time with any part of the Earth's disc above the skyline (NASA's definition), averaged over 18.6 years from 2020-01-01 every 2 hours (81523 samples; NASA uses hourly steps over a full nutation cycle but gives no calendar dates). NASA's maps are for the ground surface, so the 0 m skylines are the like-for-like comparison; they were computed directly from the LOLA 80 m and 240 m grids with the same code as the shipped masks, which are unchanged. At 2 m the largest difference is Leibnitz Beta Plateau (NASA Goddard study site 20) — highest point within 8 km: ours 97.1%, NASA 74.6% (+22.6 points). At 10 m: correlation 0.98, median absolute difference 0.7 points, no site more than 30 points apart. Rank correlation at 0 m 0.99. Crest points (5 derived highest-pixel sites): mean difference +1.4 points at 0 m against +8.9 at 2 m; other sites -0.2 at 0 m and +1.6 at 2 m. Observer height therefore explains about 84% of the crest difference at 2 m, and a mean difference of +1.4 points remains at crests. Remaining limitation: an 80 m grid cannot see relief smaller than about 80 m, so sunlight at ridge crests may be overestimated. Differences at 0 m range from -13.4 to +5.2 points over all sites; negative values occur where our rounded coordinates fall off the NASA crest. Mean disc fraction instead of any-part share at 0 m: correlation 0.99, median 2.9 points. Sites use the finest NASA map that covers them: 60 m (20 sites), 120 m (1), 240 m (2). Other caveats: NASA's maps are on a 60 m to 240 m grid and, per NASA's documentation, contain linear artefacts from the DEM; our site coordinates are rounded, so at ridge crests a 100 m shift changes the skyline by degrees. Status is 'note': ranking and median agreement are good, but the largest single-site difference is 13 points.",
+      "status": "note"
+    },
+    {
+      "id": "benchmark-barker",
+      "title": "Average illumination at Connecting Ridge against a published study",
+      "reference": "Barker et al. (2021), Planetary and Space Science 203, 105119, Table 2: Site 1 (Shackleton-de Gerlache connecting ridge), January 2024 to January 2026",
+      "result": "Ours, mean Sun disc fraction 2024-01-01 to 2026-01-01: crest point 88.0% at 2 m and 92.2% at 10 m; listed point 40.7% at 2 m and 79.0% at 10 m. Published best regions: about 67-71% at 1 m and about 83-89% at 5 m.",
+      "detail": "Plausibility check only. The published figures are first-percentile values over an ensemble of 100 elevation-model variants, for the best small regions on a 5 m grid at 1 m and 5 m above the ground; the digits were read from an image of the table. Ours are single points from an 80 m grid at 2 m and 10 m, hourly. Our crest point (the highest 80 m pixel within 8 km of the listed centre) is a favourable spot and gives 88.0% at 2 m, above the published 1 m range and at the top of the 5 m range, although 2 m is closer to 1 m than to 5 m; because the published values are first percentiles (pessimistic), a higher best estimate is not a contradiction, but it is not a match either. Our listed point sits off the crest and gives 40.7% at 2 m, well below the published best regions, as expected for a point that is not among the best. The result is consistent with the published picture (a few tens of percent at 1 m rising by about 15-20 points at 5 m) but cannot confirm our numbers to better than about 20 percentage points.",
+      "status": "note"
+    }
+  ]
+}

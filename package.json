@@ -1,0 +1,35 @@
+{
+  "name": "lunar-ribbon",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Ribbon: a lunar landing-site navigator. At the Moon's south pole, the skyline is the calendar.",
+  "license": "Apache-2.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "fixtures": "node pipeline/fetch-horizons.mjs",
+    "masks": "node pipeline/build-masks.ts",
+    "coarse-dem": "node pipeline/build-coarse-dem.ts",
+    "demo-assets": "node pipeline/export-demo-assets.ts",
+    "deploy": "npm test && npm run build && node pipeline/deploy-pages.mjs"
+  },
+  "dependencies": {
+    "astronomy-engine": "^2.1.19",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.3.5",
+    "@types/node": "^26.6.6",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.3.0",
+    "tailwindcss": "^4.3.5",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.8",
+    "vitest": "^5.1.0"
+  }
+}

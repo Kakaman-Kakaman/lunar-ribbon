@@ -1,0 +1,19 @@
+{
+ "url": "https://trek.nasa.gov/moon/trekarcgis2/rest/services/AVGVISIB_85S_060M_201608_SP/ImageServer/identify?geometry=%7B%22x%22%3A-424.62%2C%22y%22%3A121645.55%7D&geometryType=esriGeometryPoint&returnGeometry=false&returnCatalogItems=false&f=json",
+ "fetched": "2026-11-14T16:21:44.770Z",
+ "reply": {
+  "objectId": 0,
+  "name": "Pixel",
+  "value": "0.0462",
+  "location": {
+   "x": -424.62,
+   "y": 121645.55,
+   "spatialReference": {
+    "wkt": "PROJCS[\"Moon2000_npole\",GEOGCS[\"GCS_Moon\",DATUM[\"D_Moon_2000\",SPHEROID[\"Moon_2000_IAU_IAG\",1737400.0,0.0]],PRIMEM[\"Reference_Meridian\",0.0],UNIT[\"Degree\",0.0174532925199433]],PROJECTION[\"Stereographic_South_Pole\"],PARAMETER[\"false_easting\",0.0],PARAMETER[\"false_northing\",0.0],PARAMETER[\"central_meridian\",0.0],PARAMETER[\"standard_parallel_1\",-90.0],UNIT[\"Meter\",1.0]]"
+   }
+  },
+  "properties": null,
+  "catalogItems": null,
+  "catalogItemVisibilities": []
+ }
+}

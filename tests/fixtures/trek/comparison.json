@@ -1,0 +1,1508 @@
+{
+ "generated": "2026-11-14T16:24:56.081Z",
+ "period": {
+  "start": "2020-01-01T00:00:00.000Z",
+  "stepHours": 2,
+  "samples": 81523,
+  "end": "2038-08-07T12:00:00.000Z",
+  "note": "Research note 04 section 2a gives 18.6 years (hourly steps) without calendar dates; we use 18.6 years from 2020-01-01 every 2 hours."
+ },
+ "services": {
+  "sun": [
+   "AVGVISIB_85S_060M_201608_SP",
+   "AVGVISIB_75S_120M_201608_SP",
+   "AVGVISIB_65S_240M_201608_SP"
+  ],
+  "earth": [
+   "AVGVISIB_85S_060M_201608_EARTH_SP",
+   "AVGVISIB_75S_120M_201608_EARTH_SP",
+   "AVGVISIB_65S_240M_201608_EARTH_SP"
+  ],
+  "dem": "LRO_LOLA_DEM_SPole75_30mp_v04_SP"
+ },
+ "sites": [
+  {
+   "id": "cabeus-crater",
+   "name": "Cabeus (crater)",
+   "group": "south-pole-feature",
+   "lat": -84.9,
+   "lon": -35.5,
+   "terrain": "lola-80m+240m",
+   "xM": -89864.5236440329,
+   "yM": 125985.4156566803,
+   "groundElevM": -2844.7,
+   "trekDem30mM": -2844,
+   "ours": {
+    "h2": {
+     "sunMean": 0,
+     "sunAny": 0,
+     "sunUp": 0,
+     "earthMean": 0.09033694759889847,
+     "earthAny": 0.19908492081989132,
+     "earthUp": 0.09224390662757749
+    },
+    "h10": {
+     "sunMean": 0,
+     "sunAny": 0,
+     "sunUp": 0,
+     "earthMean": 0.09278275919700481,
+     "earthAny": 0.2007899611152681,
+     "earthUp": 0.0964513082197662
+    },
+    "h0": {
+     "sunMean": 0,
+     "sunAny": 0,
+     "sunUp": 0,
+     "earthMean": 0.08962069073061735,
+     "earthAny": 0.19860652821903022,
+     "earthUp": 0.09105405836389731
+    },
+    "h0check": {
+     "skylineMaxDiffDeg": 0,
+     "sunAny2mRecomputed": 0
+    }
+   },
+   "nasa": {
+    "sun": {
+     "service": "AVGVISIB_85S_060M_201608_SP",
+     "pixelM": 60,
+     "value": 0
+    },
+    "earth": {
+     "service": "AVGVISIB_85S_060M_201608_EARTH_SP",
+     "pixelM": 60,
+     "value": 0.19748
+    }
+   }
+  },
+  {
+   "id": "chandrayaan-2-vikram",
+   "name": "Vikram (Chandrayaan-2) impact site",
+   "group": "india",
+   "lat": -70.881,
+   "lon": 22.784,
+   "terrain": "lola-240m",
+   "xM": 226620.4703729075,
+   "yM": 539530.4985155793,
+   "groundElevM": 837.1,
+   "trekDem30mM": null,
+   "ours": {
+    "h2": {
+     "sunMean": 0.4688970462746452,
+     "sunAny": 0.4732406805441409,
+     "sunUp": 0.4688860812286103,
+     "earthMean": 1,
+     "earthAny": 1,
+     "earthUp": 1
+    },
+    "h10": {
+     "sunMean": 0.46910710896545216,
+     "sunAny": 0.4734982765599892,
+     "sunUp": 0.46903327895195224,
+     "earthMean": 1,
+     "earthAny": 1,
+     "earthUp": 1
+    },
+    "h0": {
+     "sunMean": 0.46883345286343125,
+     "sunAny": 0.47320388111330547,
+     "sunUp": 0.4688738147516652,
+     "earthMean": 1,
+     "earthAny": 1,
+     "earthUp": 1
+    },
+    "h0check": {
+     "skylineMaxDiffDeg": 0,
+     "sunAny2mRecomputed": 0.4732406805441409
+    }
+   },
+   "nasa": {
+    "sun": {
+     "service": "AVGVISIB_65S_240M_201608_SP",
+     "pixelM": 240,
+     "value": 0.473
+    },
+    "earth": {
+     "service": "AVGVISIB_65S_240M_201608_EARTH_SP",
+     "pixelM": 240,
+     "value": 1
+    }
+   }
+  },
+  {
+   "id": "de-gerlache-crater",
+   "name": "de Gerlache (crater)",
+   "group": "south-pole-feature",
+   "lat": -88.5,
+   "lon": -87.1,
+   "terrain": "lola-80m+240m",
+   "xM": -45429.3703278512,
+   "yM": 2301.3526214210715,
+   "groundElevM": -1009.7,
+   "trekDem30mM": -1012.5,
+   "ours": {
+    "h2": {
+     "sunMean": 0.0001858407881576348,
+     "sunAny": 0.001373845417857537,
+     "sunUp": 0,
+     "earthMean": 0,
+     "earthAny": 0,
+     "earthUp": 0
+    },
+    "h10": {
+     "sunMean": 0.0002623521427023975,
+     "sunAny": 0.0017050402953767648,
+     "sunUp": 0,
+     "earthMean": 0,
+     "earthAny": 0,
+     "earthUp": 0
+    },
+    "h0": {
+     "sunMean": 0.00016749619402966438,
+     "sunAny": 0.001287980079241441,
+     "sunUp": 0,
+     "earthMean": 0,
+     "earthAny": 0,
+     "earthUp": 0
+    },
+    "h0check": {
+     "skylineMaxDiffDeg": 0,
+     "sunAny2mRecomputed": 0.001373845417857537
+    }
+   },
+   "nasa": {
+    "sun": {
+     "service": "AVGVISIB_85S_060M_201608_SP",
+     "pixelM": 60,
+     "value": 0.00128
+    },
+    "earth": {
+     "service": "AVGVISIB_85S_060M_201608_EARTH_SP",
+     "pixelM": 60,
+     "value": 0
+    }
+   }
+  },
+  {
+   "id": "faustini-crater",
+   "name": "Faustini (crater)",
+   "group": "south-pole-feature",
+   "lat": -87.3,
+   "lon": 77,
+   "terrain": "lola-80m+240m",
+   "xM": 79789.41125926404,
+   "yM": 18420.837048399924,
+   "groundElevM": -2760.8,
+   "trekDem30mM": -2772,
+   "ours": {
+    "h2": {
+     "sunMean": 0,
+     "sunAny": 0,
+     "sunUp": 0,
+     "earthMean": 0,
+     "earthAny": 0,
+     "earthUp": 0
+    },
+    "h10": {
+     "sunMean": 0,
+     "sunAny": 0,
+     "sunUp": 0,
+     "earthMean": 0,
+     "earthAny": 0,
+     "earthUp": 0
+    },
+    "h0": {
+     "sunMean": 0,
+     "sunAny": 0,
+     "sunUp": 0,
+     "earthMean": 0,
+     "earthAny": 0,
+     "earthUp": 0
+    },
+    "h0check": {
+     "skylineMaxDiffDeg": 0,
+     "sunAny2mRecomputed": 0
+    }
+   },
+   "nasa": {
+    "sun": {
+     "service": "AVGVISIB_85S_060M_201608_SP",
+     "pixelM": 60,
+     "value": 0
+    },
+    "earth": {
+     "service": "AVGVISIB_85S_060M_201608_EARTH_SP",
+     "pixelM": 60,
+     "value": 0
+    }
+   }
+  },
+  {
+   "id": "haworth-crater",
+   "name": "Haworth (crater)",
+   "group": "south-pole-feature",
+   "lat": -86.9,
+   "lon": -4,
+   "terrain": "lola-80m+240m",
+   "xM": -6558.875093970348,
+   "yM": 93796.28373833002,
+   "groundElevM": -1577.3,
+   "trekDem30mM": -1578.5,
+   "ours": {
+    "h2": {
+     "sunMean": 0,
+     "sunAny": 0,
+     "sunUp": 0,
+     "earthMean": 0,
+     "earthAny": 0,
+     "earthUp": 0
+    },
+    "h10": {
+     "sunMean": 0,
+     "sunAny": 0,
+     "sunUp": 0,
+     "earthMean": 0,
+     "earthAny": 0,
+     "earthUp": 0
+    },
+    "h0": {
+     "sunMean": 0,
+     "sunAny": 0,
+     "sunUp": 0,
+     "earthMean": 0,
+     "earthAny": 0,
+     "earthUp": 0
+    },
+    "h0check": {
+     "skylineMaxDiffDeg": 0,
+     "sunAny2mRecomputed": 0
+    }
+   },
+   "nasa": {
+    "sun": {
+     "service": "AVGVISIB_85S_060M_201608_SP",
+     "pixelM": 60,
+     "value": 0
+    },
+    "earth": {
+     "service": "AVGVISIB_85S_060M_201608_EARTH_SP",
+     "pixelM": 60,
+     "value": 0
+    }
+   }
+  },
+  {
+   "id": "im-1-odysseus",
+   "name": "Odysseus (IM-1)",
+   "group": "clps",
+   "lat": -80.13,
+   "lon": 1.44,
+   "terrain": "lola-80m+240m",
+   "xM": 7539.877818752384,
+   "yM": 299939.0376980428,
+   "groundElevM": 2593.4,
+   "trekDem30mM": 2593.5,
+   "ours": {
+    "h2": {
+     "sunMean": 0.3951542820718924,
+     "sunAny": 0.40162898813831677,
+     "sunUp": 0.39509095592654836,
+     "earthMean": 1,
+     "earthAny": 1,
+     "earthUp": 1
+    },
+    "h10": {
+     "sunMean": 0.4061753069129242,
+     "sunAny": 0.4125706855733965,
+     "sunUp": 0.4061798510849699,
+     "earthMean": 1,
+     "earthAny": 1,
+     "earthUp": 1
+    },
+    "h0": {
+     "sunMean": 0.3839142133546358,
+     "sunAny": 0.39047876059516945,
+     "sunUp": 0.38392846190645585,
+     "earthMean": 1,
+     "earthAny": 1,
+     "earthUp": 1
+    },
+    "h0check": {
+     "skylineMaxDiffDeg": 0,
+     "sunAny2mRecomputed": 0.40162898813831677
+    }
+   },
+   "nasa": {
+    "sun": {
+     "service": "AVGVISIB_75S_120M_201608_SP",
+     "pixelM": 120,
+     "value": 0.35568
+    },
+    "earth": {
+     "service": "AVGVISIB_75S_120M_201608_EARTH_SP",
+     "pixelM": 120,
+     "value": 1
+    }
+   }
+  },
+  {
+   "id": "im-2-athena",
+   "name": "Athena (IM-2)",
+   "group": "clps",
+   "lat": -84.7906,
+   "lon": 29.1957,
+   "terrain": "lola-80m+240m",
+   "xM": 77108.24153038967,
+   "yM": 137993.27026503164,
+   "groundElevM": 5321.1,
+   "trekDem30mM": 5321.5,
+   "ours": {
+    "h2": {
+     "sunMean": 0.4524809258137945,
+     "sunAny": 0.4692295425830747,
+     "sunUp": 0.4521423401984716,
+     "earthMean": 0.8148795541484769,
+     "earthAny": 0.9316266575076972,
+     "earthUp": 0.8099309397347988
+    },
+    "h10": {
+     "sunMean": 0.46090823157070004,
+     "sunAny": 0.4787237957386259,
+     "sunUp": 0.46023821498227496,
+     "earthMean": 0.8182095778368867,
+     "earthAny": 0.9387412141358881,
+     "earthUp": 0.8129484930633073
+    },
+    "h0": {
+     "sunMean": 0.4483863250263716,
+     "sunAny": 0.4644946824822443,
+     "sunUp": 0.44797173803711837,
+     "earthMean": 0.8122612077482101,
+     "earthAny": 0.925505685512064,
+     "earthUp": 0.8077107074077254
+    },
+    "h0check": {
+     "skylineMaxDiffDeg": 0,
+     "sunAny2mRecomputed": 0.4692295425830747
+    }
+   },
+   "nasa": {
+    "sun": {
+     "service": "AVGVISIB_85S_060M_201608_SP",
+     "pixelM": 60,
+     "value": 0.45104
+    },
+    "earth": {
+     "service": "AVGVISIB_85S_060M_201608_EARTH_SP",
+     "pixelM": 60,
+     "value": 0.92084
+    }
+   }
+  },
+  {
+   "id": "mons-malapert",
+   "name": "Malapert Massif (Mons Malapert)",
+   "group": "south-pole-feature",
+   "lat": -85.98,
+   "lon": -1.67,
+   "terrain": "lola-80m+240m",
+   "xM": -3553.9702955394455,
+   "yM": 121898.1026572211,
+   "groundElevM": 4919.8,
+   "trekDem30mM": 4917,
+   "ours": {
+    "h2": {
+     "sunMean": 0.4096654597258101,
+     "sunAny": 0.42936349251131584,
+     "sunUp": 0.40940593452154606,
+     "earthMean": 0.9807770152522358,
+     "earthAny": 1,
+     "earthUp": 1
+    },
+    "h10": {
+     "sunMean": 0.5146432417665273,
+     "sunAny": 0.539602320817438,
+     "sunUp": 0.5144315101259768,
+     "earthMean": 0.9809702477982085,
+     "earthAny": 1,
+     "earthUp": 1
+    },
+    "h0": {
+     "sunMean": 0.38043431720535,
+     "sunAny": 0.3958882769279835,
+     "sunUp": 0.38013812053040247,
+     "earthMean": 0.9807770337288495,
+     "earthAny": 1,
+     "earthUp": 1
+    },
+    "h0check": {
+     "skylineMaxDiffDeg": 0,
+     "sunAny2mRecomputed": 0.42936349251131584
+    }
+   },
+   "nasa": {
+    "sun": {
+     "service": "AVGVISIB_85S_060M_201608_SP",
+     "pixelM": 60,
+     "value": 0.38288
+    },
+    "earth": {
+     "service": "AVGVISIB_85S_060M_201608_EARTH_SP",
+     "pixelM": 60,
+     "value": 1
+    }
+   }
+  },
+  {
+   "id": "mons-mouton",
+   "name": "Mons Mouton",
+   "group": "south-pole-feature",
+   "lat": -84.6,
+   "lon": 31,
+   "terrain": "lola-80m+240m",
+   "xM": 84397.95447974424,
+   "yM": 140461.78399299132,
+   "groundElevM": 5039.6,
+   "trekDem30mM": 5043.5,
+   "ours": {
+    "h2": {
+     "sunMean": 0.30159420633558826,
+     "sunAny": 0.33107221274977616,
+     "sunUp": 0.30137507206555203,
+     "earthMean": 0.569928482131983,
+     "earthAny": 0.6173472516958405,
+     "earthUp": 0.5697287881947426
+    },
+    "h10": {
+     "sunMean": 0.3211411947701602,
+     "sunAny": 0.3505391116617396,
+     "sunUp": 0.3213080971014315,
+     "earthMean": 0.5745314262595731,
+     "earthAny": 0.6221557106583419,
+     "earthUp": 0.5743532500030666
+    },
+    "h0": {
+     "sunMean": 0.2860185027504964,
+     "sunAny": 0.3140463427498988,
+     "sunUp": 0.28594384406854506,
+     "earthMean": 0.5688031015612127,
+     "earthAny": 0.6161328704782699,
+     "earthUp": 0.5685757393618979
+    },
+    "h0check": {
+     "skylineMaxDiffDeg": 0,
+     "sunAny2mRecomputed": 0.33107221274977616
+    }
+   },
+   "nasa": {
+    "sun": {
+     "service": "AVGVISIB_85S_060M_201608_SP",
+     "pixelM": 60,
+     "value": 0.31592
+    },
+    "earth": {
+     "service": "AVGVISIB_85S_060M_201608_EARTH_SP",
+     "pixelM": 60,
+     "value": 0.6136
+    }
+   }
+  },
+  {
+   "id": "nobile-crater",
+   "name": "Nobile (crater)",
+   "group": "south-pole-feature",
+   "lat": -85.28,
+   "lon": 53.27,
+   "terrain": "lola-80m+240m",
+   "xM": 114775.2267097349,
+   "yM": 85644.33871458433,
+   "groundElevM": 915.7,
+   "trekDem30mM": 919,
+   "ours": {
+    "h2": {
+     "sunMean": 0.34665229532462477,
+     "sunAny": 0.3578131324902175,
+     "sunUp": 0.3469327674398636,
+     "earthMean": 0.23550940805517376,
+     "earthAny": 0.2984556505526048,
+     "earthUp": 0.23755259251990235
+    },
+    "h10": {
+     "sunMean": 0.34720780433772125,
+     "sunAny": 0.35836512395274955,
+     "sunUp": 0.3473866270868344,
+     "earthMean": 0.23639248565509602,
+     "earthAny": 0.29915483973847873,
+     "earthUp": 0.238386712952173
+    },
+    "h0": {
+     "sunMean": 0.34649440495938666,
+     "sunAny": 0.35767820124382077,
+     "sunUp": 0.3468469021012475,
+     "earthMean": 0.2352212361447098,
+     "earthAny": 0.2982225874906468,
+     "earthUp": 0.2372581970732186
+    },
+    "h0check": {
+     "skylineMaxDiffDeg": 0,
+     "sunAny2mRecomputed": 0.3578131324902175
+    }
+   },
+   "nasa": {
+    "sun": {
+     "service": "AVGVISIB_85S_060M_201608_SP",
+     "pixelM": 60,
+     "value": 0.35564
+    },
+    "earth": {
+     "service": "AVGVISIB_85S_060M_201608_EARTH_SP",
+     "pixelM": 60,
+     "value": 0.2986
+    }
+   }
+  },
+  {
+   "id": "pgda-site01-connecting-ridge-crest",
+   "name": "Connecting Ridge (NASA Goddard study site 1) — highest point within 8 km",
+   "group": "study-site",
+   "lat": -89.438,
+   "lon": -137.283,
+   "terrain": "lola-80m+240m",
+   "xM": -11560.817391819224,
+   "yM": -12520.881717005706,
+   "groundElevM": 1957.5,
+   "trekDem30mM": 1956,
+   "ours": {
+    "h2": {
+     "sunMean": 0.8821330813313886,
+     "sunAny": 0.911718165425708,
+     "sunUp": 0.8832476724359997,
+     "earthMean": 0.5330413178743139,
+     "earthAny": 0.5790635771500068,
+     "earthUp": 0.5328557584976019
+    },
+    "h10": {
+     "sunMean": 0.923419831397534,
+     "sunAny": 0.9520626080983281,
+     "sunUp": 0.9251376912037094,
+     "earthMean": 0.5356387567004798,
+     "earthAny": 0.5818603338935024,
+     "earthUp": 0.5354685180869203
+    },
+    "h0": {
+     "sunMean": 0.7428607170028753,
+     "sunAny": 0.7844780000735989,
+     "sunUp": 0.7437287636617887,
+     "earthMean": 0.4843343070920844,
+     "earthAny": 0.5297523398304773,
+     "earthUp": 0.4843541086564528
+    },
+    "h0check": {
+     "skylineMaxDiffDeg": 0,
+     "sunAny2mRecomputed": 0.911718165425708
+    }
+   },
+   "nasa": {
+    "sun": {
+     "service": "AVGVISIB_85S_060M_201608_SP",
+     "pixelM": 60,
+     "value": 0.652
+    },
+    "earth": {
+     "service": "AVGVISIB_85S_060M_201608_EARTH_SP",
+     "pixelM": 60,
+     "value": 0.50288
+    }
+   }
+  },
+  {
+   "id": "pgda-site01-connecting-ridge",
+   "name": "Connecting Ridge (NASA Goddard study site 1)",
+   "group": "study-site",
+   "lat": -89.46,
+   "lon": -137.5,
+   "terrain": "lola-80m+240m",
+   "xM": -11062.607536464275,
+   "yM": -12072.717648536449,
+   "groundElevM": 1943.2,
+   "trekDem30mM": 1942.5,
+   "ours": {
+    "h2": {
+     "sunMean": 0.4006107006524649,
+     "sunAny": 0.4350306048599782,
+     "sunUp": 0.40062313702881397,
+     "earthMean": 0.39028138764493636,
+     "earthAny": 0.4375574991106804,
+     "earthUp": 0.39047876059516945
+    },
+    "h10": {
+     "sunMean": 0.7892400608055152,
+     "sunAny": 0.849662058560161,
+     "sunUp": 0.788636335758007,
+     "earthMean": 0.5184181907064076,
+     "earthAny": 0.5641230082308061,
+     "earthUp": 0.5182831838867559
+    },
+    "h0": {
+     "sunMean": 0.3545783131715265,
+     "sunAny": 0.38295941022778845,
+     "sunUp": 0.35440305189946397,
+     "earthMean": 0.30663286778692517,
+     "earthAny": 0.3598739006170038,
+     "earthUp": 0.3074347116764594
+    },
+    "h0check": {
+     "skylineMaxDiffDeg": 0,
+     "sunAny2mRecomputed": 0.4350306048599782
+    }
+   },
+   "nasa": {
+    "sun": {
+     "service": "AVGVISIB_85S_060M_201608_SP",
+     "pixelM": 60,
+     "value": 0.33476
+    },
+    "earth": {
+     "service": "AVGVISIB_85S_060M_201608_EARTH_SP",
+     "pixelM": 60,
+     "value": 0.336
+    }
+   }
+  },
+  {
+   "id": "pgda-site04-shackleton-rim-crest",
+   "name": "Shackleton Rim (NASA Goddard study site 4) — highest point within 8 km",
+   "group": "study-site",
+   "lat": -89.7797,
+   "lon": -156.351,
+   "terrain": "lola-80m+240m",
+   "xM": -2679.662772378557,
+   "yM": -6119.235654208328,
+   "groundElevM": 1736.4,
+   "trekDem30mM": 1738.5,
+   "ours": {
+    "h2": {
+     "sunMean": 0.8392919510898825,
+     "sunAny": 0.8930363210382346,
+     "sunUp": 0.8406829974363064,
+     "earthMean": 0.5175577391994929,
+     "earthAny": 0.5633992860910418,
+     "earthUp": 0.5174981293622659
+    },
+    "h10": {
+     "sunMean": 0.8713429508818683,
+     "sunAny": 0.9113501711173534,
+     "sunUp": 0.8722446426161942,
+     "earthMean": 0.5213135988925702,
+     "earthAny": 0.5672018939440403,
+     "earthUp": 0.5213130036922096
+    },
+    "h0": {
+     "sunMean": 0.7766747938055568,
+     "sunAny": 0.8311151454190842,
+     "sunUp": 0.7759282656428247,
+     "earthMean": 0.501408348811066,
+     "earthAny": 0.546962206984532,
+     "earthUp": 0.5014045116102205
+    },
+    "h0check": {
+     "skylineMaxDiffDeg": 0,
+     "sunAny2mRecomputed": 0.8930363210382346
+    }
+   },
+   "nasa": {
+    "sun": {
+     "service": "AVGVISIB_85S_060M_201608_SP",
+     "pixelM": 60,
+     "value": 0.85196
+    },
+    "earth": {
+     "service": "AVGVISIB_85S_060M_201608_EARTH_SP",
+     "pixelM": 60,
+     "value": 0.55028
+    }
+   }
+  },
+  {
+   "id": "pgda-site04-shackleton-rim",
+   "name": "Shackleton Rim (NASA Goddard study site 4)",
+   "group": "study-site",
+   "lat": -89.76,
+   "lon": -172,
+   "terrain": "lola-80m+240m",
+   "xM": -1012.8482113568489,
+   "yM": -7206.789496459531,
+   "groundElevM": 774.9,
+   "trekDem30mM": 725,
+   "ours": {
+    "h2": {
+     "sunMean": 0.09204947388862487,
+     "sunAny": 0.1128393214184954,
+     "sunUp": 0.09217030776590655,
+     "earthMean": 0.07094712988485281,
+     "earthAny": 0.1250199330250359,
+     "earthUp": 0.070740772542718
+    },
+    "h10": {
+     "sunMean": 0.09424433809720159,
+     "sunAny": 0.11509635317640421,
+     "sunUp": 0.09442733952381537,
+     "earthMean": 0.07508241931658537,
+     "earthAny": 0.12984065846448242,
+     "earthUp": 0.07471511107294874
+    },
+    "h0": {
+     "sunMean": 0.09148370201187359,
+     "sunAny": 0.11239772824846976,
+     "sunUp": 0.09147111858003262,
+     "earthMean": 0.0698997415816172,
+     "earthAny": 0.123854617715246,
+     "earthUp": 0.06973492143321516
+    },
+    "h0check": {
+     "skylineMaxDiffDeg": 0,
+     "sunAny2mRecomputed": 0.1128393214184954
+    }
+   },
+   "nasa": {
+    "sun": {
+     "service": "AVGVISIB_85S_060M_201608_SP",
+     "pixelM": 60,
+     "value": 0.10796
+    },
+    "earth": {
+     "service": "AVGVISIB_85S_060M_201608_EARTH_SP",
+     "pixelM": 60,
+     "value": 0.125
+    }
+   }
+  },
+  {
+   "id": "pgda-site07-peak-near-shackleton-crest",
+   "name": "Peak near Shackleton (NASA Goddard study site 7) — highest point within 8 km",
+   "group": "study-site",
+   "lat": -88.8092,
+   "lon": 123.7077,
+   "terrain": "lola-80m+240m",
+   "xM": 30039.457935367616,
+   "yM": -20039.66117548342,
+   "groundElevM": 1647.5,
+   "trekDem30mM": 1649,
+   "ours": {
+    "h2": {
+     "sunMean": 0.8534396545400638,
+     "sunAny": 0.884915913300541,
+     "sunUp": 0.8534156005053789,
+     "earthMean": 0.5531985711551957,
+     "earthAny": 0.60007605215706,
+     "earthUp": 0.5530095801184942
+    },
+    "h10": {
+     "sunMean": 0.8556220120820667,
+     "sunAny": 0.8854801712400181,
+     "sunUp": 0.8558198299866295,
+     "earthMean": 0.5586197255799656,
+     "earthAny": 0.605485568489874,
+     "earthUp": 0.5584190964513083
+    },
+    "h0": {
+     "sunMean": 0.7349435563157615,
+     "sunAny": 0.8264661506568698,
+     "sunUp": 0.7303705702685132,
+     "earthMean": 0.5259181213274821,
+     "earthAny": 0.5716546250751322,
+     "earthUp": 0.5260233308391496
+    },
+    "h0check": {
+     "skylineMaxDiffDeg": 0,
+     "sunAny2mRecomputed": 0.884915913300541
+    }
+   },
+   "nasa": {
+    "sun": {
+     "service": "AVGVISIB_85S_060M_201608_SP",
+     "pixelM": 60,
+     "value": 0.70176
+    },
+    "earth": {
+     "service": "AVGVISIB_85S_060M_201608_EARTH_SP",
+     "pixelM": 60,
+     "value": 0.55944
+    }
+   }
+  },
+  {
+   "id": "pgda-site07-peak-near-shackleton",
+   "name": "Peak near Shackleton (NASA Goddard study site 7)",
+   "group": "study-site",
+   "lat": -88.81,
+   "lon": 123.7,
+   "terrain": "lola-80m+240m",
+   "xM": 30021.96651401027,
+   "yM": -20022.162734974103,
+   "groundElevM": 1646.1,
+   "trekDem30mM": 1647,
+   "ours": {
+    "h2": {
+     "sunMean": 0.8390459492622659,
+     "sunAny": 0.884768715577199,
+     "sunUp": 0.8448413331207144,
+     "earthMean": 0.5563217405630507,
+     "earthAny": 0.6031917373011297,
+     "earthUp": 0.5562479300320156
+    },
+    "h10": {
+     "sunMean": 0.855482408462921,
+     "sunAny": 0.8853943059014021,
+     "sunUp": 0.8557216981710682,
+     "earthMean": 0.5586008782066922,
+     "earthAny": 0.6055591673515449,
+     "earthUp": 0.5583700305435276
+    },
+    "h0": {
+     "sunMean": 0.547465684272322,
+     "sunAny": 0.6147344921065221,
+     "sunUp": 0.5470112728923126,
+     "earthMean": 0.5222054421522216,
+     "earthAny": 0.5678152177912982,
+     "earthUp": 0.5221348576475351
+    },
+    "h0check": {
+     "skylineMaxDiffDeg": 0,
+     "sunAny2mRecomputed": 0.884768715577199
+    }
+   },
+   "nasa": {
+    "sun": {
+     "service": "AVGVISIB_85S_060M_201608_SP",
+     "pixelM": 60,
+     "value": 0.70176
+    },
+    "earth": {
+     "service": "AVGVISIB_85S_060M_201608_EARTH_SP",
+     "pixelM": 60,
+     "value": 0.55944
+    }
+   }
+  },
+  {
+   "id": "pgda-site20-leibnitz-beta-plateau-crest",
+   "name": "Leibnitz Beta Plateau (NASA Goddard study site 20) — highest point within 8 km",
+   "group": "study-site",
+   "lat": -85.4042,
+   "lon": 31.7249,
+   "terrain": "lola-80m+240m",
+   "xM": 73320.5951742361,
+   "yM": 118600.84219587283,
+   "groundElevM": 6461.5,
+   "trekDem30mM": 6459,
+   "ours": {
+    "h2": {
+     "sunMean": 0.6374433180772316,
+     "sunAny": 0.6672718128626277,
+     "sunUp": 0.637918133532868,
+     "earthMean": 0.8506157066606249,
+     "earthAny": 0.9714191087177851,
+     "earthUp": 0.8415784502533028
+    },
+    "h10": {
+     "sunMean": 0.7728129415953086,
+     "sunAny": 0.8052942114495296,
+     "sunUp": 0.7728125804987549,
+     "earthMean": 0.9144999185903504,
+     "earthAny": 0.9995584068299743,
+     "earthUp": 0.9264502042368411
+    },
+    "h0": {
+     "sunMean": 0.5755907454784496,
+     "sunAny": 0.6042343878414681,
+     "sunUp": 0.5757516283748144,
+     "earthMean": 0.7310719616770871,
+     "earthAny": 0.7975172650663003,
+     "earthUp": 0.729732713467365
+    },
+    "h0check": {
+     "skylineMaxDiffDeg": 0,
+     "sunAny2mRecomputed": 0.6672718128626277
+    }
+   },
+   "nasa": {
+    "sun": {
+     "service": "AVGVISIB_85S_060M_201608_SP",
+     "pixelM": 60,
+     "value": 0.4856
+    },
+    "earth": {
+     "service": "AVGVISIB_85S_060M_201608_EARTH_SP",
+     "pixelM": 60,
+     "value": 0.74572
+    }
+   }
+  },
+  {
+   "id": "pgda-site20-leibnitz-beta-plateau",
+   "name": "Leibnitz Beta Plateau (NASA Goddard study site 20)",
+   "group": "study-site",
+   "lat": -85.43,
+   "lon": 31.7,
+   "terrain": "lola-80m+240m",
+   "xM": 72857.2888527706,
+   "yM": 117966.003745327,
+   "groundElevM": 6386.2,
+   "trekDem30mM": 6389,
+   "ours": {
+    "h2": {
+     "sunMean": 0.24396301686144886,
+     "sunAny": 0.28973418544459845,
+     "sunUp": 0.24427462188584817,
+     "earthMean": 0.3954327506166338,
+     "earthAny": 0.4423904910270721,
+     "earthUp": 0.3958024115893674
+    },
+    "h10": {
+     "sunMean": 0.44667754288413963,
+     "sunAny": 0.5161610833752438,
+     "sunUp": 0.4456533738944838,
+     "earthMean": 0.49000926245445475,
+     "earthAny": 0.5351863891171816,
+     "earthUp": 0.4900580204359506
+    },
+    "h0": {
+     "sunMean": 0.1801213491422311,
+     "sunAny": 0.22263655655459197,
+     "sunUp": 0.17955668952320203,
+     "earthMean": 0.3649560950022414,
+     "earthAny": 0.41336800657483164,
+     "earthUp": 0.36543061467315974
+    },
+    "h0check": {
+     "skylineMaxDiffDeg": 0,
+     "sunAny2mRecomputed": 0.28973418544459845
+    }
+   },
+   "nasa": {
+    "sun": {
+     "service": "AVGVISIB_85S_060M_201608_SP",
+     "pixelM": 60,
+     "value": 0.177
+    },
+    "earth": {
+     "service": "AVGVISIB_85S_060M_201608_EARTH_SP",
+     "pixelM": 60,
+     "value": 0.40228
+    }
+   }
+  },
+  {
+   "id": "pgda-site23-malapert-massif-crest",
+   "name": "Malapert Massif (NASA Goddard study site 23) — highest point within 8 km",
+   "group": "study-site",
+   "lat": -85.9876,
+   "lon": 2.0528,
+   "terrain": "lola-80m+240m",
+   "xM": 4360.035575001948,
+   "yM": 121641.04503528861,
+   "groundElevM": 5172,
+   "trekDem30mM": 5173,
+   "ours": {
+    "h2": {
+     "sunMean": 0.6434161786520564,
+     "sunAny": 0.6688664548654981,
+     "sunUp": 0.6432417845270659,
+     "earthMean": 0.8307854827233958,
+     "earthAny": 0.9618267237466727,
+     "earthUp": 0.8241600529911804
+    },
+    "h10": {
+     "sunMean": 0.8112610976946165,
+     "sunAny": 0.8376409111539075,
+     "sunUp": 0.8111698539062596,
+     "earthMean": 0.9413035534818613,
+     "earthAny": 1,
+     "earthUp": 0.9623419157783693
+    },
+    "h0": {
+     "sunMean": 0.5533791185880931,
+     "sunAny": 0.5740833875102732,
+     "sunUp": 0.5533653079499037,
+     "earthMean": 0.7773484897483077,
+     "earthAny": 0.8588251168381928,
+     "earthUp": 0.7749101480563767
+    },
+    "h0check": {
+     "skylineMaxDiffDeg": 0,
+     "sunAny2mRecomputed": 0.6688664548654981
+    }
+   },
+   "nasa": {
+    "sun": {
+     "service": "AVGVISIB_85S_060M_201608_SP",
+     "pixelM": 60,
+     "value": 0.55568
+    },
+    "earth": {
+     "service": "AVGVISIB_85S_060M_201608_EARTH_SP",
+     "pixelM": 60,
+     "value": 0.87488
+    }
+   }
+  },
+  {
+   "id": "pgda-site23-malapert-massif",
+   "name": "Malapert Massif (NASA Goddard study site 23)",
+   "group": "study-site",
+   "lat": -85.99,
+   "lon": -0.2,
+   "terrain": "lola-80m+240m",
+   "xM": -424.62480845204396,
+   "yM": 121645.55293046475,
+   "groundElevM": 4794.1,
+   "trekDem30mM": 4795,
+   "ours": {
+    "h2": {
+     "sunMean": 0.22378908072873097,
+     "sunAny": 0.2643057787372889,
+     "sunUp": 0.22397360254161403,
+     "earthMean": 0.48852176969799743,
+     "earthAny": 0.5339352084687757,
+     "earthUp": 0.48848791138697056
+    },
+    "h10": {
+     "sunMean": 0.45839867742943147,
+     "sunAny": 0.5101137102412816,
+     "sunUp": 0.45778491959324363,
+     "earthMean": 0.5882266900899121,
+     "earthAny": 0.636274425622217,
+     "earthUp": 0.5879199735044098
+    },
+    "h0": {
+     "sunMean": 0.13797098632188584,
+     "sunAny": 0.1821326496816849,
+     "sunUp": 0.13851305766470812,
+     "earthMean": 0.4458006592574365,
+     "earthAny": 0.4913827999460275,
+     "earthUp": 0.4458987034333869
+    },
+    "h0check": {
+     "skylineMaxDiffDeg": 0,
+     "sunAny2mRecomputed": 0.2643057787372889
+    }
+   },
+   "nasa": {
+    "sun": {
+     "service": "AVGVISIB_85S_060M_201608_SP",
+     "pixelM": 60,
+     "value": 0.0462
+    },
+    "earth": {
+     "service": "AVGVISIB_85S_060M_201608_EARTH_SP",
+     "pixelM": 60,
+     "value": 0.44552
+    }
+   }
+  },
+  {
+   "id": "shackleton-crater",
+   "name": "Shackleton crater (centre)",
+   "group": "south-pole-feature",
+   "lat": -89.67,
+   "lon": 129.78,
+   "terrain": "lola-80m+240m",
+   "xM": 7690.243761836725,
+   "yM": -6402.723035824016,
+   "groundElevM": -2788.5,
+   "trekDem30mM": -2787,
+   "ours": {
+    "h2": {
+     "sunMean": 0,
+     "sunAny": 0,
+     "sunUp": 0,
+     "earthMean": 0,
+     "earthAny": 0,
+     "earthUp": 0
+    },
+    "h10": {
+     "sunMean": 0,
+     "sunAny": 0,
+     "sunUp": 0,
+     "earthMean": 0,
+     "earthAny": 0,
+     "earthUp": 0
+    },
+    "h0": {
+     "sunMean": 0,
+     "sunAny": 0,
+     "sunUp": 0,
+     "earthMean": 0,
+     "earthAny": 0,
+     "earthUp": 0
+    },
+    "h0check": {
+     "skylineMaxDiffDeg": 0,
+     "sunAny2mRecomputed": 0
+    }
+   },
+   "nasa": {
+    "sun": {
+     "service": "AVGVISIB_85S_060M_201608_SP",
+     "pixelM": 60,
+     "value": 0
+    },
+    "earth": {
+     "service": "AVGVISIB_85S_060M_201608_EARTH_SP",
+     "pixelM": 60,
+     "value": 0
+    }
+   }
+  },
+  {
+   "id": "shackleton-de-gerlache-ridge-point",
+   "name": "Shackleton-de Gerlache connecting ridge (LROC point)",
+   "group": "south-pole-feature",
+   "lat": -89.684,
+   "lon": -163.261,
+   "terrain": "lola-80m+240m",
+   "xM": -2759.793503885221,
+   "yM": -9176.173199889528,
+   "groundElevM": 1724.5,
+   "trekDem30mM": 1730,
+   "ours": {
+    "h2": {
+     "sunMean": 0.7724545601904171,
+     "sunAny": 0.8147393986973002,
+     "sunUp": 0.7737938986543674,
+     "earthMean": 0.48557523766788707,
+     "earthAny": 0.5311016522944445,
+     "earthUp": 0.48553169044318784
+    },
+    "h10": {
+     "sunMean": 0.8599769281283438,
+     "sunAny": 0.8972927885382039,
+     "sunUp": 0.8618426701667015,
+     "earthMean": 0.4965507753051365,
+     "earthAny": 0.5420801491603596,
+     "earthUp": 0.49642432197048686
+    },
+    "h0": {
+     "sunMean": 0.6317797756822525,
+     "sunAny": 0.6625860186695779,
+     "sunUp": 0.6331955399089827,
+     "earthMean": 0.3511437371980847,
+     "earthAny": 0.4007212688443752,
+     "earthUp": 0.3516185616329134
+    },
+    "h0check": {
+     "skylineMaxDiffDeg": 0,
+     "sunAny2mRecomputed": 0.8147393986973002
+    }
+   },
+   "nasa": {
+    "sun": {
+     "service": "AVGVISIB_85S_060M_201608_SP",
+     "pixelM": 60,
+     "value": 0.7772
+    },
+    "earth": {
+     "service": "AVGVISIB_85S_060M_201608_EARTH_SP",
+     "pixelM": 60,
+     "value": 0.53496
+    }
+   }
+  },
+  {
+   "id": "shiv-shakti-chandrayaan-3",
+   "name": "Shiv Shakti point (Chandrayaan-3 Vikram)",
+   "group": "india",
+   "lat": -69.3741,
+   "lon": 32.32,
+   "terrain": "lola-240m",
+   "xM": 338051.93359830213,
+   "yM": 534332.2374562607,
+   "groundElevM": 529.5,
+   "trekDem30mM": null,
+   "ours": {
+    "h2": {
+     "sunMean": 0.48018076643285373,
+     "sunAny": 0.4843418421795076,
+     "sunUp": 0.480220305925935,
+     "earthMean": 1,
+     "earthAny": 1,
+     "earthUp": 1
+    },
+    "h10": {
+     "sunMean": 0.4850162013469776,
+     "sunAny": 0.489383364203967,
+     "sunUp": 0.48495516602676547,
+     "earthMean": 1,
+     "earthAny": 1,
+     "earthUp": 1
+    },
+    "h0": {
+     "sunMean": 0.47875168190486295,
+     "sunAny": 0.4829679967616501,
+     "sunUp": 0.4786624633539001,
+     "earthMean": 1,
+     "earthAny": 1,
+     "earthUp": 1
+    },
+    "h0check": {
+     "skylineMaxDiffDeg": 0,
+     "sunAny2mRecomputed": 0.4843418421795076
+    }
+   },
+   "nasa": {
+    "sun": {
+     "service": "AVGVISIB_65S_240M_201608_SP",
+     "pixelM": 240,
+     "value": 0.48288
+    },
+    "earth": {
+     "service": "AVGVISIB_65S_240M_201608_EARTH_SP",
+     "pixelM": 240,
+     "value": 1
+    }
+   }
+  }
+ ],
+ "comparison": {
+  "sun_h0_Any": {
+   "n": 23,
+   "pearson": 0.9750255099430961,
+   "spearman": 0.9908120494216824,
+   "medianAbsDiffPp": 1.3454682482244296,
+   "meanDiffPp": 2.0333480388836653,
+   "sitesOver30pp": [],
+   "worstSite": "pgda-site23-malapert-massif",
+   "worstDiffPp": 13.593264968168493
+  },
+  "sun_h0_Mean": {
+   "n": 23,
+   "pearson": 0.9766650217775205,
+   "spearman": 0.9823690394767358,
+   "medianAbsDiffPp": 0.9145595040613352,
+   "meanDiffPp": -0.39282984325481723,
+   "sitesOver30pp": [],
+   "worstSite": "pgda-site07-peak-near-shackleton",
+   "worstDiffPp": -15.429431572767804
+  },
+  "sun_h0_Up": {
+   "n": 23,
+   "pearson": 0.976754524406193,
+   "spearman": 0.9798381575525316,
+   "medianAbsDiffPp": 0.8793097898752489,
+   "meanDiffPp": -0.41104082123529906,
+   "sitesOver30pp": [],
+   "worstSite": "pgda-site07-peak-near-shackleton",
+   "worstDiffPp": -15.47487271076875
+  },
+  "sun_h2_Any": {
+   "n": 23,
+   "pearson": 0.9703951074764201,
+   "spearman": 0.9798858012576338,
+   "medianAbsDiffPp": 3.7539398697300164,
+   "meanDiffPp": 6.80474090800729,
+   "sitesOver30pp": [],
+   "worstSite": "pgda-site01-connecting-ridge-crest",
+   "worstDiffPp": 25.971816542570803
+  },
+  "sun_h2_Mean": {
+   "n": 23,
+   "pearson": 0.9732452719542899,
+   "spearman": 0.9803824489014542,
+   "medianAbsDiffPp": 1.4325793664411723,
+   "meanDiffPp": 4.661946904530183,
+   "sitesOver30pp": [],
+   "worstSite": "pgda-site01-connecting-ridge-crest",
+   "worstDiffPp": 23.013308133138853
+  },
+  "sun_h2_Up": {
+   "n": 23,
+   "pearson": 0.9731532572537412,
+   "spearman": 0.9753571903686022,
+   "medianAbsDiffPp": 1.4544927934447949,
+   "meanDiffPp": 4.704506724962654,
+   "sitesOver30pp": [],
+   "worstSite": "pgda-site01-connecting-ridge-crest",
+   "worstDiffPp": 23.124767243599965
+  },
+  "sun_h10_Any": {
+   "n": 23,
+   "pearson": 0.8868955048820215,
+   "spearman": 0.8765830913429923,
+   "medianAbsDiffPp": 5.689068557339649,
+   "meanDiffPp": 13.303200398500502,
+   "sitesOver30pp": [
+    "pgda-site01-connecting-ridge-crest",
+    "pgda-site01-connecting-ridge",
+    "pgda-site20-leibnitz-beta-plateau-crest",
+    "pgda-site20-leibnitz-beta-plateau",
+    "pgda-site23-malapert-massif"
+   ],
+   "worstSite": "pgda-site01-connecting-ridge",
+   "worstDiffPp": 51.49020585601609
+  },
+  "sun_h10_Mean": {
+   "n": 23,
+   "pearson": 0.9009102997469914,
+   "spearman": 0.9312143321632355,
+   "medianAbsDiffPp": 1.9382950881868255,
+   "meanDiffPp": 11.011914049009182,
+   "sitesOver30pp": [
+    "pgda-site01-connecting-ridge",
+    "pgda-site23-malapert-massif"
+   ],
+   "worstSite": "pgda-site01-connecting-ridge",
+   "worstDiffPp": 45.44800608055152
+  },
+  "sun_h10_Up": {
+   "n": 23,
+   "pearson": 0.9013196995823577,
+   "spearman": 0.9285559775586745,
+   "medianAbsDiffPp": 2.0284642616194115,
+   "meanDiffPp": 11.019929046430748,
+   "sitesOver30pp": [
+    "pgda-site01-connecting-ridge",
+    "pgda-site23-malapert-massif"
+   ],
+   "worstSite": "pgda-site01-connecting-ridge",
+   "worstDiffPp": 45.3876335758007
+  },
+  "earth_h0_Any": {
+   "n": 23,
+   "pearson": 0.9954726419215548,
+   "spearman": 0.9937609493394347,
+   "medianAbsDiffPp": 0.25328704782698885,
+   "meanDiffPp": 0.14467407384099018,
+   "sitesOver30pp": [],
+   "worstSite": "shackleton-de-gerlache-ridge-point",
+   "worstDiffPp": -13.423873115562479
+  },
+  "earth_h0_Mean": {
+   "n": 23,
+   "pearson": 0.9910032058635416,
+   "spearman": 0.9922766155022077,
+   "medianAbsDiffPp": 2.9367132213074854,
+   "meanDiffPp": -3.910943297616725,
+   "sitesOver30pp": [],
+   "worstSite": "shackleton-de-gerlache-ridge-point",
+   "worstDiffPp": -18.381626280191526
+  },
+  "earth_h0_Up": {
+   "n": 23,
+   "pearson": 0.9907219732764212,
+   "spearman": 0.9937609493394347,
+   "medianAbsDiffPp": 2.8565288323540603,
+   "meanDiffPp": -3.8419309333348983,
+   "sitesOver30pp": [],
+   "worstSite": "shackleton-de-gerlache-ridge-point",
+   "worstDiffPp": -18.334143836708662
+  },
+  "earth_h2_Any": {
+   "n": 23,
+   "pearson": 0.9890980576563134,
+   "spearman": 0.9907661900747252,
+   "medianAbsDiffPp": 0.3747251695840448,
+   "meanDiffPp": 3.1677206507206024,
+   "sitesOver30pp": [],
+   "worstSite": "pgda-site20-leibnitz-beta-plateau-crest",
+   "worstDiffPp": 22.56991087177851
+  },
+  "earth_h2_Mean": {
+   "n": 23,
+   "pearson": 0.9909053158809763,
+   "spearman": 0.9892863293680976,
+   "medianAbsDiffPp": 3.0161317874313864,
+   "meanDiffPp": -1.3183033005428302,
+   "sitesOver30pp": [],
+   "worstSite": "cabeus-crater",
+   "worstDiffPp": -10.714305240110152
+  },
+  "earth_h2_Up": {
+   "n": 23,
+   "pearson": 0.9911024541610226,
+   "spearman": 0.9907661900747252,
+   "medianAbsDiffPp": 2.9975758497601923,
+   "meanDiffPp": -1.3090101091769777,
+   "sitesOver30pp": [],
+   "worstSite": "im-2-athena",
+   "worstDiffPp": -11.09090602652012
+  },
+  "earth_h10_Any": {
+   "n": 23,
+   "pearson": 0.9764157577554903,
+   "spearman": 0.9632248586399909,
+   "medianAbsDiffPp": 0.7120149160359635,
+   "meanDiffPp": 5.048224898921562,
+   "sitesOver30pp": [],
+   "worstSite": "pgda-site20-leibnitz-beta-plateau-crest",
+   "worstDiffPp": 25.383840682997427
+  },
+  "earth_h10_Mean": {
+   "n": 23,
+   "pearson": 0.9780936320321044,
+   "spearman": 0.96636080233992,
+   "medianAbsDiffPp": 3.2758756700479785,
+   "meanDiffPp": 1.0183924611790656,
+   "sitesOver30pp": [],
+   "worstSite": "pgda-site01-connecting-ridge",
+   "worstDiffPp": 18.24181907064076
+  },
+  "earth_h10_Up": {
+   "n": 23,
+   "pearson": 0.9774095564100321,
+   "spearman": 0.9678063690452858,
+   "medianAbsDiffPp": 3.2588518086920315,
+   "meanDiffPp": 1.239057147382787,
+   "sitesOver30pp": [],
+   "worstSite": "pgda-site01-connecting-ridge",
+   "worstDiffPp": 18.228318388675586
+  }
+ },
+ "demCheck": {
+  "n": 21,
+  "medianAbsDiffM": 1.5,
+  "maxAbsDiffM": 49.89999999999998
+ },
+ "benchmark": {
+  "period": "2024-01-01 to 2026-01-01, hourly",
+  "samples": 17544,
+  "sites": {
+   "pgda-site01-connecting-ridge-crest": {
+    "h2": {
+     "sunMean": 0.8799653220312152,
+     "sunAny": 0.9093707250341997,
+     "sunUp": 0.8810419516643867,
+     "earthMean": 0.5241387966439637,
+     "earthAny": 0.5740994072047424,
+     "earthUp": 0.5241678066575467
+    },
+    "h10": {
+     "sunMean": 0.9216280194238083,
+     "sunAny": 0.9497264021887825,
+     "sunUp": 0.9236206110351117,
+     "earthMean": 0.5267112724759481,
+     "earthAny": 0.5773483812129503,
+     "earthUp": 0.5266757865937073
+    }
+   },
+   "pgda-site01-connecting-ridge": {
+    "h2": {
+     "sunMean": 0.4071408000736103,
+     "sunAny": 0.443000455996352,
+     "sunUp": 0.4066347469220246,
+     "earthMean": 0.38064279310484245,
+     "earthAny": 0.4270975832193342,
+     "earthUp": 0.3808139534883721
+    },
+    "h10": {
+     "sunMean": 0.7897305045350441,
+     "sunAny": 0.8482102143182855,
+     "sunUp": 0.7913246694026448,
+     "earthMean": 0.5085800023925882,
+     "earthAny": 0.5556885544915641,
+     "earthUp": 0.5086639306885545
+    }
+   }
+  }
+ }
+}

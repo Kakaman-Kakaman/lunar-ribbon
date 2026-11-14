@@ -1,0 +1,137 @@
+@import "tailwindcss";
+
+/* Design tokens. Meanings are fixed (docs/ARCHITECTURE.md "Visual language"):
+   sun = sunlight and power, earth = radio link, dark = time without the Sun, alert = a failure. */
+@theme {
+  --color-sky: #0a0c10;
+  --color-panel: #1a1d23;
+  --color-line: #2b2f38;
+  --color-terrain: #30353f;
+  --color-terrain-edge: #d9dce1;
+  --color-sun: #ffb020;
+  --color-earth: #4da3ff;
+  --color-dark: #3a3f4b;
+  --color-ink: #f2f4f7;
+  --color-ink2: #a7adb8;
+  --color-alert: #ff5a5f;
+  --color-good: #4cc38a;
+  --font-sans: "Inter", "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, "Cascadia Mono", "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+}
+
+:root {
+  --sky: #0a0c10;
+  --panel: #1a1d23;
+  --line: #2b2f38;
+  --terrain: #30353f;
+  --terrain-edge: #d9dce1;
+  --sun: #ffb020;
+  --earth: #4da3ff;
+  --dark: #3a3f4b;
+  --text: #f2f4f7;
+  --text2: #a7adb8;
+  --alert: #ff5a5f;
+  --good: #4cc38a;
+  --font-sans: "Inter", "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, "Cascadia Mono", "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  color-scheme: dark;
+}
+
+html {
+  background: var(--sky);
+  color: var(--text);
+  font-family: var(--font-sans);
+  scroll-behavior: smooth;
+  scroll-padding-top: 12px;
+}
+
+body {
+  margin: 0;
+  min-width: 960px;
+  background: var(--sky);
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+.mono {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Text on the chart keeps a dark outline so it stays readable over bands and terrain. */
+svg text.halo {
+  paint-order: stroke;
+  stroke: var(--sky);
+  stroke-width: 3px;
+  stroke-linejoin: round;
+}
+svg text.halo-terrain {
+  paint-order: stroke;
+  stroke: var(--terrain);
+  stroke-width: 3px;
+  stroke-linejoin: round;
+}
+
+/* Visible keyboard focus everywhere. */
+:focus-visible {
+  outline: 2px solid var(--earth);
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+
+button,
+select,
+input {
+  font: inherit;
+  color: inherit;
+}
+
+select,
+input[type="text"],
+input[type="number"] {
+  background: var(--sky);
+  border: 1px solid #454b57;
+  border-radius: 6px;
+  padding: 6px 8px;
+  color: var(--text);
+  min-height: 36px;
+}
+
+select:hover,
+input:hover {
+  border-color: var(--text2);
+}
+
+input[type="range"] {
+  accent-color: var(--earth);
+  width: 100%;
+  height: 24px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  * {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+@keyframes ribbon-pulse {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(250%); }
+}
+.pulse-bar {
+  animation: ribbon-pulse 1.3s ease-in-out infinite;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
