@@ -15,6 +15,9 @@ import type { PlanView, YRange } from '../state/plan';
 export const PLOT_LEFT = 76;
 export const PLOT_RIGHT = 16;
 const TOP = 8;
+type Anchor = 'start' | 'middle' | 'end';
+type Spot = { x: number; y: number; anchor: Anchor };
+type Box = { x0: number; x1: number; y0: number; y1: number };
 const BOTTOM = 40;
 /** Plot height in pixels when the page does not pick one (the plan panels size it to the window). */
 export const DEFAULT_PLOT_H = 190;
@@ -247,8 +250,44 @@ export function Ribbon({ width, data, view, heightM, range, cursorIdx, hoverAz, 
   const rel = (el: number, h: number) => clearanceText(el - h);
   const sunLabel = `Sun ${rel(sunEl, sunH)}${sunUp ? '' : ', hidden'}`;
   const earthLabel = `Earth ${rel(earthEl, earthH)}${earthUp ? '' : ', hidden'}`;
-  const labelAnchor = (x: number) => (x > PLOT_LEFT + plotW - 190 ? 'end' : x < PLOT_LEFT + 190 ? 'start' : 'middle');
-  const close = Math.abs(sunX - earthX) < 230;
+  const labelAnchor = (x: number): Anchor => (x > PLOT_LEFT + plotW - 190 ? 'end' : x < PLOT_LEFT + 190 ? 'start' : 'middle');
+  // Marker labels stay inside the plot and clear of each other. Each label can sit above, below,
+  // right or left of its marker; the first pair that fits without colliding wins, so the usual
+  // case (both above) is unchanged. An 11 px mono character is about 6.6 px wide, and a line runs
+  // from 10 px above its baseline to 3 px below it.
+  const labelBox = (text: string, s: Spot): Box => {
+    const w = text.length * 6.6;
+    const x0 = s.anchor === 'middle' ? s.x - w / 2 : s.anchor === 'end' ? s.x - w : s.x;
+    return { x0, x1: x0 + w, y0: s.y - 10, y1: s.y + 3 };
+  };
+  const markBox = (x: number, y: number, r: number): Box => ({ x0: x - r, x1: x + r, y0: y - r, y1: y + r });
+  const hit = (a: Box, b: Box) => a.x0 < b.x1 && b.x0 < a.x1 && a.y0 < b.y1 && b.y0 < a.y1;
+  const inside = (b: Box) => b.y0 >= TOP + 2 && b.y1 <= plotB - 2 && b.x0 >= PLOT_LEFT && b.x1 <= PLOT_LEFT + plotW;
+  const spotsAround = (x: number, y: number, up: number, down: number): Spot[] => [
+    { x, y: y - up, anchor: labelAnchor(x) },
+    { x, y: y + down, anchor: labelAnchor(x) },
+    { x: x + 14, y: y + 4, anchor: 'start' },
+    { x: x - 14, y: y + 4, anchor: 'end' },
+  ];
+  const sunSpots = spotsAround(sunX, sunY, 22, 25);
+  const earthSpots = spotsAround(earthX, earthY, 17, 22);
+  const sunMark = markBox(sunX, sunY, 13), earthMark = markBox(earthX, earthY, 8);
+  const labelSpots = (): [Spot, Spot] => {
+    for (const s of sunSpots) {
+      const sb = labelBox(sunLabel, s);
+      if (!inside(sb) || (!noEarth && hit(sb, earthMark))) continue;
+      if (noEarth) return [s, earthSpots[0]];
+      for (const e of earthSpots) {
+        const eb = labelBox(earthLabel, e);
+        if (inside(eb) && !hit(eb, sb) && !hit(eb, sunMark)) return [s, e];
+      }
+    }
+    return [
+      sunSpots.find((s) => inside(labelBox(sunLabel, s))) ?? sunSpots[0],
+      earthSpots.find((e) => inside(labelBox(earthLabel, e))) ?? earthSpots[0],
+    ];
+  };
+  const [sunSpot, earthSpot] = labelSpots();
 
   // --- Hover ---
   const hoverX = hoverAz === null ? null : xOf(hoverAz);
@@ -430,12 +469,12 @@ export function Ribbon({ width, data, view, heightM, range, cursorIdx, hoverAz, 
             )}
           </g>}
           <text
-            x={sunX} y={sunY - 22} textAnchor={labelAnchor(sunX)} fontSize="11" className="mono halo" fill="var(--text)"
+            x={sunSpot.x} y={sunSpot.y} textAnchor={sunSpot.anchor} fontSize="11" className="mono halo" fill="var(--text)"
           >
             {sunLabel}
           </text>
           {!noEarth && <text
-            x={earthX} y={close && sunY - 22 < earthY ? earthY + 26 : earthY - 17} textAnchor={labelAnchor(earthX)}
+            x={earthSpot.x} y={earthSpot.y} textAnchor={earthSpot.anchor}
             fontSize="11" className="mono halo" fill="var(--text)"
           >
             {earthLabel}
