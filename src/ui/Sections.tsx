@@ -94,9 +94,20 @@ export function Credits() {
           <h3 className="mb-1.5 font-semibold text-ink">Data</h3>
           <ul className="space-y-2 text-ink2">
             <li>
-              <span className="text-ink">NASA LOLA (terrain).</span> Lunar Orbiter Laser Altimeter gridded data records
-              LDEM_80S_80M and LDEM_60S_240M. Neumann, G. A. (2011), LRO Moon Laser Altimeter 4 GDR V1.0, NASA Planetary Data
-              System, doi:10.17189/1520642. Every skyline is computed from these grids.
+              <span className="text-ink">NASA Goddard 2023 south-pole elevation model (terrain).</span> LDEM_80S_20MPP_ADJ, 20 m
+              per pixel, from NASA Goddard&apos;s Planetary Geodesy Data Archive. The terrain near every south-pole site.
+            </li>
+            <li>
+              <span className="text-ink">NASA LOLA (terrain).</span> Lunar Orbiter Laser Altimeter gridded data records: 240 m
+              (south), 10 m, 20 m, 80 m and 240 m (north), and 480 m for typed points. Neumann, G. A. (2011), LRO Moon Laser
+              Altimeter 4 GDR V1.0, NASA Planetary Data System, doi:10.17189/1520642.
+            </li>
+            <li>
+              <span className="text-ink">NASA Deep Space Network.</span> Antenna positions and the elevation limit from the DSN
+              Telecommunications Link Design Handbook, 810-005, module 301.
+            </li>
+            <li>
+              <span className="text-ink">NASA Earth Fact Sheet.</span> Solar irradiance at 1 AU (1361 W/m²), for panel power.
             </li>
             <li>
               <span className="text-ink">NASA JPL Horizons (check).</span> Reference tables for the Sun and Earth directions the
@@ -109,8 +120,13 @@ export function Credits() {
               Trek, are what the terrain and skylines were checked against.
             </li>
             <li>
+              <span className="text-ink">ACT Artemis III Geotechnical maps (check).</span> Malapert Massif Sun and Earth
+              visibility cubes, LROC QuickMap, used for the date-by-date check.
+            </li>
+            <li>
               <span className="text-ink">Sites.</span> The five NASA Goddard study sites come from the Planetary Geodesy Data
-              Archive. Every other site carries its own source in the project&apos;s site catalogue.
+              Archive; north-pole craters from the IAU Gazetteer of Planetary Nomenclature. Every other site carries its own
+              source in the project&apos;s site catalogue.
             </li>
             <li>
               <span className="text-ink">When the Sun counts as up.</span> At least half the disc above the skyline, the
@@ -127,13 +143,15 @@ export function Credits() {
             <li>Vite (MIT)</li>
             <li>TypeScript (Apache-2.0)</li>
             <li>Vitest (MIT)</li>
+            <li>three.js (MIT): the 3D view</li>
+            <li>geotiff.js (MIT): reading the 2023 elevation model</li>
           </ul>
           <p className="mt-2 text-ink2">Versions and licences are in CREDITS.md in the project repository.</p>
         </div>
         <div>
           <h3 className="mb-1.5 font-semibold text-ink">Notes</h3>
           <p className="text-ink2">
-            Everything drawn comes from the NASA data above. This tool is not affiliated with or endorsed by NASA.
+            Everything drawn comes from the data above; the 3D lighting is computed, not photographed. This tool is not affiliated with or endorsed by NASA.
           </p>
           <p className="mt-2 text-ink2">
             Times are UTC. A body counts as up when at least half of its disc is above the skyline. The reference surface is a

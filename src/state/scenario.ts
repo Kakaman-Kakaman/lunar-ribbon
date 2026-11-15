@@ -33,13 +33,13 @@ export interface Scenario {
 
 /**
  * The scenario the app opens on. Change it here and nowhere else. The equivalent hash is
- * #a=pgda-site23-malapert-massif&b=pgda-site23-malapert-massif&t=20271013T1800Z&p=short-stay&h=2&m=plus&n=3
- * 18:00 was chosen by the clearance rule in pipeline/export-demo-assets.ts (Sun 0.56° above the
- * skyline at landing, against 0.05° at 00:00).
+ * #a=pgda-site23-malapert-massif-crest&b=pgda-site23-malapert-massif-crest&t=20270315T1800Z&p=short-stay&h=2&m=plus&n=3
+ * Picked by the team (D-056) from pipeline/find-stories-v2.ts on NASA Goddard's 2023 terrain:
+ * plan A works and plan B (three days later) fails at all 16 points around the site.
  */
 export const DEFAULTS = {
-  site: 'pgda-site23-malapert-massif',
-  landingMs: Date.UTC(2027, 9, 13, 18, 0),
+  site: 'pgda-site23-malapert-massif-crest',
+  landingMs: Date.UTC(2027, 2, 15, 18, 0),
   profileId: 'short-stay',
   heightM: 2 as HeightM,
   bMode: 'plus' as BMode,

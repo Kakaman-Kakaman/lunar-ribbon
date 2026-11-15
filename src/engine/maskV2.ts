@@ -67,6 +67,7 @@ export function horizonDegOf(p: MaskV2Point, heightM: number): number[] {
 /** Terrain label for a site from the name of the finest grid that covers it. */
 export function terrainOfGrid(name: string | undefined): HorizonMask['terrain'] {
   if (!name) return 'smooth-sphere';
+  if (/20MPP_ADJ/.test(name)) return 'goddard-2023-20m';
   if (/_10M/.test(name)) return 'lola-10m';
   if (/_20M/.test(name)) return 'lola-20m';
   if (/_240M/.test(name)) return 'lola-240m';

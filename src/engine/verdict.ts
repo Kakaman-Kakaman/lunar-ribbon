@@ -85,6 +85,8 @@ export function compassName(azDeg: number): string {
 /** One line naming where the skyline data came from. */
 export function terrainLabel(t: TerrainSource): string {
   switch (t) {
+    case 'goddard-2023-20m':
+      return "Terrain: NASA Goddard's 2023 south-pole elevation model (20 m) near the site, NASA LOLA 240 m beyond";
     case 'lola-10m':
       return 'Terrain: NASA LOLA elevation grids (10 m near the site, then 20 m and 240 m)';
     case 'lola-20m':
@@ -104,6 +106,7 @@ export function terrainLabel(t: TerrainSource): string {
 export function terrainBadge(t: TerrainSource): string {
   switch (t) {
     case 'smooth-sphere': return 'No terrain: geometric estimate';
+    case 'goddard-2023-20m': return 'NASA terrain (Goddard 2023), 20 m';
     case 'lola-10m': return 'NASA LOLA terrain, 10 m';
     case 'lola-20m': return 'NASA LOLA terrain, 20 m';
     case 'lola-80m+240m': return 'NASA LOLA terrain, 80 m';
@@ -480,7 +483,9 @@ export function compareSentence(a: PlanSummary, b: PlanSummary): string {
   } else if (okOf(a) !== okOf(b)) {
     const [okP, badP, okL, badL] = okOf(a) ? [a, b, 'A', 'B'] : [b, a, 'B', 'A'];
     parts.push(
-      `Plan ${okL} works and plan ${badL} fails because ${reason(badP)}; the Sun is up for ${fmtPct(okP.ev.sunShare)} of the stay in plan ${okL} against ${fmtPct(badP.ev.sunShare)} in plan ${badL}.`,
+      fmtPct(okP.ev.sunShare) === fmtPct(badP.ev.sunShare)
+        ? `Plan ${okL} works and plan ${badL} fails because ${reason(badP)}.`
+        : `Plan ${okL} works and plan ${badL} fails because ${reason(badP)}; the Sun is up for ${fmtPct(okP.ev.sunShare)} of the stay in plan ${okL} against ${fmtPct(badP.ev.sunShare)} in plan ${badL}.`,
     );
   } else {
     parts.push(`Both fail: plan A because ${reason(a)}, plan B because ${reason(b)}.`);

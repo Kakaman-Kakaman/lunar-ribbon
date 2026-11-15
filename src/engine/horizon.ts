@@ -16,7 +16,7 @@ export interface HorizonMask {
   /** East-positive, -180..180. */
   lon: number;
   groundElevM: number | null;
-  terrain: 'lola-10m' | 'lola-20m' | 'lola-80m+240m' | 'lola-240m' | 'lola-480m' | 'smooth-sphere';
+  terrain: 'goddard-2023-20m' | 'lola-10m' | 'lola-20m' | 'lola-80m+240m' | 'lola-240m' | 'lola-480m' | 'smooth-sphere';
   azStepDeg: number;
   /** Observer heights above the ground that the mask was computed for, metres. */
   heightsM: number[];
