@@ -1,7 +1,7 @@
 // E1 check (docs/PLAN-V2.md): the version 1 terrain recipe against nested full-resolution terrain,
 // both compared with NASA Goddard's average-visibility maps at the 23 masked sites and with the
 // Barker et al. (2021) connecting-ridge benchmark.
-// Run: node pipeline/compare-terrain.ts      Output: pipeline/out/terrain-v2-comparison.json
+// Run: node pipeline/compare-terrain.ts [--with-5m]      Output: pipeline/out/terrain-v2-comparison.json
 // NASA values come from the cached Moon Trek replies in tests/fixtures/trek/comparison.json, so no
 // network is needed. Grids that are missing or still downloading are skipped and listed.
 
@@ -20,31 +20,15 @@ register(
 
 const { FrameCache, computeSeries } = await import('../src/engine/visibility.ts');
 const { horizonProfile, sampleDem, llToXY } = await import('../src/engine/raymarch.ts');
-const { loadLola, availableSouthGrids } = await import('./lola.ts');
+const { loadTerrainStack } = await import('./terrain-stack.ts');
 type HorizonMask = import('../src/engine/horizon.ts').HorizonMask;
-type LolaGrid = import('./lola.ts').LolaGrid;
 
 const ROOT = join(import.meta.dirname, '..');
 const HOUR = 3600000;
 
 // ---- Terrain ----
-const grids: LolaGrid[] = [];
-const skipped: string[] = [];
-for (const name of availableSouthGrids()) {
-  try {
-    grids.push(loadLola(name));
-  } catch (e) {
-    skipped.push(`${name}: ${(e as Error).message}`);
-  }
-}
-const byName = (n: string) => grids.find((g) => g.name === n);
-const v1Near = byName('LDEM_80S_80M');
-const v1Far = byName('LDEM_60S_240M');
-if (!v1Near || !v1Far) throw new Error('need LDEM_80S_80M and LDEM_60S_240M for the version 1 recipe');
-// Nested stack: every grid finer than 80 m, then 240 m for the far field. The 80 m grid covers the
-// same area as the 20 m grid, so it only joins the stack when the 20 m grid is absent.
-const fine = grids.filter((g) => g.scaleM < 80).sort((a, b) => a.scaleM - b.scaleM);
-const stack = [...fine, ...(fine.some((g) => g.edgeLatDeg >= -80) ? [] : [v1Near]), v1Far];
+// `--with-5m` adds the PDS 5 m grid to the nested stack, for comparison only (D-042).
+const { v1Near, v1Far, stack, skipped } = loadTerrainStack(process.argv.includes('--with-5m') ? [] : ['LDEM_875S_5M']);
 console.log(`nested stack: ${stack.map((g) => g.name).join(' > ')}`);
 if (skipped.length) console.log(`skipped: ${skipped.join('; ')}`);
 
