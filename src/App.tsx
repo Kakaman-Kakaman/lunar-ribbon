@@ -15,6 +15,7 @@ import { SitesCalendar } from './ui/SitesCalendar';
 import { RegionMap } from './ui/RegionMap';
 const Terrain3D = lazy(() => import('./ui/Terrain3D'));
 import { exportCsv, exportReport } from './ui/Export';
+import { Tour } from './ui/Tour';
 import { Replays } from './ui/Replays';
 import { useCursor, usePlotHeight } from './ui/hooks';
 
@@ -26,6 +27,7 @@ export default function App() {
   const [retry, setRetry] = useState(0);
   const [trueScale, setTrueScale] = useState(false);
   const [show3d, setShow3d] = useState(false);
+  const [tour, setTour] = useState(false);
 
   const profile = useMemo(() => effectiveProfile(s), [s]);
   const cursor = useCursor(Math.round(profile.stayDays * 24));
@@ -71,6 +73,7 @@ export default function App() {
           <p className="truncate text-sm text-ink2">At the Moon&apos;s south pole, the skyline is the calendar.</p>
         </div>
         <nav aria-label="Sections" className="flex shrink-0 gap-5 text-[13px]">
+          <button type="button" onClick={() => setTour(true)} className="text-ink underline decoration-sun underline-offset-4 hover:decoration-ink">Take the tour</button>
           {[['how-to-read', 'How to read this'], ['validation', 'Validation'], ['credits', 'Data and credits']].map(([id, t]) => (
             <button type="button" key={id} onClick={() => document.getElementById(id)?.scrollIntoView()} className="text-ink underline decoration-ink2 underline-offset-4 hover:decoration-ink">
               {t}
@@ -78,6 +81,7 @@ export default function App() {
           ))}
         </nav>
       </header>
+      <Tour open={tour} onClose={() => setTour(false)} />
 
       {cat.status === 'error' ? (
         <div role="alert" className="rounded-lg border border-alert bg-panel p-6">
@@ -93,7 +97,7 @@ export default function App() {
         </div>
       ) : (
         <main className="space-y-2.5">
-          <section aria-label="Comparison" className="pb-1 pt-0.5">
+          <section id="comparison" aria-label="Comparison" className="pb-1 pt-0.5">
             <h2 className="visually-hidden">Plan A against plan B</h2>
             <p className="max-w-[110ch] text-[20px] font-medium leading-[1.3] text-ink" aria-live="polite">
               {comparison ?? 'Comparing the two plans once both are computed...'}
@@ -129,7 +133,7 @@ export default function App() {
             <button type="button" disabled={planA.status !== 'ready' || planB.status !== 'ready'} onClick={() => exportReport(comparison, planA, planB, s.heightM, profile.label)} className="rounded-md border border-line px-2.5 py-1 hover:border-ink2 disabled:opacity-50">Report (HTML)</button>
             <button type="button" disabled={planA.status !== 'ready' || planB.status !== 'ready'} onClick={() => exportCsv(planA, planB, s.heightM)} className="rounded-md border border-line px-2.5 py-1 hover:border-ink2 disabled:opacity-50">Hourly data (CSV)</button>
           </div>
-          <section aria-labelledby="t3d-h" className="rounded-lg border border-line bg-panel px-4 py-3">
+          <section id="site-3d" aria-labelledby="t3d-h" className="rounded-lg border border-line bg-panel px-4 py-3">
             <div className="flex flex-wrap items-baseline justify-between gap-3">
               <h2 id="t3d-h" className="text-base font-semibold">Plan A&apos;s site in 3D</h2>
               <button type="button" onClick={() => setShow3d((v) => !v)} className="rounded-md border border-[#454b57] px-3 py-1 text-sm hover:border-ink2">

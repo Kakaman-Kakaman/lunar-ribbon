@@ -135,3 +135,10 @@ input[type="range"] {
   clip-path: inset(50%);
   white-space: nowrap;
 }
+
+/* Guided tour: the part of the page the current step talks about. */
+.tour-focus {
+  outline: 2px solid var(--sun);
+  outline-offset: 4px;
+  border-radius: 8px;
+}

@@ -12,7 +12,7 @@ export function LandingDates({ planA, planB, onPickA, onPickB }: { planA: PlanSt
   const box = useRef<HTMLDivElement>(null);
   const width = useWidth(box);
   return (
-    <section aria-labelledby="landing-h" className="rounded-lg border border-line bg-panel px-4 py-3">
+    <section id="landing-dates" aria-labelledby="landing-h" className="rounded-lg border border-line bg-panel px-4 py-3">
       <h2 id="landing-h" className="text-base font-semibold">
         Landing dates
       </h2>
