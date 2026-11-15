@@ -238,7 +238,7 @@ function TraverseTracks({ samples }: { samples: TraverseSample[] }) {
         {samples.map((s, k) => <rect key={`s${k}`} x={x(k)} y={4} width={bw} height={14} fill={s.sunFrac >= 0.5 ? 'var(--sun)' : 'var(--alert)'} fillOpacity={s.sunFrac >= 0.5 ? 0.3 + 0.6 * s.sunFrac : 0.85} />)}
         <text x={L - 6} y={34} textAnchor="end" fontSize="11" fill="var(--text2)">Earth</text>
         {samples.map((s, k) => <rect key={`e${k}`} x={x(k)} y={24} width={bw} height={14} fill={s.earthFrac >= 0.5 ? 'var(--earth)' : 'var(--line)'} />)}
-        <text x={L - 6} y={60} textAnchor="end" fontSize="11" fill="var(--text2)">Slope</text>
+        <text x={L - 6} y={80} textAnchor="end" fontSize="11" fill="var(--text2)">Slope</text>
         <line x1={L} x2={W - R} y1={96} y2={96} stroke="var(--line)" />
         <text x={L - 6} y={99} textAnchor="end" fontSize="10.5" fill="var(--text2)" className="mono">0°</text>
         <text x={L - 6} y={sY(maxSlope) + 4} textAnchor="end" fontSize="10.5" fill="var(--text2)" className="mono">{Math.round(maxSlope)}°</text>
