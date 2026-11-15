@@ -6,6 +6,7 @@ import type { PlanState } from '../state/hooks';
 import type { YRange } from '../state/plan';
 import { groupLabel, type SiteInfo } from '../state/sites';
 import { customId, customSite, parseCustomId } from '../state/custom';
+import { PoleMap } from './PoleMap';
 import { MissionStrip } from './MissionStrip';
 import { Ribbon, hoverReadout, ribbonHeight } from './Ribbon';
 import { useWidth, type Cursor } from './hooks';
@@ -124,7 +125,8 @@ function VerdictBox({ plan }: { plan: PlanState }) {
   );
 }
 
-function CustomPointForm(props: { accent: string; lat0: number; lon0: number; onPick(id: string): void }) {
+function CustomPointForm(props: { accent: string; lat0: number; lon0: number; sites: SiteInfo[]; current: SiteInfo | undefined; onPick(id: string): void }) {
+  const [map, setMap] = useState(false);
   const [lat, setLat] = useState(String(props.lat0));
   const [lon, setLon] = useState(String(props.lon0));
   const [err, setErr] = useState<string | null>(null);
@@ -149,6 +151,9 @@ function CustomPointForm(props: { accent: string; lat0: number; lon0: number; on
       <button type="submit" className="h-8 rounded-md border border-[#454b57] px-3 text-ink hover:border-ink2">
         Show this point
       </button>
+      <button type="button" aria-expanded={map} onClick={() => setMap((m) => !m)} className="h-8 rounded-md border border-[#454b57] px-3 text-ink hover:border-ink2">
+        {map ? 'Hide map' : 'Pick on a map'}
+      </button>
       <span className="basis-full text-ink2">
         Degrees; south and west are negative. Inside 80° S the skyline is computed from a 480 m NASA LOLA grid and is
         indicative only. Elsewhere the app has no terrain and uses a smooth sphere.
@@ -157,6 +162,11 @@ function CustomPointForm(props: { accent: string; lat0: number; lon0: number; on
         <span role="alert" className="basis-full text-alert">
           {err}
         </span>
+      )}
+      {map && (
+        <div className="basis-full">
+          <PoleMap sites={props.sites} current={props.current} onPick={(a, b) => props.onPick(customId(a, b))} />
+        </div>
       )}
     </form>
   );
@@ -245,6 +255,8 @@ export function PlanPanel(p: Props) {
               accent={accent}
               lat0={site?.lat ?? -89.5}
               lon0={site?.lon ?? 0}
+              sites={p.sites}
+              current={site}
               onPick={(id) => {
                 p.onSite(id);
                 setTyping(false);
