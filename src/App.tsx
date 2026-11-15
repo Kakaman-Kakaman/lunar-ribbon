@@ -20,6 +20,7 @@ export default function App() {
   const cat = useCatalog();
   const [hoverAz, setHoverAz] = useState<number | null>(null);
   const [retry, setRetry] = useState(0);
+  const [trueScale, setTrueScale] = useState(false);
 
   const profile = useMemo(() => effectiveProfile(s), [s]);
   const cursor = useCursor(Math.round(profile.stayDays * 24));
@@ -96,14 +97,25 @@ export default function App() {
 
           <Controls api={api} />
           <Replays api={api} />
+          <div className="flex flex-wrap items-center gap-2 text-[13px] text-ink2" role="group" aria-label="Vertical scale of the ribbons">
+            <span>Vertical scale:</span>
+            {([[false, 'Stretched, so low hills show'], [true, 'True proportion']] as const).map(([v, t]) => (
+              <button
+                key={t} type="button" aria-pressed={trueScale === v} onClick={() => setTrueScale(v)}
+                className={`rounded-md border px-2.5 py-1 ${trueScale === v ? 'border-ink2 bg-panel text-ink' : 'border-line text-ink2 hover:border-ink2'}`}
+              >
+                {t}
+              </button>
+            ))}
+          </div>
 
           <PlanPanel
             label="Plan A" sites={sites} siteId={s.siteA} onSite={api.setSiteA} plan={planA} heightM={s.heightM} range={range}
-            hoverAz={hoverAz} onHover={setHoverAz} cursor={cursor} plotH={plotH} onRetry={() => setRetry((r) => r + 1)}
+            hoverAz={hoverAz} onHover={setHoverAz} cursor={cursor} plotH={plotH} trueScale={trueScale} onRetry={() => setRetry((r) => r + 1)}
           />
           <PlanPanel
             label="Plan B" sites={sites} siteId={s.siteB} onSite={api.setSiteB} plan={planB} heightM={s.heightM} range={range}
-            hoverAz={hoverAz} onHover={setHoverAz} cursor={cursor} plotH={plotH} onRetry={() => setRetry((r) => r + 1)}
+            hoverAz={hoverAz} onHover={setHoverAz} cursor={cursor} plotH={plotH} trueScale={trueScale} onRetry={() => setRetry((r) => r + 1)}
           />
           <LandingDates planA={planA} planB={planB} onPickA={(ms) => api.setLandingA(ms, true)} onPickB={(ms) => api.setLandingB(ms, true)} />
           <KeyNumbers planA={planA} planB={planB} />

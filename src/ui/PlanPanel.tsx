@@ -48,6 +48,8 @@ interface Props {
   cursor: Cursor;
   /** Height of each ribbon's plot area, pixels. */
   plotH: number;
+  /** Draw elevation and azimuth at the same scale instead of stretched. */
+  trueScale?: boolean;
   onRetry(): void;
 }
 
@@ -302,6 +304,7 @@ export function PlanPanel(p: Props) {
               heightM={p.heightM}
               range={p.range}
               plotH={p.plotH}
+              trueScale={p.trueScale}
               cursorIdx={plan.view.landingIdx + p.cursor.hours}
               hoverAz={p.hoverAz}
               onHover={p.onHover}

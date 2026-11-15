@@ -18,7 +18,8 @@ import {
   type HeightM,
   type Scenario,
 } from './scenario';
-import { loadCatalog, loadMask, type SiteInfo } from './sites';
+import { loadCatalog, loadMask, loadMaskV2, type SiteInfo } from './sites';
+import type { MaskV2 } from '../engine/maskV2';
 import type { SiteSeries } from '../engine/visibility';
 
 // --- Scenario -------------------------------------------------------------------------
@@ -160,6 +161,8 @@ export interface PlanData {
   key: string;
   site: SiteInfo;
   mask: HorizonMask;
+  /** The full version 2 skyline file (band points, ridge layers), when the site has one. */
+  maskV2: MaskV2 | null;
   series: SiteSeries;
   dsn: DsnSeries;
   geom: SeriesGeometry;
@@ -192,9 +195,11 @@ export function usePlan(
     setError(null);
     (async () => {
       const mask = await loadMask(site);
+      const v2 = loadMaskV2(site);
+      const maskV2 = v2 ? await v2 : null;
       const r = await getSeries(mask, heightM, anchorMs);
       if (!live) return;
-      setData({ key, site, mask, series: r.series, dsn: r.dsn, geom: seriesGeometry(r.series), ms: r.ms, inWorker: r.inWorker });
+      setData({ key, site, mask, maskV2, series: r.series, dsn: r.dsn, geom: seriesGeometry(r.series), ms: r.ms, inWorker: r.inWorker });
     })().catch((e: unknown) => {
       if (live) setError({ key, message: e instanceof Error ? e.message : String(e) });
     });

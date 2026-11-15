@@ -7,6 +7,7 @@
 
 import { useId, useMemo } from 'react';
 import { horizonAt } from '../engine/horizon';
+import { horizonDegOf, ridgesOf } from '../engine/maskV2';
 import type { Envelope } from '../engine/ribbonGeometry';
 import { clearanceText, compassName, fmtDuration, fmtNum } from '../engine/verdict';
 import type { PlanData } from '../state/hooks';
@@ -48,6 +49,8 @@ interface Props {
   title: string;
   /** Height of the plot area in pixels. */
   plotH?: number;
+  /** Elevation and azimuth at the same scale (no vertical stretch). */
+  trueScale?: boolean;
 }
 
 type Pt = [number, number];
@@ -69,28 +72,53 @@ function splitWrap(pts: { x: number; y: number; key?: number }[], maxJump: numbe
 
 const poly = (pts: Pt[]) => pts.map((p) => `${p[0].toFixed(1)},${p[1].toFixed(1)}`).join(' ');
 
-export function Ribbon({ width, data, view, heightM, range, cursorIdx, hoverAz, onHover, title, plotH }: Props) {
+export function Ribbon({ width, data, view, heightM, range: given, cursorIdx, hoverAz, onHover, title, plotH, trueScale }: Props) {
   const PLOT_H = plotH ?? DEFAULT_PLOT_H;
   const RIBBON_H = ribbonHeight(PLOT_H);
   const uid = useId().replace(/:/g, '');
   const { mask, series, geom } = data;
+  const plotW = Math.max(200, width - PLOT_LEFT - PLOT_RIGHT);
+  const plotB = TOP + PLOT_H;
+  // True proportion: one degree of elevation takes as many pixels as one degree of azimuth.
+  const range: YRange = trueScale ? { min: given.min, max: given.min + (360 * PLOT_H) / plotW, step: 10, fitted: given.fitted } : given;
   const Y_MIN = range.min;
   const Y_MAX = range.max;
   const noEarth = geom.earthRise === 'never';
-  const plotW = Math.max(200, width - PLOT_LEFT - PLOT_RIGHT);
-  const plotB = TOP + PLOT_H;
   const xOf = (az: number) => PLOT_LEFT + ((displayAz(az) + 180) / 360) * plotW;
   const xDisp = (d: number) => PLOT_LEFT + ((d + 180) / 360) * plotW;
   const yOf = (el: number) => TOP + ((Y_MAX - el) / (Y_MAX - Y_MIN)) * PLOT_H;
   const exag = verticalExaggeration(plotW, range, PLOT_H);
   const profile = mask.horizonDeg[String(heightM)];
 
-  // --- Terrain skyline, sampled every 0.5 degrees across the -180..180 axis ---
+  // --- Terrain skyline across the -180..180 axis, as finely as the mask and the screen allow ---
+  const step = Math.max(mask.azStepDeg, 360 / (plotW * 1.5));
   const terrain = useMemo(() => {
     const pts: { d: number; el: number }[] = [];
-    for (let d = -180; d <= 180; d += 0.5) pts.push({ d, el: horizonAt(profile, mask.azStepDeg, d) });
+    const n = Math.round(360 / step);
+    for (let k = 0; k <= n; k++) { const d = -180 + (k * 360) / n; pts.push({ d, el: horizonAt(profile, mask.azStepDeg, d) }); }
     return pts;
-  }, [profile, mask.azStepDeg]);
+  }, [profile, mask.azStepDeg, step]);
+
+  // --- Version 2: the skyline's range over the site's position band, and ridge crests for depth ---
+  const band = useMemo(() => {
+    const m = data.maskV2;
+    if (!m || !m.band.points.length || !m.heightsM.includes(heightM)) return null;
+    const lines = m.band.points.map((p) => horizonDegOf(p, heightM));
+    const n = lines[0].length, out: { d: number; lo: number; hi: number }[] = [];
+    for (let k = 0; k <= n; k++) {
+      const i = k % n;
+      let lo = Infinity, hi = -Infinity;
+      for (const l of lines) { if (l[i] < lo) lo = l[i]; if (l[i] > hi) hi = l[i]; }
+      out.push({ d: displayAz(k * m.band.azStepDeg === 360 ? 360 : (k * m.band.azStepDeg) % 360), lo, hi });
+    }
+    out.sort((a, b) => a.d - b.d);
+    return { radiusM: m.band.radiusM, pts: out };
+  }, [data.maskV2, heightM]);
+  const ridges = useMemo(() => {
+    const m = data.maskV2;
+    if (!m || !m.heightsM.includes(heightM)) return null;
+    return { step: m.centre.ridgeAzStepDeg, crests: ridgesOf(m, heightM) };
+  }, [data.maskV2, heightM]);
 
   const terrainPath = useMemo(() => {
     const top = terrain.map((p) => `${xDisp(p.d).toFixed(1)},${yOf(Math.min(Y_MAX + 0.4, Math.max(Y_MIN - 1, p.el))).toFixed(1)}`);
@@ -102,6 +130,33 @@ export function Ribbon({ width, data, view, heightM, range, cursorIdx, hoverAz, 
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [terrain, plotW, PLOT_H, Y_MIN, Y_MAX],
   );
+
+  // Ridge crests in front of the skyline, grouped by distance (near ones drawn brighter).
+  const ridgePaths = useMemo(() => {
+    if (!ridges) return null;
+    const buckets = ['', '', '', ''];
+    const clampEl = (e: number) => Math.min(Y_MAX + 0.4, Math.max(Y_MIN - 1, e));
+    ridges.crests.forEach((list, k) => {
+      const d = displayAz((k * ridges.step) % 360);
+      const x0 = xDisp(d - ridges.step / 2), x1 = xDisp(d + ridges.step / 2);
+      for (let j = 0; j < list.length - 1; j++) {
+        const [km, el] = list[j];
+        const b = km < 2 ? 0 : km < 10 ? 1 : km < 40 ? 2 : 3;
+        const y = yOf(clampEl(el)).toFixed(1);
+        buckets[b] += `M${x0.toFixed(1)},${y}H${x1.toFixed(1)}`;
+      }
+    });
+    return buckets;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ridges, plotW, PLOT_H, Y_MIN, Y_MAX]);
+  const bandPath = useMemo(() => {
+    if (!band) return null;
+    const clampEl = (e: number) => Math.min(Y_MAX + 0.4, Math.max(Y_MIN - 1, e));
+    const top = band.pts.map((p) => `${xDisp(p.d).toFixed(1)},${yOf(clampEl(p.hi)).toFixed(1)}`);
+    const bot = [...band.pts].reverse().map((p) => `${xDisp(p.d).toFixed(1)},${yOf(clampEl(p.lo)).toFixed(1)}`);
+    return `M${top.join('L')}L${bot.join('L')}Z`;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [band, plotW, PLOT_H, Y_MIN, Y_MAX]);
 
   // Where the terrain rises above the chart: runs, with the highest value in each.
   const clipped = useMemo(() => {
@@ -397,6 +452,10 @@ export function Ribbon({ width, data, view, heightM, range, cursorIdx, hoverAz, 
 
         {/* 6. Terrain: opaque, over everything above */}
         <path d={terrainPath} fill="var(--terrain)" />
+        {ridgePaths && ridgePaths.map((d, b) => d && (
+          <path key={`rg${b}`} d={d} fill="none" stroke="var(--terrain-edge)" strokeWidth="1" opacity={[0.6, 0.42, 0.28, 0.16][b]} />
+        ))}
+        {bandPath && <path d={bandPath} fill="var(--terrain-edge)" fillOpacity="0.28" stroke="none" />}
         <path d={edgePath} fill="none" stroke="var(--terrain-edge)" strokeWidth="1.4" strokeLinejoin="round" />
         {clipped.map((r, i) => {
           const x = xDisp(r.at);
