@@ -218,19 +218,21 @@ export function Ribbon({ width, data, view, heightM, range: given, cursorIdx, ho
   const stayEndMs = series.startMs + view.stayEndIdx * series.stepMs;
   const sunSegments = useMemo(() => {
     // Split by wrap, by up/hidden state, and by inside/after the stay.
-    type Seg = { pts: Pt[]; up: boolean; after: boolean };
+    // up: at least half the disc above the skyline; full: all of it (version 2 draws partial Sun fainter).
+    type Seg = { pts: Pt[]; up: boolean; full: boolean; after: boolean };
     const segs: Seg[] = [];
     let cur: Seg | null = null;
     let prev: { x: number; y: number } | null = null;
     for (const p of view.sunPath) {
       const up = p.frac >= 0.5;
+      const full = p.frac >= 0.99;
       const after = p.ms >= stayEndMs;
       const pt = { x: xOf(p.az), y: yOf(p.el) };
       const wrapped = prev !== null && Math.abs(pt.x - prev.x) > plotW / 2;
-      if (!cur || wrapped || cur.up !== up || cur.after !== after) {
+      if (!cur || wrapped || cur.up !== up || cur.full !== full || cur.after !== after) {
         const keep: Pt[] = cur && !wrapped && prev ? [[prev.x, prev.y]] : [];
         if (cur && cur.pts.length > 1) segs.push(cur);
-        cur = { pts: [...keep, [pt.x, pt.y]], up, after };
+        cur = { pts: [...keep, [pt.x, pt.y]], up, full, after };
       } else {
         cur.pts.push([pt.x, pt.y]);
       }
@@ -420,7 +422,7 @@ export function Ribbon({ width, data, view, heightM, range: given, cursorIdx, ho
             strokeDasharray={sg.up ? undefined : '1.5 4'}
             strokeLinecap="round"
             strokeLinejoin="round"
-            opacity={sg.up ? (sg.after ? 0.5 : 1) : 0.55}
+            opacity={sg.up ? (sg.after ? 0.5 : sg.full ? 1 : 0.55) : 0.55}
           />
         ))}
         {view.ticks.map((t) => {

@@ -36,6 +36,9 @@ export function Legend() {
         <Item icon={<Swatch><path d="M1,8 H33" stroke="var(--sun)" strokeWidth="1.4" strokeDasharray="1.5 4" strokeLinecap="round" opacity="0.7" /></Swatch>}>
           Sun path dotted: the Sun is hidden by terrain (mostly behind the terrain shape)
         </Item>
+        <Item icon={<Swatch><path d="M1,8 H33" stroke="var(--sun)" strokeWidth="2" opacity="0.55" /></Swatch>}>
+          Sun path faint: terrain hides part of the Sun, so the panels get less light
+        </Item>
         <Item icon={<Swatch><path d="M1,8 H33" stroke="var(--earth)" strokeWidth="1" /></Swatch>}>
           Earth path over the same period
         </Item>
