@@ -84,7 +84,7 @@ export function KeyNumbers({ planA, planB }: { planA: PlanState; planB: PlanStat
       <span className="text-ink2">...</span>
     );
   return (
-    <section aria-labelledby="keynum-h" className="rounded-lg border border-line bg-panel px-4 py-3">
+    <section id="key-numbers" aria-labelledby="keynum-h" className="rounded-lg border border-line bg-panel px-4 py-3">
       <h2 id="keynum-h" className="mb-2 text-base font-semibold">
         Key numbers
       </h2>

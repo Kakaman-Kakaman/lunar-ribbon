@@ -14,6 +14,7 @@ import { PlanPanel } from './ui/PlanPanel';
 import { SitesCalendar } from './ui/SitesCalendar';
 import { RegionMap } from './ui/RegionMap';
 const Terrain3D = lazy(() => import('./ui/Terrain3D'));
+import { exportCsv, exportReport } from './ui/Export';
 import { Replays } from './ui/Replays';
 import { useCursor, usePlotHeight } from './ui/hooks';
 
@@ -123,6 +124,11 @@ export default function App() {
           />
           <LandingDates planA={planA} planB={planB} onPickA={(ms) => api.setLandingA(ms, true)} onPickB={(ms) => api.setLandingB(ms, true)} />
           <KeyNumbers planA={planA} planB={planB} />
+          <div className="flex flex-wrap items-center gap-2 text-[13px] text-ink2">
+            <span>Save this comparison:</span>
+            <button type="button" disabled={planA.status !== 'ready' || planB.status !== 'ready'} onClick={() => exportReport(comparison, planA, planB, s.heightM, profile.label)} className="rounded-md border border-line px-2.5 py-1 hover:border-ink2 disabled:opacity-50">Report (HTML)</button>
+            <button type="button" disabled={planA.status !== 'ready' || planB.status !== 'ready'} onClick={() => exportCsv(planA, planB, s.heightM)} className="rounded-md border border-line px-2.5 py-1 hover:border-ink2 disabled:opacity-50">Hourly data (CSV)</button>
+          </div>
           <section aria-labelledby="t3d-h" className="rounded-lg border border-line bg-panel px-4 py-3">
             <div className="flex flex-wrap items-baseline justify-between gap-3">
               <h2 id="t3d-h" className="text-base font-semibold">Plan A&apos;s site in 3D</h2>
