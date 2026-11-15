@@ -6,6 +6,12 @@ dist/
 # raw downloads used by the pipeline (re-downloadable, see README.md)
 data-raw/
 
+# generated terrain tiles and area maps (about 500 MB): rebuilt by the pipeline from the raw
+# NASA files (README.md), copied into dist/ by the build and published by npm run deploy
+public/tiles/
+public/tiles-north/
+public/area/
+
 # local analysis output and material prepared for the design team
 pipeline/out/
 demo-assets/
