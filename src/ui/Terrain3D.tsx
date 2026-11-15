@@ -60,13 +60,14 @@ export default function Terrain3D({ lat, lon, heightM, sunAz, sunEl, earthAz, ea
     let disposed = false;
     const cleanups: (() => void)[] = [];
     (async () => {
-      const [sx, sy] = llToXY(lat, lon);
+      const pole = lat > 0 ? 'north' as const : 'south' as const;
+      const [sx, sy] = llToXY(lat, lon, pole);
       const [fine10, fine20, far] = await Promise.all([
-        loadTerrain(10, sx, sy, NEAR_HALF), loadTerrain(20, sx, sy, NEAR_HALF), loadTerrain(160, sx, sy, FAR_HALF),
+        loadTerrain(10, sx, sy, NEAR_HALF, pole), loadTerrain(20, sx, sy, NEAR_HALF, pole), loadTerrain(160, sx, sy, FAR_HALF, pole),
       ]);
       if (disposed) return;
       const near: TileTerrain | null = fine10 ?? fine20;
-      if (!near && !far) { setStatus('No terrain tiles cover this site (tiles cover 80° S to the pole).'); return; }
+      if (!near && !far) { setStatus('No terrain tiles cover this site (tiles cover 80° to each pole).'); return; }
       const lam = lon * DEG, cl = Math.cos(lam), sl = Math.sin(lam);
       const heightAt = (x: number, y: number) => {
         let h = near ? near.sample(x, y) : NaN;
@@ -82,8 +83,10 @@ export default function Terrain3D({ lat, lon, heightM, sunAz, sunEl, earthAz, ea
         const pos = new Float32Array(n * n * 3);
         for (let j = 0; j < n; j++) for (let i = 0; i < n; i++) {
           const e = -half + i * step, no = half - j * step;
-          // local east/north to polar-plane offsets (inverse of e = dx cos - dy sin, n = dx sin + dy cos)
-          const dx = e * cl + no * sl, dy = -e * sl + no * cl;
+          // local east/north to polar-plane offsets. South plane: e = dx cos - dy sin, n = dx sin + dy cos;
+          // north plane (y = -rho cos lon): e = dx cos + dy sin, n = -dx sin + dy cos.
+          const dx = pole === 'north' ? e * cl - no * sl : e * cl + no * sl;
+          const dy = pole === 'north' ? e * sl + no * cl : -e * sl + no * cl;
           let h = sample(sx + dx, sy + dy);
           if (Number.isNaN(h)) h = ground - 500;
           const inNear = sink > 0 && Math.abs(e) < NEAR_HALF - step && Math.abs(no) < NEAR_HALF - step;

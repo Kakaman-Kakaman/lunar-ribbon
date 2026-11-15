@@ -3,7 +3,8 @@
 // 40 m within 40 km, 20 m within 15 km, 10 m within 8 km (inside the 10 m grid's coverage).
 // Levels at a grid's own pixel size copy pixels (tile pixel centres match the grid's); coarser levels
 // are block averages. Afterwards a sample of tiles is decoded and compared with the source grid.
-// Run: node pipeline/build-tiles.ts      Output: public/tiles/<scale>m/<i>_<j>.png and index.json
+// Run: node pipeline/build-tiles.ts [--north]
+// Output: public/tiles/ (south) or public/tiles-north/ (north): <scale>m/<i>_<j>.png and index.json
 
 import { mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { register } from 'node:module';
@@ -23,13 +24,24 @@ const { llToXY } = await import('../src/engine/raymarch.ts');
 const T = await import('../src/engine/terrainTiles.ts');
 const { encodePngRgb } = await import('./png.ts');
 const { loadTerrainStack } = await import('./terrain-stack.ts');
+const { loadLola } = await import('./lola.ts');
 type DemGrid = import('../src/engine/raymarch.ts').DemGrid;
 
 const ROOT = join(import.meta.dirname, '..');
-const OUT = join(ROOT, 'public', 'tiles');
-const { v1Near, stack } = loadTerrainStack();
-const g10 = stack.find((g) => g.scaleM === 10);
-const g20 = stack.find((g) => g.scaleM === 20);
+const NORTH = process.argv.includes('--north');
+const POLE = NORTH ? 'north' as const : 'south' as const;
+const OUT = join(ROOT, 'public', NORTH ? 'tiles-north' : 'tiles');
+let v1Near: DemGrid & { name: string }, g10: (DemGrid & { name: string }) | undefined, g20: (DemGrid & { name: string }) | undefined;
+if (NORTH) {
+  v1Near = loadLola('LDEM_80N_80M');
+  g20 = loadLola('LDEM_80N_20M');
+  try { g10 = loadLola('LDEM_85N_10M'); } catch { g10 = undefined; }
+} else {
+  const st = loadTerrainStack();
+  v1Near = st.v1Near;
+  g10 = st.stack.find((g) => g.scaleM === 10);
+  g20 = st.stack.find((g) => g.scaleM === 20);
+}
 if (!g20) throw new Error('need a 20 m grid');
 console.log(`sources: 80 m ${v1Near.name}, 20 m ${g20.name}, 10 m ${g10?.name ?? 'none'}`);
 
@@ -52,9 +64,10 @@ function boxMean(g: DemGrid, x: number, y: number, s: number): number {
   return n ? sum / n : NaN;
 }
 
-const sites = (JSON.parse(readFileSync(join(ROOT, 'public/masks/index.json'), 'utf8')) as { id: string; lat: number; lon: number }[])
-  .filter((s) => s.lat <= -80)
-  .map((s) => { const [x, y] = llToXY(s.lat, s.lon); return { id: s.id, x, y }; });
+const siteList = NORTH
+  ? (JSON.parse(readFileSync(join(ROOT, 'src/data/sites-north.json'), 'utf8')).sites as { id: string; lat: number; lon: number }[]).filter((s) => s.lat >= 80)
+  : (JSON.parse(readFileSync(join(ROOT, 'public/masks/index.json'), 'utf8')) as { id: string; lat: number; lon: number }[]).filter((s) => s.lat <= -80);
+const sites = siteList.map((s) => { const [x, y] = llToXY(s.lat, s.lon, POLE); return { id: s.id, x, y }; });
 
 // level index -> [source grid, radius around sites in m (Infinity = everywhere)]
 const PLAN: Record<number, [DemGrid | undefined, number]> = {
@@ -101,6 +114,7 @@ for (let L = 0; L < T.LEVELS.length; L++) {
   console.log(`${String(s).padStart(4)} m: ${tiles.length} tiles, running total ${(totalBytes / 1048576).toFixed(0)} MB, ${((Date.now() - t0) / 1000).toFixed(0)} s`);
 }
 writeFileSync(join(OUT, 'index.json'), JSON.stringify({
+  pole: POLE,
   tilePx: T.TILE_PX, extentM: T.EXTENT_M, heightOffsetM: T.HEIGHT_OFFSET_M,
   sources: { '640': `${v1Near.name} (mean)`, '160': `${v1Near.name} (mean)`, '80': v1Near.name, '40': `${g20.name} (mean)`, '20': g20.name, '10': g10?.name ?? null },
   levels: index,

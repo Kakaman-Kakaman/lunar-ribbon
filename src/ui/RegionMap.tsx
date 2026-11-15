@@ -153,7 +153,7 @@ export function RegionMap({ site, heightM, landingMs, stayDays, onPickB }: Props
     <section aria-labelledby="region-h" className="rounded-lg border border-line bg-panel px-4 py-3">
       <h2 id="region-h" className="text-base font-semibold">Around plan A&apos;s site</h2>
       {!site ? null : !index || !region ? (
-        <p className="mt-1 text-sm text-ink2">No area map for {site.name} yet. Area maps cover the sites with real terrain inside 80° S.</p>
+        <p className="mt-1 text-sm text-ink2">No area map for {site.name} yet. Area maps cover the south-pole sites with real terrain inside 80° S.</p>
       ) : (
         <>
           <p className="mb-2 max-w-[100ch] text-xs text-ink2">

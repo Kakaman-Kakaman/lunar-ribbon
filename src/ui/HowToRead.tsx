@@ -74,7 +74,7 @@ export function HowToRead({ plan, heightM, range }: { plan: PlanState; heightM: 
             <span>
               <strong>The Sun&apos;s lane.</strong> Near the Moon&apos;s poles the Sun never climbs high. It slides along the horizon,
               all the way round once a lunar day, {perDay} of direction per day. The amber band is the narrow lane it
-              follows; the numbered ticks are days after landing. The Sun travels right to left at the south pole.
+              follows; the numbered ticks are days after landing. The Sun travels right to left at the south pole and left to right at the north pole.
             </span>
           </li>
           <li className="flex gap-3">

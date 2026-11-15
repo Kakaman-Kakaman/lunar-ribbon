@@ -46,6 +46,7 @@ const base = () => import.meta.env.BASE_URL;
 const GROUP_LABELS: Record<string, string> = {
   clps: 'CLPS and commercial landers',
   'south-pole-feature': 'South pole features',
+  'north-pole-feature': 'North pole features (IAU craters)',
   'study-site': 'NASA Goddard study sites',
   india: 'India (Chandrayaan)',
   apollo: 'Apollo',
