@@ -8,6 +8,7 @@
 
 import {
   EARTH_RADIUS_KM,
+  MOON_RADIUS_KM,
   SUN_RADIUS_KM,
   angularRadiusDeg,
   moonFrame,
@@ -46,6 +47,30 @@ function stripAreaAbove(x0: number, x1: number, r: number, k: number): number {
     if (x1 > xb) area += 2 * (G(x1) - G(Math.max(x0, xb)));
   }
   return area;
+}
+
+/**
+ * Thickness of the layer of Earth's atmosphere treated as opaque when Earth covers the Sun, km.
+ * Danjon (1951) estimated 75 km, an enlargement of Earth's radius of about 1/85; NASA's lunar
+ * eclipse predictions (Espenak 2006; Meeus and Mucke 1979) use Danjon's method
+ * (https://eclipse.gsfc.nasa.gov/LEcat5/shadow.html).
+ */
+export const EARTH_OPAQUE_LAYER_KM = 75;
+
+/**
+ * How far the Sun's disc is from touching Earth's (opaque-layer) disc at the best-placed point on
+ * the Moon's near side, degrees; negative means Earth covers part of the Sun somewhere on the Moon,
+ * which is how an eclipse table counts a lunar eclipse. From the Moon's centre the two discs are
+ * sigma apart; moving to the limb shifts Earth's direction by up to the Moon's radius over Earth's
+ * distance, and the Sun's by a negligible amount.
+ */
+export function eclipseGapAnywhereDeg(frame: MoonFrame): number {
+  const e = frame.earth, s = frame.sun;
+  const de = Math.hypot(e[0], e[1], e[2]), ds = Math.hypot(s[0], s[1], s[2]);
+  const cos = (e[0] * s[0] + e[1] * s[1] + e[2] * s[2]) / (de * ds);
+  const sigma = (Math.acos(Math.max(-1, Math.min(1, cos))) * 180) / Math.PI;
+  const shift = (Math.asin(MOON_RADIUS_KM / de) * 180) / Math.PI;
+  return sigma - shift - angularRadiusDeg(SUN_RADIUS_KM, ds) - angularRadiusDeg(EARTH_RADIUS_KM + EARTH_OPAQUE_LAYER_KM, de);
 }
 
 /** Number of vertical strips a disc is cut into when the skyline under it is not flat. */
@@ -179,7 +204,8 @@ export function computeSeries(
     const earthR = angularRadiusDeg(EARTH_RADIUS_KM, earth.distKm);
     s.earthFrac[i] = discFractionAboveSkyline(earth.az, earth.el, earthR, profile, mask.azStepDeg);
     s.sunDistKm![i] = sun.distKm;
-    s.sunCover![i] = sunCoveredByEarth(separationDeg(sun.az, sun.el, earth.az, earth.el), sunR, earthR);
+    const shadowR = angularRadiusDeg(EARTH_RADIUS_KM + EARTH_OPAQUE_LAYER_KM, earth.distKm);
+    s.sunCover![i] = sunCoveredByEarth(separationDeg(sun.az, sun.el, earth.az, earth.el), sunR, shadowR);
   }
   return s;
 }
