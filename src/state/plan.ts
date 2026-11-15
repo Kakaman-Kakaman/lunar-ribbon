@@ -130,6 +130,21 @@ export interface PlanView {
 const wrap180 = (d: number) => ((((d + 180) % 360) + 360) % 360) - 180;
 const norm = (v: Vec3) => Math.hypot(v[0], v[1], v[2]);
 
+/** The first stretch of the stay when Earth covers part of the Sun while the Sun is above the skyline. */
+export function eclipseInStay(series: SiteSeries, landingIdx: number, stayN: number): { startMs: number; hours: number; maxCover: number } | null {
+  const cover = series.sunCover;
+  if (!cover) return null;
+  const end = Math.min(series.n, landingIdx + stayN);
+  for (let i = Math.max(0, landingIdx); i < end; i++) {
+    if (cover[i] > 0.02 && series.sunFrac[i] >= 0.5) {
+      let j = i, max = 0;
+      while (j < end && cover[j] > 0) { max = Math.max(max, cover[j]); j++; }
+      return { startMs: series.startMs + i * series.stepMs, hours: ((j - i) * series.stepMs) / 3600000, maxCover: max };
+    }
+  }
+  return null;
+}
+
 export function planView(
   mask: HorizonMask,
   series: SiteSeries,
@@ -145,6 +160,7 @@ export function planView(
   const margin = slipMarginMs(scan, landingMs);
   const scanEndMs = scan.startMs + (scan.n - 1) * scan.stepMs;
   const next = nextWindow(scan, landingMs);
+  const eclipse = eclipseInStay(series, landingIdx, Math.round((profile.stayDays * DAY_MS) / stepMs));
   const verdict = describeVerdict({
     ev,
     profile,
@@ -154,6 +170,7 @@ export function planView(
     landingMs,
     terrain: mask.terrain,
     ctx,
+    eclipse,
   });
 
   const stayN = Math.max(1, Math.round((profile.stayDays * DAY_MS) / stepMs));

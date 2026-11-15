@@ -25,6 +25,30 @@ export function discFractionAbove(centreElDeg: number, radiusDeg: number, horizo
   return (Math.acos(d) - d * Math.sqrt(1 - d * d)) / Math.PI;
 }
 
+/**
+ * Fraction of the Sun's disc hidden behind Earth's disc, for two discs sepDeg apart (small-angle,
+ * flat geometry). Seen from the Moon this is an eclipse of the Sun by Earth, which people on Earth
+ * see at the same moment as a lunar eclipse.
+ */
+export function sunCoveredByEarth(sepDeg: number, sunRadiusDeg: number, earthRadiusDeg: number): number {
+  const d = sepDeg, r = sunRadiusDeg, R = earthRadiusDeg;
+  if (d >= r + R) return 0;
+  if (d <= R - r) return 1;
+  if (d <= r - R) return (R * R) / (r * r);
+  const a =
+    r * r * Math.acos((d * d + r * r - R * R) / (2 * d * r)) +
+    R * R * Math.acos((d * d + R * R - r * r) / (2 * d * R)) -
+    0.5 * Math.sqrt((-d + r + R) * (d + r - R) * (d - r + R) * (d + r + R));
+  return Math.min(1, Math.max(0, a / (Math.PI * r * r)));
+}
+
+/** Angle between two sky directions given as azimuth and elevation, degrees. */
+export function separationDeg(az1: number, el1: number, az2: number, el2: number): number {
+  const D = Math.PI / 180;
+  const c = Math.sin(el1 * D) * Math.sin(el2 * D) + Math.cos(el1 * D) * Math.cos(el2 * D) * Math.cos((az1 - az2) * D);
+  return Math.acos(Math.min(1, Math.max(-1, c))) / D;
+}
+
 /** Memoises moonFrame per timestamp, so every site shares one ephemeris evaluation per step. */
 export class FrameCache {
   private frames = new Map<number, MoonFrame>();
@@ -53,6 +77,8 @@ export interface SiteSeries {
   earthEl: Float32Array;
   earthHorizon: Float32Array;
   earthFrac: Float32Array;
+  /** Fraction of the Sun's disc hidden behind Earth (an eclipse seen from the Moon). */
+  sunCover?: Float32Array;
 }
 
 /**
@@ -78,6 +104,7 @@ export function computeSeries(
     sunHorizon: new Float32Array(n), sunFrac: new Float32Array(n),
     earthAz: new Float32Array(n), earthEl: new Float32Array(n),
     earthHorizon: new Float32Array(n), earthFrac: new Float32Array(n),
+    sunCover: new Float32Array(n),
   };
   for (let i = 0; i < n; i++) {
     const f = frames.get(startMs + i * stepMs);
@@ -88,11 +115,14 @@ export function computeSeries(
     s.sunAz[i] = sun.az;
     s.sunEl[i] = sun.el;
     s.sunHorizon[i] = sunH;
-    s.sunFrac[i] = discFractionAbove(sun.el, angularRadiusDeg(SUN_RADIUS_KM, sun.distKm), sunH);
+    const sunR = angularRadiusDeg(SUN_RADIUS_KM, sun.distKm);
+    s.sunFrac[i] = discFractionAbove(sun.el, sunR, sunH);
     s.earthAz[i] = earth.az;
     s.earthEl[i] = earth.el;
     s.earthHorizon[i] = earthH;
-    s.earthFrac[i] = discFractionAbove(earth.el, angularRadiusDeg(EARTH_RADIUS_KM, earth.distKm), earthH);
+    const earthR = angularRadiusDeg(EARTH_RADIUS_KM, earth.distKm);
+    s.earthFrac[i] = discFractionAbove(earth.el, earthR, earthH);
+    s.sunCover![i] = sunCoveredByEarth(separationDeg(sun.az, sun.el, earth.az, earth.el), sunR, earthR);
   }
   return s;
 }

@@ -226,6 +226,46 @@ const cmp = JSON.parse(readFileSync(join(ROOT, 'tests', 'fixtures', 'trek', 'com
   });
 }
 
+// ---------- 8. eclipses: Earth crossing the Sun, against NASA's lunar eclipse table ----------
+{
+  // NASA lunar eclipses 2027-2030 (F. Espenak, https://eclipse.gsfc.nasa.gov/LEdecade/LEdecade2021.html):
+  // seen from the Moon, Earth passes in front of the Sun at these times.
+  const NASA: [string, string][] = [
+    ['2027-02-20', 'penumbral'], ['2027-07-18', 'penumbral'], ['2027-08-17', 'penumbral'],
+    ['2028-01-12', 'partial'], ['2028-07-06', 'partial'], ['2028-12-31', 'total'],
+    ['2029-06-26', 'total'], ['2029-12-20', 'total'], ['2030-06-15', 'partial'], ['2030-12-09', 'penumbral'],
+  ];
+  const start = Date.UTC(2027, 0, 1), n = 4 * 365 * 24;
+  const mask = smoothSphereMask('apollo-11', 'Apollo 11', 0.674, 23.473, [2]);
+  const s = computeSeries(mask, 2, start, HOUR, n, new FrameCache());
+  const events: { day: string; max: number; hours: number }[] = [];
+  let cur: { iMax: number; max: number; i0: number } | null = null;
+  for (let i = 0; i < n; i++) {
+    const c = s.sunCover![i];
+    if (c > 0) {
+      if (!cur) cur = { iMax: i, max: c, i0: i };
+      else if (c > cur.max) { cur.max = c; cur.iMax = i; }
+    } else if (cur) {
+      events.push({ day: new Date(start + cur.iMax * HOUR).toISOString().slice(0, 10), max: cur.max, hours: i - cur.i0 });
+      cur = null;
+    }
+  }
+  const near = (a: string, b: string) => Math.abs(Date.parse(a) - Date.parse(b)) <= 86400000;
+  const found = NASA.filter(([d]) => events.some((e) => near(e.day, d)));
+  const missed = NASA.filter(([d]) => !events.some((e) => near(e.day, d)));
+  const extra = events.filter((e) => !NASA.some(([d]) => near(e.day, d)));
+  const totals = NASA.filter(([, k]) => k === 'total').map(([d]) => events.find((e) => near(e.day, d)));
+  const allTotalsFull = totals.every((e) => e && e.max >= 0.999);
+  checks.push({
+    id: 'eclipses-nasa',
+    title: "Eclipses: Earth crossing the Sun, against NASA's eclipse table",
+    reference: 'NASA lunar eclipse table 2021-2030 (F. Espenak, eclipse.gsfc.nasa.gov): ten lunar eclipses in 2027-2030',
+    result: `Engine, Apollo 11 site, hourly 2027-2030: Earth covers part of the Sun on ${events.length} occasions; ${found.length} of NASA's ${NASA.length} eclipse dates are found, ${extra.length} extra. At the three total eclipses Earth covers ${allTotalsFull ? 'all' : 'not all'} of the Sun.${missed.length ? ' Missed: ' + missed.map(([d, k]) => d + ' (' + k + ')').join(', ') + '.' : ''}`,
+    detail: `A lunar eclipse seen from Earth is Earth passing in front of the Sun seen from the Moon. The engine computes the overlap of the two discs from its own Sun and Earth directions; nothing is tuned to the eclipse table. Hourly sampling can miss a very shallow penumbral eclipse, which covers only a sliver of the Sun from part of the Moon. Events found: ${events.map((e) => e.day + ' ' + Math.round(e.max * 100) + '% for ' + e.hours + ' h').join('; ')}.`,
+    status: extra.length === 0 && allTotalsFull && missed.every(([, k]) => k === 'penumbral') ? 'pass' : 'note',
+  });
+}
+
 const out = { generated: new Date().toISOString().slice(0, 10), checks };
 writeFileSync(join(ROOT, 'src', 'data', 'validation.json'), JSON.stringify(out, null, 2) + '\n');
 for (const c of checks) console.log(`[${c.status}] ${c.id}: ${c.result}`);

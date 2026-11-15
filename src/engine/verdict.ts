@@ -204,6 +204,8 @@ export interface VerdictInput {
   landingMs: number;
   terrain: TerrainSource;
   ctx?: FailureContext;
+  /** First time in the stay that Earth crosses the Sun while the Sun is above the skyline. */
+  eclipse?: { startMs: number; hours: number; maxCover: number } | null;
 }
 
 export interface Verdict {
@@ -342,6 +344,13 @@ export function describeVerdict(i: VerdictInput): Verdict {
         `Next landing date that works: ${fmtDateUtc(i.nextWindowStartMs)}${later > 0 ? `, ${fmtDuration(later)} later` : ''}.`,
       );
     }
+  }
+  if (i.eclipse) {
+    const e = i.eclipse;
+    const how = e.maxCover >= 0.999 ? 'hiding it completely' : `covering up to ${Math.round(e.maxCover * 100)}% of it`;
+    sentences.push(
+      `On ${fmtDateUtc(e.startMs)} Earth passes in front of the Sun for about ${fmtDuration(e.hours)}, ${how}: seen from Earth, a lunar eclipse.`,
+    );
   }
   if (i.terrain === 'smooth-sphere') sentences.push('This is a geometric estimate with no terrain.');
   const word = i.ev.ok ? 'Works' : 'Fails';

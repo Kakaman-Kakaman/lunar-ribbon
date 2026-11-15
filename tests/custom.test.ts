@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { customId, customSite, parseCustomId } from '../src/state/custom';
+import { sunCoveredByEarth } from '../src/engine/visibility';
 
 describe('custom points', () => {
   it('round-trips latitude and longitude through the id', () => {
@@ -20,5 +21,20 @@ describe('custom points', () => {
     expect(customSite(customId(-80, 10))?.terrain).toBe('lola-480m');
     expect(customSite(customId(-79.9, 10))?.terrain).toBe('smooth-sphere');
     expect(customSite(customId(0, 0))?.terrain).toBe('smooth-sphere');
+  });
+});
+
+
+describe('Earth crossing the Sun', () => {
+  it('covers nothing when the discs are apart and everything when centred', () => {
+    expect(sunCoveredByEarth(2, 0.27, 0.95)).toBe(0);
+    expect(sunCoveredByEarth(0.1, 0.27, 0.95)).toBe(1);
+  });
+  it('covers more as the discs close', () => {
+    const a = sunCoveredByEarth(1.15, 0.27, 0.95), b = sunCoveredByEarth(1.0, 0.27, 0.95), c = sunCoveredByEarth(0.8, 0.27, 0.95);
+    expect(a).toBeGreaterThan(0);
+    expect(b).toBeGreaterThan(a);
+    expect(c).toBeGreaterThan(b);
+    expect(c).toBeLessThan(1);
   });
 });

@@ -48,4 +48,5 @@ Versions are those installed in `node_modules/`; licences are read from each pac
 | NASA (2022). NASA Identifies Candidate Regions for Landing Next Americans on Moon. https://www.nasa.gov/news-release/nasa-identifies-candidate-regions-for-landing-next-americans-on-moon/ | The 6.5-day short-stay profile |
 | NASA (2024). NASA Provides Update on Artemis III Moon Landing Regions. https://www.nasa.gov/news-release/nasa-provides-update-on-artemis-iii-moon-landing-regions/ | Candidate regions, including Malapert Massif |
 | Foust, J. / SpaceNews (2024-07-18). NASA cancels VIPER lunar rover. https://spacenews.com/nasa-cancels-viper-lunar-rover/ | The 9-to-12-month wait for lighting after a slip |
+| Espenak, F. Lunar eclipses 2021-2030, NASA Goddard. https://eclipse.gsfc.nasa.gov/LEdecade/LEdecade2021.html | Reference dates for the eclipse check |
 | The Spokesman-Review (2025-03-17), reporting Firefly Aerospace's statement on Blue Ghost Mission 1. https://www.spokesman.com/stories/2025/mar/17/fireflys-moon-lander-ends-successful-mission | 346 hours of daylight operations, used to check the predicted sunset |

@@ -33,7 +33,7 @@ landing can slip and still work, and the next landing date that works. A landing
 colours every landing time over the next year. Three mission profiles (6.5-day stay, one lunar
 day, 100-day rover) and two observer heights (2 m and 10 m) change the rules.
 
-Any point can be typed as latitude and longitude. Inside 80°S its skyline is computed in the
+Any point can be typed as latitude and longitude, or picked on a shaded-relief map of the pole. Inside 80°S its skyline is computed in the
 browser from a 480 m NASA LOLA grid and labelled indicative; elsewhere the Moon is treated as a
 smooth sphere. Three real landings can be replayed (IM-1 Odysseus, IM-2 Athena, Blue Ghost
 Mission 1), each with what the app shows kept apart from what happened.
@@ -52,6 +52,9 @@ next landing that works is about 26 days later.
   0.975 (Sun) and 0.995 (Earth). On ridge crests Ribbon runs about 7.5 points sunnier than NASA's
   maps on average, because the 80 m grid cannot see smaller relief.
 - Blue Ghost Mission 1: sunset 347.8 hours after landing, against the 346 hours of daylight operations Firefly reported.
+- Eclipses: the engine finds Earth crossing the Sun on 8 of the 10 lunar eclipse dates in NASA's
+  2027-2030 table, with nothing extra, and full cover at all three total eclipses. The two it
+  misses are shallow penumbral eclipses. A stay that includes an eclipse says so in its verdict.
 
 The app's Validation section has the full results (`src/data/validation.json`).
 
