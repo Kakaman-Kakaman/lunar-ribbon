@@ -19,6 +19,16 @@ Versions are those installed in `node_modules/`; licences are read from each pac
 | vite | 8.3.8 | MIT | dev dependency |
 | vitest | 5.1.0 | MIT | dev dependency |
 
+## Demo deck (`public/deck/`, served at `/deck/`)
+
+| Item | Source | Licence | Use |
+|------|--------|---------|-----|
+| Inter typeface | Google Fonts, https://fonts.google.com/specimen/Inter | SIL Open Font License 1.1 | Deck text |
+| JetBrains Mono typeface | Google Fonts, https://fonts.google.com/specimen/JetBrains+Mono | SIL Open Font License 1.1 | Deck numbers and labels |
+| node-qrcode 1.5.4 | https://github.com/soldair/node-qrcode | MIT | Generated `qr-live-app.svg` once (not shipped as code) |
+| Ribbon, deck graphics | `public/deck/ribbon-data.js`, written by `npm run demo-assets` from the engine and the LOLA-derived masks | This project's licence | Every skyline, band, path, and span on the slides |
+| App capture | `public/deck/app-two-plans.png`, a screenshot of the live app | This project's licence | Slide 4 |
+
 ## Data
 
 | Data | Source | Use | Citation and terms |

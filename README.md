@@ -4,6 +4,11 @@ Ribbon — a lunar landing-site navigator. At the Moon's south pole, the skyline
 
 Entry for the NASA Space Apps Challenge 2026, challenge "Lunar Landing Site Navigator".
 
+Team Falcate: Muhammad Asif, Muhammad Hasan, Muhammad Ahmed Qidwai, Syed Muzzamil Hassan, Rameesha, Aqsa.
+
+- Live app: https://kakaman-kakaman.github.io/lunar-ribbon/
+- Demo deck (seven slides): https://kakaman-kakaman.github.io/lunar-ribbon/deck/
+
 ## What it does
 
 Ribbon answers a lunar mission planner's question, "the landing date moved: is the site still

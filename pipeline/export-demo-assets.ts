@@ -656,3 +656,62 @@ L.push(`| Earth at the same site, ground level | ours ${pct1(mal.ours.h0.earthAn
 L.push('', `Why the Sun figure differs here (from \`src/data/validation.json\`, check \`average-sunlight\`): NASA's maps are on a 60 m to 240 m grid, contain linear artefacts from the elevation model, and our 80 m grid cannot see relief smaller than about 80 m; the listed Malapert coordinates are rounded, and at ridge crests a 100 m shift changes the skyline by degrees. Status in validation.json: "note", not "pass".`);
 writeFileSync(join(OUT, 'numbers' + TAG + '.md'), L.join('\n') + '\n');
 console.log('done');
+
+// ---- Data for the demo deck (public/deck/) ----
+// The deck draws its ribbon from these numbers, so every shape on a slide is the app's own geometry.
+// Written only for the rule's winner, never for a --landing variant.
+if (forcedMs === null) {
+  const bandRuns = (env: Envelope, radiusDeg: number) => {
+    const runs: number[][][] = [];
+    let cur: number[][] = [];
+    for (let k = 0; k < 360; k++) {
+      const bin = (180 + k) % 360;
+      const lo = env.minEl[bin], hi = env.maxEl[bin];
+      if (Number.isNaN(lo) || Number.isNaN(hi)) {
+        if (cur.length) runs.push(cur);
+        cur = [];
+        continue;
+      }
+      const c = bin + 0.5;
+      cur.push([c > 180 ? c - 360 : c, r3(lo - radiusDeg), r3(hi + radiusDeg)]);
+    }
+    if (cur.length) runs.push(cur);
+    return runs;
+  };
+  const planData = (p: Plan) => {
+    const stayEndMs = p.series.startMs + p.view.stayEndIdx * p.series.stepMs;
+    const h = (ms: number) => r2((ms - p.landingMs) / HOUR);
+    return {
+      landingUtc: iso(p.landingMs),
+      landingMs: p.landingMs,
+      stayEndHours: h(stayEndMs),
+      // [hours after landing, ribbon azimuth, elevation, fraction of the disc above the skyline]
+      sun: p.view.sunPath.map((q) => [h(q.ms), r3(displayAz(q.az)), r3(q.el), r2(q.frac)]),
+      earth: p.view.earthPath.map((q) => [h(q.ms), r3(displayAz(q.az)), r3(q.el), r2(q.frac)]),
+      ticks: p.view.ticks.map((t) => [t.day, r3(displayAz(t.az)), r3(t.el)]),
+      spans: spanPieces(p).map((c) => ({ x0: r3(c.x0), x1: r3(c.x1), id: c.id, days: r2(c.days), inStayHours: r1(c.inStayHours), afterStay: c.after, label: c.label })),
+      verdict: verdictOf(p),
+    };
+  };
+  const skyline: number[] = [];
+  for (let d = -180; d <= 180; d += 0.5) skyline.push(r3(horizonAt(profileArr, mask.azStepDeg, d)));
+  const deck = {
+    generatedBy: 'npm run demo-assets (pipeline/export-demo-assets.ts), from src/engine and src/state; do not edit by hand',
+    site: { id: SITE_ID, name: mask.name, lat: mask.lat, lon: mask.lon, observerHeightM: HEIGHT, profile: profile.label },
+    elevationRangeDeg: [YMIN, YMAX],
+    skylineStepDeg: 0.5,
+    skyline,
+    sunRadiusDeg: r3(A.view.sunRadiusDeg),
+    earthRadiusDeg: r3(A.view.earthRadiusDeg),
+    sunBand: bandRuns(A.geom.sunBand, A.view.sunRadiusDeg),
+    earthRegion: bandRuns(A.geom.earthRegion, A.view.earthRadiusDeg),
+    slipDays: SLIP_DAYS,
+    A: planData(A),
+    B: planData(B),
+    next: nw ? { landingUtc: iso(nw), landingMs: nw, daysAfterB: r2((nw - B.landingMs) / DAY) } : null,
+  };
+  const deckDir = join(ROOT, 'public', 'deck');
+  mkdirSync(deckDir, { recursive: true });
+  writeFileSync(join(deckDir, 'ribbon-data.js'), '// ' + deck.generatedBy + '\nwindow.RIBBON_DATA = ' + JSON.stringify(deck) + ';\n');
+  console.log('deck data: public/deck/ribbon-data.js');
+}
