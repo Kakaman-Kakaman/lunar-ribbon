@@ -8,6 +8,8 @@ Versions are those installed in `node_modules/`; licences are read from each pac
 |---------|---------|---------|------|
 | astronomy-engine | 2.1.19 | MIT | dependency |
 | react | 19.3.1 | MIT | dependency |
+| three | 0.187.0 | MIT | dependency (3D terrain view) |
+| @types/three | 0.187.0 | MIT | dev dependency |
 | react-dom | 19.3.1 | MIT | dependency |
 | @tailwindcss/vite | 4.3.5 | MIT | dev dependency |
 | @types/node | 26.6.6 | MIT | dev dependency |

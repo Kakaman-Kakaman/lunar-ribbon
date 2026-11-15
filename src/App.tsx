@@ -1,5 +1,5 @@
 // Ribbon: a lunar landing-site navigator. At the Moon's south pole, the skyline is the calendar.
-import { useEffect, useMemo, useState } from 'react';
+import { Suspense, lazy, useEffect, useMemo, useState } from 'react';
 import { compareSentence } from './engine/verdict';
 import { DEFAULT_RANGE, fitRange } from './state/plan';
 import { effectiveAnchor, useCatalog, usePlan, useScenario } from './state/hooks';
@@ -13,6 +13,7 @@ import { Credits, Validation } from './ui/Sections';
 import { PlanPanel } from './ui/PlanPanel';
 import { SitesCalendar } from './ui/SitesCalendar';
 import { RegionMap } from './ui/RegionMap';
+const Terrain3D = lazy(() => import('./ui/Terrain3D'));
 import { Replays } from './ui/Replays';
 import { useCursor, usePlotHeight } from './ui/hooks';
 
@@ -23,6 +24,7 @@ export default function App() {
   const [hoverAz, setHoverAz] = useState<number | null>(null);
   const [retry, setRetry] = useState(0);
   const [trueScale, setTrueScale] = useState(false);
+  const [show3d, setShow3d] = useState(false);
 
   const profile = useMemo(() => effectiveProfile(s), [s]);
   const cursor = useCursor(Math.round(profile.stayDays * 24));
@@ -121,6 +123,30 @@ export default function App() {
           />
           <LandingDates planA={planA} planB={planB} onPickA={(ms) => api.setLandingA(ms, true)} onPickB={(ms) => api.setLandingB(ms, true)} />
           <KeyNumbers planA={planA} planB={planB} />
+          <section aria-labelledby="t3d-h" className="rounded-lg border border-line bg-panel px-4 py-3">
+            <div className="flex flex-wrap items-baseline justify-between gap-3">
+              <h2 id="t3d-h" className="text-base font-semibold">Plan A&apos;s site in 3D</h2>
+              <button type="button" onClick={() => setShow3d((v) => !v)} className="rounded-md border border-[#454b57] px-3 py-1 text-sm hover:border-ink2">
+                {show3d ? 'Hide the 3D view' : 'Show the 3D view'}
+              </button>
+            </div>
+            {show3d && planA.status === 'ready' && (() => {
+              const i = Math.min(planA.data.series.n - 1, planA.view.landingIdx + cursor.hours);
+              const ser = planA.data.series;
+              const site = planA.data.site;
+              return (
+                <Suspense fallback={<p className="mt-2 text-sm text-ink2">Loading the 3D view...</p>}>
+                  <div className="mt-2">
+                    <Terrain3D
+                      lat={site.lat} lon={site.lon} heightM={s.heightM}
+                      sunAz={ser.sunAz[i]} sunEl={ser.sunEl[i]} earthAz={ser.earthAz[i]} earthEl={ser.earthEl[i]}
+                      caption={`${site.name}, ${new Date(ser.startMs + i * ser.stepMs).toISOString().slice(0, 16).replace('T', ' ')} UTC (plan A's time cursor; press Play above to move it).`}
+                    />
+                  </div>
+                </Suspense>
+              );
+            })()}
+          </section>
           <RegionMap
             site={siteA} heightM={s.heightM} landingMs={s.landingMs} stayDays={profile.stayDays}
             onPickB={(lat, lon) => { api.setSiteB(customId(lat, lon)); document.getElementById('plan-b')?.scrollIntoView({ behavior: 'smooth' }); }}
