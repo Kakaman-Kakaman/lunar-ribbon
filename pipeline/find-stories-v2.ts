@@ -23,7 +23,7 @@ const { FrameCache, computeSeries } = await import('../src/engine/visibility.ts'
 const { horizonProfile, sampleDem, llToXY, MOON_RADIUS_M } = await import('../src/engine/raymarch.ts');
 const { REQUIREMENT_PRESETS, evaluateRequirements, stayCount } = await import('../src/engine/requirements.ts');
 const { computeDsnSeries } = await import('../src/engine/dsn.ts');
-const { loadTerrainStack, roundingRadiusM } = await import('./terrain-stack.ts');
+const { loadTerrainStack, loadMainStack, roundingRadiusM } = await import('./terrain-stack.ts');
 type HorizonMask = import('../src/engine/horizon.ts').HorizonMask;
 
 const ROOT = join(import.meta.dirname, '..');
@@ -35,7 +35,8 @@ const MAX_RADIUS_M = 30;
 const DEG = Math.PI / 180;
 const req = REQUIREMENT_PRESETS.find((p) => p.id === 'short-stay')!.req;
 
-const { stack } = loadTerrainStack();
+const { stack, source: terrainSource } = await loadMainStack();
+console.log(`terrain: ${terrainSource}`);
 console.log(`nested stack: ${stack.map((g) => g.name).join(' > ')}`);
 const frames = new FrameCache();
 const dsn = computeDsnSeries(START, HOUR, N);

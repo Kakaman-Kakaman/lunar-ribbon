@@ -23,7 +23,7 @@ const { horizonProfile, MOON_RADIUS_M } = await import('../src/engine/raymarch.t
 const { PROFILES, evaluate, slipScan, slipMarginMs, nextWindow } = await import('../src/engine/mission.ts');
 const { REQUIREMENT_PRESETS, evaluateRequirements, scanRequirements } = await import('../src/engine/requirements.ts');
 const { computeDsnSeries } = await import('../src/engine/dsn.ts');
-const { loadTerrainStack, roundingRadiusM } = await import('./terrain-stack.ts');
+const { loadTerrainStack, loadMainStack, roundingRadiusM } = await import('./terrain-stack.ts');
 type HorizonMask = import('../src/engine/horizon.ts').HorizonMask;
 type SiteSeries = import('../src/engine/visibility.ts').SiteSeries;
 
@@ -35,7 +35,8 @@ const iA = (PLAN_A - START) / HOUR, iB = (PLAN_B - START) / HOUR;
 const DEG = Math.PI / 180;
 
 const site = JSON.parse(readFileSync(join(ROOT, 'public/masks/pgda-site23-malapert-massif.json'), 'utf8')) as HorizonMask;
-const { stack } = loadTerrainStack();
+const { stack, source: terrainSource } = await loadMainStack();
+console.log(`terrain: ${terrainSource}`);
 console.log(`nested stack: ${stack.map((g) => g.name).join(' > ')}`);
 const frames = new FrameCache();
 const dsn = computeDsnSeries(START, HOUR, N);

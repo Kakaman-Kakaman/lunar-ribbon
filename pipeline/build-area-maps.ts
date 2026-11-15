@@ -18,7 +18,7 @@ register(HOOK, import.meta.url);
 const { llToXY } = await import('../src/engine/raymarch.ts');
 const { pointXY, packBytes } = await import('../src/engine/areaMap.ts');
 const { packInt16 } = await import('../src/engine/maskV2.ts');
-const { loadTerrainStack } = await import('./terrain-stack.ts');
+const { loadTerrainStack, loadMainStack } = await import('./terrain-stack.ts');
 
 const arg = (k: string, d: string) => { const i = process.argv.indexOf(`--${k}`); return i > 0 ? process.argv[i + 1] : d; };
 const N = Number(arg('n', '100')), SPACING = Number(arg('spacing', '200')), WORKERS = Number(arg('workers', String(Math.max(1, cpus().length - 2))));
@@ -27,7 +27,8 @@ const HEIGHTS = [2, 10];
 const ROOT = join(import.meta.dirname, '..');
 const OUT = join(ROOT, 'public', 'area');
 
-const { stack } = loadTerrainStack();
+const { stack, source: terrainSource } = await loadMainStack();
+console.log(`terrain: ${terrainSource}`);
 const terrain = stack.map((g) => g.name);
 const shared = stack.map((g) => {
   const sab = new SharedArrayBuffer(g.data.byteLength);

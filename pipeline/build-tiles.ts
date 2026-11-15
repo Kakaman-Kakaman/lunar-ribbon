@@ -23,7 +23,7 @@ register(
 const { llToXY } = await import('../src/engine/raymarch.ts');
 const T = await import('../src/engine/terrainTiles.ts');
 const { encodePngRgb } = await import('./png.ts');
-const { loadTerrainStack } = await import('./terrain-stack.ts');
+const { loadTerrainStack, loadMainStack } = await import('./terrain-stack.ts');
 const { loadLola } = await import('./lola.ts');
 type DemGrid = import('../src/engine/raymarch.ts').DemGrid;
 
@@ -37,10 +37,13 @@ if (NORTH) {
   g20 = loadLola('LDEM_80N_20M');
   try { g10 = loadLola('LDEM_85N_10M'); } catch { g10 = undefined; }
 } else {
-  const st = loadTerrainStack();
+  const st = await loadMainStack();
   v1Near = st.v1Near;
-  g10 = st.stack.find((g) => g.scaleM === 10);
+  // With the 2023 adjusted DEM (D-041) the fine tiles come from it, and there is no 10 m level, so the
+  // tiles match the terrain the skylines are computed from.
   g20 = st.stack.find((g) => g.scaleM === 20);
+  g10 = st.source === 'pgda-adj' ? undefined : st.stack.find((g) => g.scaleM === 10);
+  console.log(`terrain: ${st.source}`);
 }
 if (!g20) throw new Error('need a 20 m grid');
 console.log(`sources: 80 m ${v1Near.name}, 20 m ${g20.name}, 10 m ${g10?.name ?? 'none'}`);

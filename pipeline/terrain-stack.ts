@@ -61,3 +61,22 @@ export function roundingRadiusM(lat: number, lon: number): number {
   const dLon = 0.5 * 10 ** -decimals(lon) * mPerDeg * Math.cos((lat * Math.PI) / 180);
   return Math.hypot(dLat, dLon);
 }
+
+/** Size of NASA Goddard's crossover-adjusted 20 m south-pole DEM (PGDA product 90), bytes. */
+export const ADJ_BYTES = 2696082051;
+
+/**
+ * The main version 2 terrain (D-041): NASA Goddard's crossover-adjusted 20 m south-pole DEM
+ * (Barker et al. 2023) backed by the PDS 240 m grid, when the file is complete; otherwise the PDS
+ * fine stack. `--pds` on the command line forces the PDS stack (for comparisons).
+ */
+export async function loadMainStack(): Promise<TerrainStack & { source: 'pgda-adj' | 'pds' }> {
+  const pds = loadTerrainStack();
+  const { existsSync, statSync } = await import('node:fs');
+  const { join } = await import('node:path');
+  const path = join(import.meta.dirname, '..', 'data-raw', 'pgda', 'LDEM_80S_20MPP_ADJ.TIF');
+  if (process.argv.includes('--pds') || !existsSync(path) || statSync(path).size !== ADJ_BYTES) return { ...pds, source: 'pds' };
+  const { loadPgdaDem } = await import('./pgda.ts');
+  const adj = await loadPgdaDem('LDEM_80S_20MPP_ADJ.TIF', -80);
+  return { ...pds, stack: [adj, pds.v1Far], source: 'pgda-adj' };
+}

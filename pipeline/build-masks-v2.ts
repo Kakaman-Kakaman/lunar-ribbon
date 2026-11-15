@@ -18,7 +18,7 @@ register(
 
 const { horizonProfile, sampleDem, llToXY, xyToLL, MOON_RADIUS_M } = await import('../src/engine/raymarch.ts');
 const { packInt16 } = await import('../src/engine/maskV2.ts');
-const { loadTerrainStack, loadNorthStack, roundingRadiusM } = await import('./terrain-stack.ts');
+const { loadTerrainStack, loadMainStack, loadNorthStack, roundingRadiusM } = await import('./terrain-stack.ts');
 type LolaGrid = import('./lola.ts').LolaGrid;
 type MaskV2 = import('../src/engine/maskV2.ts').MaskV2;
 
@@ -28,7 +28,8 @@ const HEIGHTS = [1, 2, 5, 10];
 const AZ_CENTRE = 0.1, AZ_BAND = 0.5, AZ_RIDGES = 0.5;
 const DEG = Math.PI / 180;
 
-const { stack } = loadTerrainStack();
+const { stack, source: terrainSource } = await loadMainStack();
+console.log(`terrain: ${terrainSource}`);
 const terrain = stack.map((g) => g.name);
 console.log(`nested stack: ${terrain.join(' > ')}`);
 

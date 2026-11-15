@@ -19,7 +19,7 @@ register(
 
 const { FrameCache, computeSeries } = await import('../src/engine/visibility.ts');
 const { horizonProfile, sampleDem, llToXY, MOON_RADIUS_M } = await import('../src/engine/raymarch.ts');
-const { loadTerrainStack, roundingRadiusM } = await import('./terrain-stack.ts');
+const { loadTerrainStack, loadMainStack, roundingRadiusM } = await import('./terrain-stack.ts');
 type HorizonMask = import('../src/engine/horizon.ts').HorizonMask;
 
 const ROOT = join(import.meta.dirname, '..');
@@ -29,7 +29,8 @@ const AZ = 0.1;
 const START = Date.UTC(2024, 0, 1), N = Math.round((Date.UTC(2026, 0, 1) - START) / HOUR);
 const DEG = Math.PI / 180;
 
-const { stack, skipped } = loadTerrainStack();
+const { stack, skipped, source: terrainSource } = await loadMainStack();
+console.log(`terrain: ${terrainSource}`);
 console.log(`nested stack: ${stack.map((g) => g.name).join(' > ')}${skipped.length ? ` | skipped: ${skipped.map((s) => s.split(':')[0]).join(', ')}` : ''}`);
 
 /** Point at distance d (m) and azimuth a (deg) from (lat, lon), great circle on the 1737.4 km sphere. */

@@ -20,7 +20,7 @@ register(
 
 const { FrameCache, computeSeries } = await import('../src/engine/visibility.ts');
 const { horizonProfile, sampleDem, llToXY } = await import('../src/engine/raymarch.ts');
-const { loadTerrainStack } = await import('./terrain-stack.ts');
+const { loadTerrainStack, loadMainStack } = await import('./terrain-stack.ts');
 type HorizonMask = import('../src/engine/horizon.ts').HorizonMask;
 
 const ROOT = join(import.meta.dirname, '..');
@@ -28,7 +28,10 @@ const HOUR = 3600000;
 
 // ---- Terrain ----
 // `--with-5m` adds the PDS 5 m grid to the nested stack, for comparison only (D-042).
-const { v1Near, v1Far, stack, skipped } = loadTerrainStack(process.argv.includes('--with-5m') ? [] : ['LDEM_875S_5M']);
+// Main v2 terrain (D-041: the 2023 adjusted 20 m DEM when present); --with-5m adds the PDS 5 m grid for comparison (D-042).
+const main = process.argv.includes('--with-5m') ? { ...loadTerrainStack([]), source: 'pds-with-5m' } : await loadMainStack();
+const { v1Near, v1Far, stack, skipped } = main;
+console.log(`terrain: ${main.source}`);
 console.log(`nested stack: ${stack.map((g) => g.name).join(' > ')}`);
 if (skipped.length) console.log(`skipped: ${skipped.join('; ')}`);
 

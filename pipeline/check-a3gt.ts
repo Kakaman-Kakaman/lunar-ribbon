@@ -24,13 +24,14 @@ const { horizonProfile, xyToLL } = await import('../src/engine/raymarch.ts');
 const { horizonAt } = await import('../src/engine/horizon.ts');
 const { siteBasis, skyPosition } = await import('../src/engine/ephemeris.ts');
 const { FrameCache } = await import('../src/engine/visibility.ts');
-const { loadTerrainStack } = await import('./terrain-stack.ts');
+const { loadTerrainStack, loadMainStack } = await import('./terrain-stack.ts');
 
 const ROOT = join(import.meta.dirname, '..');
 const DIR = join(ROOT, 'data-raw', 'a3gt');
 const GRID = 15, AZ = 0.1, HEIGHTS = [0, 2];
 
-const { stack } = loadTerrainStack();
+const { stack, source: terrainSource } = await loadMainStack();
+console.log(`terrain: ${terrainSource}`);
 console.log(`nested stack: ${stack.map((g) => g.name).join(' > ')}`);
 const sun = await (await fromFile(join(DIR, 'mm_dec25_2mpp_svmask.tif'))).getImage(0);
 const earth = await (await fromFile(join(DIR, 'mm_dec25_2mpp_evmask.tif'))).getImage(0);
