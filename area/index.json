@@ -1,0 +1,239 @@
+{
+ "terrain": [
+  "LDEM_80S_20MPP_ADJ",
+  "LDEM_60S_240M"
+ ],
+ "regions": [
+  {
+   "id": "im-1-odysseus",
+   "cx": 7539.877818752384,
+   "cy": 299939.0376980428,
+   "spacingM": 100,
+   "n": 100,
+   "heightsM": [
+    2,
+    10
+   ]
+  },
+  {
+   "id": "im-2-athena",
+   "cx": 77108.24153038967,
+   "cy": 137993.27026503164,
+   "spacingM": 100,
+   "n": 100,
+   "heightsM": [
+    2,
+    10
+   ]
+  },
+  {
+   "id": "shackleton-crater",
+   "cx": 7690.243761836725,
+   "cy": -6402.723035824016,
+   "spacingM": 100,
+   "n": 100,
+   "heightsM": [
+    2,
+    10
+   ]
+  },
+  {
+   "id": "shackleton-de-gerlache-ridge-point",
+   "cx": -2759.793503885221,
+   "cy": -9176.173199889528,
+   "spacingM": 100,
+   "n": 100,
+   "heightsM": [
+    2,
+    10
+   ]
+  },
+  {
+   "id": "mons-malapert",
+   "cx": -3553.9702955394455,
+   "cy": 121898.1026572211,
+   "spacingM": 100,
+   "n": 100,
+   "heightsM": [
+    2,
+    10
+   ]
+  },
+  {
+   "id": "mons-mouton",
+   "cx": 84397.95447974424,
+   "cy": 140461.78399299132,
+   "spacingM": 100,
+   "n": 100,
+   "heightsM": [
+    2,
+    10
+   ]
+  },
+  {
+   "id": "nobile-crater",
+   "cx": 114775.2267097349,
+   "cy": 85644.33871458433,
+   "spacingM": 100,
+   "n": 100,
+   "heightsM": [
+    2,
+    10
+   ]
+  },
+  {
+   "id": "haworth-crater",
+   "cx": -6558.875093970348,
+   "cy": 93796.28373833002,
+   "spacingM": 100,
+   "n": 100,
+   "heightsM": [
+    2,
+    10
+   ]
+  },
+  {
+   "id": "de-gerlache-crater",
+   "cx": -45429.3703278512,
+   "cy": 2301.3526214210715,
+   "spacingM": 100,
+   "n": 100,
+   "heightsM": [
+    2,
+    10
+   ]
+  },
+  {
+   "id": "faustini-crater",
+   "cx": 79789.41125926404,
+   "cy": 18420.837048399924,
+   "spacingM": 100,
+   "n": 100,
+   "heightsM": [
+    2,
+    10
+   ]
+  },
+  {
+   "id": "cabeus-crater",
+   "cx": -89864.5236440329,
+   "cy": 125985.4156566803,
+   "spacingM": 100,
+   "n": 100,
+   "heightsM": [
+    2,
+    10
+   ]
+  },
+  {
+   "id": "pgda-site01-connecting-ridge",
+   "cx": -11062.607536464275,
+   "cy": -12072.717648536449,
+   "spacingM": 100,
+   "n": 100,
+   "heightsM": [
+    2,
+    10
+   ]
+  },
+  {
+   "id": "pgda-site04-shackleton-rim",
+   "cx": -1012.8482113568489,
+   "cy": -7206.789496459531,
+   "spacingM": 100,
+   "n": 100,
+   "heightsM": [
+    2,
+    10
+   ]
+  },
+  {
+   "id": "pgda-site07-peak-near-shackleton",
+   "cx": 30021.96651401027,
+   "cy": -20022.162734974103,
+   "spacingM": 100,
+   "n": 100,
+   "heightsM": [
+    2,
+    10
+   ]
+  },
+  {
+   "id": "pgda-site23-malapert-massif",
+   "cx": -424.62480845204396,
+   "cy": 121645.55293046475,
+   "spacingM": 100,
+   "n": 100,
+   "heightsM": [
+    2,
+    10
+   ]
+  },
+  {
+   "id": "pgda-site20-leibnitz-beta-plateau",
+   "cx": 72857.2888527706,
+   "cy": 117966.003745327,
+   "spacingM": 100,
+   "n": 100,
+   "heightsM": [
+    2,
+    10
+   ]
+  },
+  {
+   "id": "pgda-site01-connecting-ridge-crest",
+   "cx": -11560.817391819224,
+   "cy": -12520.881717005706,
+   "spacingM": 100,
+   "n": 100,
+   "heightsM": [
+    2,
+    10
+   ]
+  },
+  {
+   "id": "pgda-site04-shackleton-rim-crest",
+   "cx": -2679.662772378557,
+   "cy": -6119.235654208328,
+   "spacingM": 100,
+   "n": 100,
+   "heightsM": [
+    2,
+    10
+   ]
+  },
+  {
+   "id": "pgda-site07-peak-near-shackleton-crest",
+   "cx": 30039.457935367616,
+   "cy": -20039.66117548342,
+   "spacingM": 100,
+   "n": 100,
+   "heightsM": [
+    2,
+    10
+   ]
+  },
+  {
+   "id": "pgda-site23-malapert-massif-crest",
+   "cx": 4360.035575001948,
+   "cy": 121641.04503528861,
+   "spacingM": 100,
+   "n": 100,
+   "heightsM": [
+    2,
+    10
+   ]
+  },
+  {
+   "id": "pgda-site20-leibnitz-beta-plateau-crest",
+   "cx": 73320.5951742361,
+   "cy": 118600.84219587283,
+   "spacingM": 100,
+   "n": 100,
+   "heightsM": [
+    2,
+    10
+   ]
+  }
+ ]
+}
