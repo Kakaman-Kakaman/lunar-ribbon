@@ -11,6 +11,7 @@ import { HowToRead } from './ui/HowToRead';
 import { Legend } from './ui/Legend';
 import { Credits, Validation } from './ui/Sections';
 import { PlanPanel } from './ui/PlanPanel';
+import { SitesCalendar } from './ui/SitesCalendar';
 import { Replays } from './ui/Replays';
 import { useCursor, usePlotHeight } from './ui/hooks';
 
@@ -119,6 +120,10 @@ export default function App() {
           />
           <LandingDates planA={planA} planB={planB} onPickA={(ms) => api.setLandingA(ms, true)} onPickB={(ms) => api.setLandingB(ms, true)} />
           <KeyNumbers planA={planA} planB={planB} />
+          <SitesCalendar
+            sites={sites} heightM={s.heightM} anchorMs={effectiveAnchor(anchors.a, s.landingMs)} profile={profile}
+            onPick={(id, ms) => { api.setSiteB(id); api.setBMode('own'); api.setBOwn(ms); document.getElementById('plan-b')?.scrollIntoView({ behavior: 'smooth' }); }}
+          />
           <Legend />
           <HowToRead plan={planA} heightM={s.heightM} range={range} />
           <Validation />

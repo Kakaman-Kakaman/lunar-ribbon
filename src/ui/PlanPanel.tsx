@@ -187,7 +187,7 @@ export function PlanPanel(p: Props) {
   const accent = p.label === 'Plan A' ? 'A' : 'B';
 
   return (
-    <section aria-label={p.label} className="rounded-lg border border-line bg-panel px-4 py-2.5">
+    <section id={`plan-${accent.toLowerCase()}`} aria-label={p.label} className="rounded-lg border border-line bg-panel px-4 py-2.5">
       <div className="flex flex-wrap items-start gap-x-5 gap-y-2">
         {/* Site */}
         <div className="w-[34rem] max-w-full shrink-0">
