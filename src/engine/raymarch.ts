@@ -5,8 +5,12 @@ export const MOON_RADIUS_M = 1737400;
 
 const DEG = Math.PI / 180;
 
-/** Square elevation grid in south polar stereographic projection (row 0 at the top, +y up). */
+export type Pole = 'south' | 'north';
+
+/** Square elevation grid in polar stereographic projection (row 0 at the top, +y up). */
 export interface DemGrid {
+  /** Which pole the projection is centred on; south if absent. */
+  pole?: Pole;
   /** Heights in grid units (16-bit LOLA products) or metres (float products, with dnToM = 1); NaN means no data. */
   data: Int16Array | Float32Array;
   size: number;
@@ -16,16 +20,29 @@ export interface DemGrid {
   offsetPx: number;
 }
 
-/** South polar stereographic, centre lat -90, centre lon 0, east-positive. x = rho sin(lon), y = rho cos(lon). */
-export function llToXY(latDeg: number, lonDeg: number): [number, number] {
-  const rho = 2 * MOON_RADIUS_M * Math.tan(Math.PI / 4 + (latDeg * DEG) / 2);
+/**
+ * Polar stereographic on the 1737.4 km sphere, centre longitude 0, east-positive, scale 1 at the pole.
+ * South: x = rho sin(lon), y = rho cos(lon), rho = 2R tan(45 + lat/2).
+ * North: x = rho sin(lon), y = -rho cos(lon), rho = 2R tan(45 - lat/2).
+ */
+export function llToXY(latDeg: number, lonDeg: number, pole: Pole = 'south'): [number, number] {
   const lon = lonDeg * DEG;
+  if (pole === 'north') {
+    const rho = 2 * MOON_RADIUS_M * Math.tan(Math.PI / 4 - (latDeg * DEG) / 2);
+    return [rho * Math.sin(lon), -rho * Math.cos(lon)];
+  }
+  const rho = 2 * MOON_RADIUS_M * Math.tan(Math.PI / 4 + (latDeg * DEG) / 2);
   return [rho * Math.sin(lon), rho * Math.cos(lon)];
 }
 
 /** Inverse of llToXY. Returns [latDeg, lonDeg in -180..180]. */
-export function xyToLL(x: number, y: number): [number, number] {
+export function xyToLL(x: number, y: number, pole: Pole = 'south'): [number, number] {
   const rho = Math.hypot(x, y);
+  if (pole === 'north') {
+    const lat = Math.PI / 2 - 2 * Math.atan(rho / (2 * MOON_RADIUS_M));
+    const lon = rho === 0 ? 0 : Math.atan2(x, -y);
+    return [lat / DEG, lon / DEG];
+  }
   const lat = 2 * Math.atan(rho / (2 * MOON_RADIUS_M)) - Math.PI / 2;
   const lon = rho === 0 ? 0 : Math.atan2(x, y);
   return [lat / DEG, lon / DEG];
@@ -146,7 +163,10 @@ export function horizonProfile(o: HorizonOptions): HorizonResult {
   const nested = o.grids !== undefined && o.grids.length > 0 ? o.grids : null;
   const bare = nested === null && o.near === null && o.far === null;
 
-  const [sx, sy] = llToXY(o.lat, o.lon);
+  const poles = new Set([...(nested ?? []).map((g) => g.grid.pole ?? 'south'), ...[o.near, o.far].filter((g) => g !== null).map((g) => g!.pole ?? 'south')]);
+  if (poles.size > 1) throw new Error('terrain grids for one skyline must share a pole');
+  const pole: Pole = poles.has('north') ? 'north' : 'south';
+  const [sx, sy] = llToXY(o.lat, o.lon, pole);
   const z0raw = bare ? 0 : nested ? nestedHeightAt(nested, sx, sy, 0) : heightAt(o, sx, sy, true);
   const z0 = Number.isNaN(z0raw) ? 0 : z0raw;
 
@@ -206,7 +226,7 @@ export function horizonProfile(o: HorizonOptions): HorizonResult {
       const lon2 = lon1 + Math.atan2(sinA * st * cosLat1, ct - sinLat1 * sinLat2);
       let z = 0;
       if (!bare) {
-        const [x, y] = llToXY(lat2 / DEG, lon2 / DEG);
+        const [x, y] = llToXY(lat2 / DEG, lon2 / DEG, pole);
         z = nested ? nestedHeightAt(nested, x, y, dists[k]) : heightAt(o, x, y, dists[k] <= nearLimitM);
         if (Number.isNaN(z)) continue;
       }

@@ -1,6 +1,6 @@
 // The terrain the pipeline uses, in one place: the version 1 recipe (80 m near, 240 m far) and the
 // version 2 nested stack (finest available grid first, 240 m for the far field).
-import { availableSouthGrids, loadLola, type LolaGrid } from './lola.ts';
+import { availableNorthGrids, availableSouthGrids, loadLola, type LolaGrid } from './lola.ts';
 
 export interface TerrainStack {
   v1Near: LolaGrid;
@@ -30,6 +30,23 @@ export function loadTerrainStack(exclude: string[] = ['LDEM_875S_5M']): TerrainS
   // The 80 m grid covers the same area as the 20 m grid, so it joins only when no 20 m grid is present.
   const stack = [...fine, ...(fine.some((g) => g.edgeLatDeg >= -80) ? [] : [v1Near]), v1Far];
   return { v1Near, v1Far, stack, skipped: [...skipped, ...exclude.filter((n) => byName(n)).map((n) => `${n}: excluded (comparison only)`)] };
+}
+
+/** The north-pole stack: grids finer than 80 m first (when present), then 80 m, then 240 m for the far field. */
+export function loadNorthStack(): { stack: LolaGrid[]; skipped: string[] } {
+  const grids: LolaGrid[] = [];
+  const skipped: string[] = [];
+  for (const name of availableNorthGrids()) {
+    try {
+      grids.push(loadLola(name));
+    } catch (e) {
+      skipped.push(`${name}: ${(e as Error).message}`);
+    }
+  }
+  const fine = grids.filter((g) => g.scaleM < 80).sort((a, b) => a.scaleM - b.scaleM);
+  const g80 = grids.find((g) => g.scaleM === 80), g240 = grids.find((g) => g.scaleM === 240);
+  const stack = [...fine, ...(fine.some((g) => g.edgeLatDeg <= 80) || !g80 ? [] : [g80]), ...(g240 ? [g240] : [])];
+  return { stack, skipped };
 }
 
 /**

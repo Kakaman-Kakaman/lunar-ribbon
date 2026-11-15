@@ -17,7 +17,7 @@ function field(lbl: string, key: string): string {
 
 export interface LolaGrid extends DemGrid {
   name: string;
-  /** The grid covers latitudes from the pole to this one (e.g. -87.5). */
+  /** The grid covers latitudes from the pole to this one (e.g. -87.5, or 80 for a north grid). */
   edgeLatDeg: number;
 }
 
@@ -33,7 +33,6 @@ export function loadLola(name: string, dir = LOLA_DIR): LolaGrid {
     ['SAMPLE_TYPE', 'LSB_INTEGER'],
     ['SAMPLE_BITS', '16'],
     ['MAP_PROJECTION_TYPE', 'POLAR STEREOGRAPHIC'],
-    ['CENTER_LATITUDE', '-90'],
     ['CENTER_LONGITUDE', '0'],
     ['POSITIVE_LONGITUDE_DIRECTION', 'EAST'],
     ['A_AXIS_RADIUS', '1737.4'],
@@ -42,6 +41,9 @@ export function loadLola(name: string, dir = LOLA_DIR): LolaGrid {
     const got = field(lbl, k);
     if (got !== want) throw new Error(`${name}: ${k} is ${got}, expected ${want}`);
   }
+  const centreLat = field(lbl, 'CENTER_LATITUDE');
+  if (centreLat !== '-90' && centreLat !== '90') throw new Error(`${name}: CENTER_LATITUDE is ${centreLat}, expected -90 or 90`);
+  const pole = centreLat === '90' ? 'north' as const : 'south' as const;
   const lineOff = Number(field(lbl, 'LINE_PROJECTION_OFFSET'));
   const sampleOff = Number(field(lbl, 'SAMPLE_PROJECTION_OFFSET'));
   if (lines !== samples || lineOff !== sampleOff) throw new Error(`${name}: grid is not square and centred on the pole`);
@@ -54,13 +56,21 @@ export function loadLola(name: string, dir = LOLA_DIR): LolaGrid {
     : new Int16Array(buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength));
   return {
     name,
+    pole,
     data,
     size: lines,
     scaleM: Number(field(lbl, 'MAP_SCALE')),
     dnToM: Number(field(lbl, 'SCALING_FACTOR')),
     offsetPx: lineOff,
-    edgeLatDeg: Number(field(lbl, 'MAXIMUM_LATITUDE')),
+    edgeLatDeg: Number(field(lbl, pole === 'north' ? 'MINIMUM_LATITUDE' : 'MAXIMUM_LATITUDE')),
   };
+}
+
+/** The north-pole grids present on disk, finest first, from the set the project uses. */
+export function availableNorthGrids(dir = LOLA_DIR): string[] {
+  return ['LDEM_85N_10M', 'LDEM_80N_20M', 'LDEM_80N_80M', 'LDEM_60N_240M'].filter(
+    (n) => existsSync(join(dir, `${n}.IMG`)) && existsSync(join(dir, `${n}.LBL`)),
+  );
 }
 
 /** The south-pole grids present on disk, finest first, from the set the project uses. */
