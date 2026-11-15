@@ -41,6 +41,7 @@ Versions are those installed in `node_modules/`; licences are read from each pac
 | NASA Goddard average Sun and Earth visibility maps | Served by NASA Moon Trek | Reference for the skyline validation | Method: Mazarico, E., Neumann, G. A., Smith, D. E., Zuber, M. T., et al. (2011). Illumination conditions of the lunar polar regions using LOLA topography. *Icarus* 211, 1066–1081. https://doi.org/10.1016/j.icarus.2010.10.030 |
 | NASA Goddard PGDA south-pole landing-site products | https://pgda.gsfc.nasa.gov/ (each site's product page is in `src/data/sites.json`) | Positions of the five NASA Goddard study sites | Benchmark figures: Barker, M. K., Mazarico, E., Neumann, G. A., Smith, D. E., et al. (2021). Improved LOLA elevation maps for south pole landing sites: Error estimates and their impact on illumination conditions. *Planetary and Space Science* 203, 105119. https://doi.org/10.1016/j.pss.2020.105119 |
 | Site coordinates | See the `source` field of each entry in `src/data/sites.json` | Landing and candidate site positions | See each entry's source |
+| North-pole crater positions | IAU Gazetteer of Planetary Nomenclature (IAU Working Group for Planetary System Nomenclature, hosted by USGS Astrogeology), https://planetarynames.wr.usgs.gov/; each entry in `src/data/sites-north.json` links its feature page | Named craters north of 84 N, for the north-pole view | Fetched 2026 November 15 |
 
 ## References
 

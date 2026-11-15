@@ -1,0 +1,148 @@
+{
+ "source": "IAU Gazetteer of Planetary Nomenclature (USGS Astrogeology), Moon craters with centre latitude 84 N or more, fetched 2026-11-15. Dropped names (Lenard) are left out. Feature pages can list slightly different centres in other coordinate systems (Peary: 88.57, 88.60, 88.63 N); the search table's planetographic +East value is used.",
+ "sites": [
+  {
+   "id": "n-hinshelwood",
+   "name": "Hinshelwood (crater, centre)",
+   "group": "north-pole-feature",
+   "lat": 89.41,
+   "lon": -51.89,
+   "diameterKm": 13.35,
+   "source": "https://planetarynames.wr.usgs.gov/Feature/14565",
+   "sourceQuality": "primary",
+   "note": "IAU Gazetteer of Planetary Nomenclature, crater centre (Planetographic, +East, -180 - 180); approval status Approved."
+  },
+  {
+   "id": "n-whipple",
+   "name": "Whipple (crater, centre)",
+   "group": "north-pole-feature",
+   "lat": 89.14,
+   "lon": 120.02,
+   "diameterKm": 14.53,
+   "source": "https://planetarynames.wr.usgs.gov/Feature/14566",
+   "sourceQuality": "primary",
+   "note": "IAU Gazetteer of Planetary Nomenclature, crater centre (Planetographic, +East, -180 - 180); approval status Approved."
+  },
+  {
+   "id": "n-peary",
+   "name": "Peary (crater, centre)",
+   "group": "north-pole-feature",
+   "lat": 88.63,
+   "lon": 24.4,
+   "diameterKm": 78.75,
+   "source": "https://planetarynames.wr.usgs.gov/Feature/4627",
+   "sourceQuality": "primary",
+   "note": "IAU Gazetteer of Planetary Nomenclature, crater centre (Planetographic, +East, -180 - 180); approval status Approved."
+  },
+  {
+   "id": "n-aepinus",
+   "name": "Aepinus (crater, centre)",
+   "group": "north-pole-feature",
+   "lat": 87.96,
+   "lon": -109.69,
+   "diameterKm": 16.74,
+   "source": "https://planetarynames.wr.usgs.gov/Feature/14523",
+   "sourceQuality": "primary",
+   "note": "IAU Gazetteer of Planetary Nomenclature, crater centre (Planetographic, +East, -180 - 180); approval status Approved."
+  },
+  {
+   "id": "n-florey",
+   "name": "Florey (crater, centre)",
+   "group": "north-pole-feature",
+   "lat": 87.04,
+   "lon": -19.75,
+   "diameterKm": 69.06,
+   "source": "https://planetarynames.wr.usgs.gov/Feature/14527",
+   "sourceQuality": "primary",
+   "note": "IAU Gazetteer of Planetary Nomenclature, crater centre (Planetographic, +East, -180 - 180); approval status Approved."
+  },
+  {
+   "id": "n-erlanger",
+   "name": "Erlanger (crater, centre)",
+   "group": "north-pole-feature",
+   "lat": 86.99,
+   "lon": 28.62,
+   "diameterKm": 10.94,
+   "source": "https://planetarynames.wr.usgs.gov/Feature/14525",
+   "sourceQuality": "primary",
+   "note": "IAU Gazetteer of Planetary Nomenclature, crater centre (Planetographic, +East, -180 - 180); approval status Approved."
+  },
+  {
+   "id": "n-bosch",
+   "name": "Bosch (crater, centre)",
+   "group": "north-pole-feature",
+   "lat": 86.82,
+   "lon": 133.54,
+   "diameterKm": 19.58,
+   "source": "https://planetarynames.wr.usgs.gov/Feature/14524",
+   "sourceQuality": "primary",
+   "note": "IAU Gazetteer of Planetary Nomenclature, crater centre (Planetographic, +East, -180 - 180); approval status Approved."
+  },
+  {
+   "id": "n-gore",
+   "name": "Gore (crater, centre)",
+   "group": "north-pole-feature",
+   "lat": 86.18,
+   "lon": -62.31,
+   "diameterKm": 9.41,
+   "source": "https://planetarynames.wr.usgs.gov/Feature/14528",
+   "sourceQuality": "primary",
+   "note": "IAU Gazetteer of Planetary Nomenclature, crater centre (Planetographic, +East, -180 - 180); approval status Approved."
+  },
+  {
+   "id": "n-hermite",
+   "name": "Hermite (crater, centre)",
+   "group": "north-pole-feature",
+   "lat": 86.17,
+   "lon": -93.32,
+   "diameterKm": 108.64,
+   "source": "https://planetarynames.wr.usgs.gov/Feature/2471",
+   "sourceQuality": "primary",
+   "note": "IAU Gazetteer of Planetary Nomenclature, crater centre (Planetographic, +East, -180 - 180); approval status Approved."
+  },
+  {
+   "id": "n-fibiger",
+   "name": "Fibiger (crater, centre)",
+   "group": "north-pole-feature",
+   "lat": 86.14,
+   "lon": 37.13,
+   "diameterKm": 21.1,
+   "source": "https://planetarynames.wr.usgs.gov/Feature/14526",
+   "sourceQuality": "primary",
+   "note": "IAU Gazetteer of Planetary Nomenclature, crater centre (Planetographic, +East, -180 - 180); approval status Approved."
+  },
+  {
+   "id": "n-byrd",
+   "name": "Byrd (crater, centre)",
+   "group": "north-pole-feature",
+   "lat": 85.43,
+   "lon": 10.07,
+   "diameterKm": 97.49,
+   "source": "https://planetarynames.wr.usgs.gov/Feature/941",
+   "sourceQuality": "primary",
+   "note": "IAU Gazetteer of Planetary Nomenclature, crater centre (Planetographic, +East, -180 - 180); approval status Approved."
+  },
+  {
+   "id": "n-rozhdestvenskiy",
+   "name": "Rozhdestvenskiy (crater, centre)",
+   "group": "north-pole-feature",
+   "lat": 84.99,
+   "lon": -157.89,
+   "diameterKm": 181.15,
+   "source": "https://planetarynames.wr.usgs.gov/Feature/5207",
+   "sourceQuality": "primary",
+   "note": "IAU Gazetteer of Planetary Nomenclature, crater centre (Planetographic, +East, -180 - 180); approval status Approved."
+  },
+  {
+   "id": "n-grignard",
+   "name": "Grignard (crater, centre)",
+   "group": "north-pole-feature",
+   "lat": 84.54,
+   "lon": -75.83,
+   "diameterKm": 12.95,
+   "source": "https://planetarynames.wr.usgs.gov/Feature/14529",
+   "sourceQuality": "primary",
+   "note": "IAU Gazetteer of Planetary Nomenclature, crater centre (Planetographic, +East, -180 - 180); approval status Approved."
+  }
+ ]
+}
