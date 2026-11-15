@@ -1,5 +1,6 @@
 // One plan: site picker, terrain badge, verdict, ribbon and mission strip.
 
+import { MissionTimeline } from './MissionTimeline';
 import { useMemo, useRef, useState } from 'react';
 import { fmtDateTimeUtc, fmtNum, terrainBadge } from '../engine/verdict';
 import type { PlanState } from '../state/hooks';
@@ -315,6 +316,7 @@ export function PlanPanel(p: Props) {
                 width={width} data={plan.data} view={plan.view} cursor={p.cursor} label={p.label}
                 aside={p.hoverAz !== null ? <HoverLine data={plan} heightM={p.heightM} az={p.hoverAz} /> : undefined}
               />
+              <MissionTimeline width={width} data={plan.data} view={plan.view} cursorHours={p.cursor.hours} />
             </div>
           </div>
         )}
