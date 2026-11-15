@@ -3,7 +3,7 @@ import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { DSN_COMPLEXES, complexesInView, computeDsnSeries, contactSeries, moonElevationDeg } from '../src/engine/dsn.ts';
 
-const fx = JSON.parse(readFileSync(join(__dirname, 'fixtures', 'horizons', 'dsn-moon-2027.json'), 'utf8')) as {
+const fx = JSON.parse(readFileSync(join(__dirname, 'fixtures', 'dsn', 'moon-2027.json'), 'utf8')) as {
   rows: Record<string, [number, number, number][]>;
 };
 

@@ -7,7 +7,7 @@ import { mkdir, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const OUT = join(dirname(fileURLToPath(import.meta.url)), '..', 'tests', 'fixtures', 'horizons', 'dsn-moon-2027.json');
+const OUT = join(dirname(fileURLToPath(import.meta.url)), '..', 'tests', 'fixtures', 'dsn', 'moon-2027.json');
 const API = 'https://ssd.jpl.nasa.gov/api/horizons.api';
 const dms = (d, m, s, sign = 1) => sign * (d + m / 60 + s / 3600);
 
