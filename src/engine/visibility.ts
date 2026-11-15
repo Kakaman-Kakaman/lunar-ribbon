@@ -132,6 +132,8 @@ export interface SiteSeries {
   earthFrac: Float32Array;
   /** Fraction of the Sun's disc hidden behind Earth (an eclipse seen from the Moon). */
   sunCover?: Float32Array;
+  /** Distance from the site to the Sun, km (for solar irradiance). */
+  sunDistKm?: Float32Array;
 }
 
 /**
@@ -158,6 +160,7 @@ export function computeSeries(
     earthAz: new Float32Array(n), earthEl: new Float32Array(n),
     earthHorizon: new Float32Array(n), earthFrac: new Float32Array(n),
     sunCover: new Float32Array(n),
+    sunDistKm: new Float32Array(n),
   };
   for (let i = 0; i < n; i++) {
     const f = frames.get(startMs + i * stepMs);
@@ -175,6 +178,7 @@ export function computeSeries(
     s.earthHorizon[i] = earthH;
     const earthR = angularRadiusDeg(EARTH_RADIUS_KM, earth.distKm);
     s.earthFrac[i] = discFractionAboveSkyline(earth.az, earth.el, earthR, profile, mask.azStepDeg);
+    s.sunDistKm![i] = sun.distKm;
     s.sunCover![i] = sunCoveredByEarth(separationDeg(sun.az, sun.el, earth.az, earth.el), sunR, earthR);
   }
   return s;
