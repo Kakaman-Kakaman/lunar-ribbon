@@ -305,6 +305,22 @@ const cmp = JSON.parse(readFileSync(join(ROOT, 'tests', 'fixtures', 'trek', 'com
   }
 }
 
+// ---------- 11. North pole against NASA Goddard's north maps ----------
+{
+  const np = join(ROOT, 'pipeline/out/north-goddard.json');
+  if (existsSync(np)) {
+    const r = JSON.parse(readFileSync(np, 'utf8'));
+    checks.push({
+      id: 'north-goddard',
+      title: 'North pole: average sunlight and Earth view against NASA Goddard maps',
+      reference: "NASA Goddard average Sun and Earth visibility maps, north pole (AVGVISIB_85N_060M_201608, PDS LOLA extras), 60 m pixels; crater centres from the IAU gazetteer and the highest point within 8 km of each",
+      result: `Ground level, ${r.sun.n} points: Sun correlation ${f(r.sun.pearson, 3)}, median difference ${f(r.sun.medianAbsDiffPp, 2)} percentage points; Earth correlation ${f(r.earth.pearson, 3)}, median difference ${f(r.earth.medianAbsDiffPp, 2)} points.`,
+      detail: `Terrain: ${r.stack.join(', ')}. Share of time with any part of the disc visible, 18.6 years from 2020 every 2 hours (the maps' own averaging dates are not given). The north crater positions were also checked to sit in depressions on the terrain grid.`,
+      status: r.sun.pearson > 0.95 ? 'pass' : 'note',
+    });
+  }
+}
+
 const out = { generated: new Date().toISOString().slice(0, 10), checks };
 writeFileSync(join(ROOT, 'src', 'data', 'validation.json'), JSON.stringify(out, null, 2) + '\n');
 for (const c of checks) console.log(`[${c.status}] ${c.id}: ${c.result}`);

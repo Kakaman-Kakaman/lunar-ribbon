@@ -96,6 +96,14 @@
       "result": "Ours, mean Sun disc fraction at the crest point: 58.0% at 1 m, 70.6% at 2 m, 84.2% at 5 m, 89.3% at 10 m.",
       "detail": "Terrain: LDEM_85S_10M, LDEM_80S_20M, LDEM_60S_240M. The published figures are for the best area of the site; ours are one point, so this is a plausibility check.",
       "status": "note"
+    },
+    {
+      "id": "north-goddard",
+      "title": "North pole: average sunlight and Earth view against NASA Goddard maps",
+      "reference": "NASA Goddard average Sun and Earth visibility maps, north pole (AVGVISIB_85N_060M_201608, PDS LOLA extras), 60 m pixels; crater centres from the IAU gazetteer and the highest point within 8 km of each",
+      "result": "Ground level, 24 points: Sun correlation 0.975, median difference 0.34 percentage points; Earth correlation 0.998, median difference 0.24 points.",
+      "detail": "Terrain: LDEM_85N_10M, LDEM_80N_20M, LDEM_60N_240M. Share of time with any part of the disc visible, 18.6 years from 2020 every 2 hours (the maps' own averaging dates are not given). The north crater positions were also checked to sit in depressions on the terrain grid.",
+      "status": "pass"
     }
   ]
 }
