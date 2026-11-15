@@ -113,10 +113,12 @@ for (const site of index) buildSite(site, stack, 'south');
 const north = loadNorthStack();
 if (north.stack.length && !process.argv.includes('--south-only')) {
   console.log(`north stack: ${north.stack.map((g) => g.name).join(' > ')}${north.skipped.length ? ` | skipped: ${north.skipped.map((x) => x.split(':')[0]).join(', ')}` : ''}`);
-  const fine = north.stack.find((g) => g.scaleM <= 20) ?? north.stack[0];
   const nsites = (JSON.parse(readFileSync(join(ROOT, 'src/data/sites-north.json'), 'utf8')).sites as any[]);
   for (const site of nsites) {
     buildSite(site, north.stack, 'north');
+    // The highest point is searched on the finest grid that covers the crater (10 m only reaches 85 N).
+    const [x, y] = llToXY(site.lat, site.lon, 'north');
+    const fine = north.stack.find((g) => g.scaleM <= 20 && !Number.isNaN(sampleDem(g, x, y))) ?? north.stack[0];
     buildSite(crestOf(site, fine, 'north'), north.stack, 'north');
   }
 }
