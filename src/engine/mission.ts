@@ -26,6 +26,10 @@ export interface MissionProfile {
   minEarthShare: number;
   needSunAtLanding: boolean;
   needEarthAtLanding: boolean;
+  /** Version 2: the battery must stay at or above this share of capacity (power.ts defaults); omit to ignore power. */
+  minBatteryCharge?: number;
+  /** Version 2: hours of Deep Space Network contact needed in every Earth day of the stay; omit to ignore contact. */
+  minContactHoursPerDay?: number;
   /** One sentence: where the numbers come from. */
   basis: string;
 }
@@ -39,7 +43,9 @@ export const PROFILES: MissionProfile[] = [
     minEarthShare: 1,
     needSunAtLanding: true,
     needEarthAtLanding: true,
-    basis: "NASA's Artemis III planning: a 6.5-day surface stay with continuous sunlight and direct-to-Earth communication, no relay.",
+    minBatteryCharge: 0.2,
+    minContactHoursPerDay: 24,
+    basis: "NASA's Artemis III planning: a 6.5-day surface stay with continuous sunlight and direct-to-Earth communication, no relay. Contact every hour through the Deep Space Network, the 20% battery floor and the panel and battery sizes are this tool's assumptions.",
   },
   {
     id: 'lunar-day',
@@ -49,7 +55,9 @@ export const PROFILES: MissionProfile[] = [
     minEarthShare: 0.75,
     needSunAtLanding: true,
     needEarthAtLanding: true,
-    basis: "Solar-powered landers such as Blue Ghost Mission 1 operate for about 14 days of daylight. The 75% Earth-link share is this tool's default, not a NASA figure.",
+    minBatteryCharge: 0.2,
+    minContactHoursPerDay: 18,
+    basis: "Solar-powered landers such as Blue Ghost Mission 1 operate for about 14 days of daylight. The 75% Earth-link share, 18 hours of contact a day, the 20% battery floor and the panel and battery sizes are this tool's defaults, not NASA figures.",
   },
   {
     id: 'long-rover',
@@ -59,7 +67,8 @@ export const PROFILES: MissionProfile[] = [
     minEarthShare: 0.5,
     needSunAtLanding: true,
     needEarthAtLanding: true,
-    basis: "NASA's VIPER plan: 100 days, direct-to-Earth link, mission at risk after more than four days of cold and dark. The 50% Earth-link share is this tool's default, not a NASA figure.",
+    minContactHoursPerDay: 12,
+    basis: "NASA's VIPER plan: 100 days, direct-to-Earth link, mission at risk after more than four days of cold and dark. The 50% Earth-link share and 12 hours of contact a day are this tool's defaults, not NASA figures; surviving the dark on a reduced load is outside this simple power model, so there is no battery rule.",
   },
 ];
 

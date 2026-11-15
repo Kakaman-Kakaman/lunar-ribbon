@@ -50,8 +50,8 @@ export default function App() {
   const comparison =
     planA.status === 'ready' && planB.status === 'ready'
       ? compareSentence(
-          { siteName: planA.data.site.name, landingMs: planA.view.landingMs, ev: planA.view.ev, slipMarginMs: planA.view.slipMarginMs, profile },
-          { siteName: planB.data.site.name, landingMs: planB.view.landingMs, ev: planB.view.ev, slipMarginMs: planB.view.slipMarginMs, profile },
+          { siteName: planA.data.site.name, landingMs: planA.view.landingMs, ev: planA.view.ev, slipMarginMs: planA.view.slipMarginMs, profile, power: planA.view.power },
+          { siteName: planB.data.site.name, landingMs: planB.view.landingMs, ev: planB.view.ev, slipMarginMs: planB.view.slipMarginMs, profile, power: planB.view.power },
         )
       : null;
 

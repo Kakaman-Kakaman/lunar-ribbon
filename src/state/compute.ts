@@ -1,6 +1,7 @@
 // Client for the series worker, with a main-thread fallback if workers are unavailable.
 
 import { FrameCache, computeSeries, type SiteSeries } from '../engine/visibility';
+import { computeDsnSeries, type DsnSeries } from '../engine/dsn';
 import type { HorizonMask } from '../engine/horizon';
 import { DAY_MS, HOUR_MS } from './scenario';
 
@@ -13,7 +14,7 @@ export interface WorkerRequest {
   n: number;
 }
 export type WorkerReply =
-  | { id: number; ok: true; series: SiteSeries; ms: number }
+  | { id: number; ok: true; series: SiteSeries; dsn: DsnSeries; ms: number }
   | { id: number; ok: false; error: string };
 
 /** Series run from this many days before the anchor landing... */
@@ -27,6 +28,8 @@ export const SERIES_N = (LEAD_DAYS + SCAN_DAYS + MAX_STAY_DAYS) * 24 + 1;
 
 export interface SeriesResult {
   series: SiteSeries;
+  /** Moon elevation at the DSN complexes for the same hours (site-independent). */
+  dsn: DsnSeries;
   /** Time the computation took, ms. */
   ms: number;
   inWorker: boolean;
@@ -47,7 +50,7 @@ function getWorker(): Worker | null {
       const p = pending.get(e.data.id);
       if (!p) return;
       pending.delete(e.data.id);
-      if (e.data.ok) p.resolve({ series: e.data.series, ms: e.data.ms, inWorker: true });
+      if (e.data.ok) p.resolve({ series: e.data.series, dsn: e.data.dsn, ms: e.data.ms, inWorker: true });
       else p.reject(new Error(e.data.error));
     };
     worker.onerror = () => {
@@ -95,7 +98,8 @@ export function getSeries(mask: HorizonMask, heightM: number, anchorMs: number):
           fallbackFrames ??= new FrameCache();
           const t0 = performance.now();
           const series = computeSeries(mask, heightM, startMs, STEP_MS, SERIES_N, fallbackFrames);
-          resolve({ series, ms: performance.now() - t0, inWorker: false });
+          const dsn = computeDsnSeries(startMs, STEP_MS, SERIES_N);
+          resolve({ series, dsn, ms: performance.now() - t0, inWorker: false });
         } catch (e) {
           reject(e instanceof Error ? e : new Error(String(e)));
         }

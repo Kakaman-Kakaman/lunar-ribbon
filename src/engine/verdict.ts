@@ -5,6 +5,7 @@
 // terrain source named, and for a dark spell the compass direction of the Sun and the
 // distance to the terrain that hides it (when the skyline mask carries distKm).
 
+import type { RequirementFailure } from './requirements';
 import type { Evaluation, MissionProfile } from './mission';
 import type { HorizonMask } from './horizon';
 import { darkSpans } from './ribbonGeometry';
@@ -217,6 +218,43 @@ export interface VerdictInput {
   ctx?: FailureContext;
   /** First time in the stay that Earth crosses the Sun while the Sun is above the skyline. */
   eclipse?: { startMs: number; hours: number; maxCover: number } | null;
+  /** Version 2: the battery and contact rules (requirements.ts) for this landing; null when the profile has neither. */
+  power?: PowerContact | null;
+}
+
+/** The battery and Deep Space Network contact outcome of one landing. */
+export interface PowerContact {
+  ok: boolean;
+  failures: RequirementFailure[];
+  firstFailureAfterH: number | null;
+  minChargeFrac: number | null;
+  batteryEmptyAfterH: number | null;
+  worstDayContactH: number | null;
+}
+
+const okOf = (s: { ev: Evaluation; power?: PowerContact | null }) => s.ev.ok && (!s.power || s.power.ok);
+
+function powerFailureSentences(pc: PowerContact, p: MissionProfile): string[] {
+  const out: string[] = [];
+  const when = pc.firstFailureAfterH === null ? '' : ` ${fmtDuration(pc.firstFailureAfterH)} after landing`;
+  if (pc.failures.includes('battery')) {
+    const low = pc.minChargeFrac === null ? '' : ` (lowest ${fmtPct(pc.minChargeFrac)}${pc.batteryEmptyAfterH !== null ? `, empty ${fmtDuration(pc.batteryEmptyAfterH)} after landing` : ''})`;
+    out.push(`Fails${when}: the battery falls below the ${fmtPct(p.minBatteryCharge ?? 0)} this mission profile keeps in reserve${low}.`);
+  }
+  if (pc.failures.includes('contact')) {
+    const s = `contact through the Deep Space Network drops to ${fmtDuration(pc.worstDayContactH ?? 0)} on the worst day; this mission profile needs ${fmtDuration(p.minContactHoursPerDay ?? 0)} a day`;
+    out.push(out.length ? `Also, ${s}.` : `Fails${when}: ${s}.`);
+  }
+  return out;
+}
+
+function powerWorksSentence(pc: PowerContact, p: MissionProfile): string | null {
+  const bits: string[] = [];
+  if (p.minBatteryCharge !== undefined && pc.minChargeFrac !== null) bits.push(`the battery never drops below ${fmtPct(pc.minChargeFrac)}`);
+  if (p.minContactHoursPerDay !== undefined && pc.worstDayContactH !== null) bits.push(pc.worstDayContactH >= 24 - 1e-9 ? 'there is Deep Space Network contact every hour' : `there are at least ${fmtDuration(pc.worstDayContactH)} of Deep Space Network contact every day`);
+  if (!bits.length) return null;
+  const s = bits.join(', and ');
+  return s.charAt(0).toUpperCase() + s.slice(1) + '.';
 }
 
 export interface Verdict {
@@ -345,8 +383,19 @@ function worksSentences(i: VerdictInput): string[] {
 /** The sentences for one plan. */
 export function describeVerdict(i: VerdictInput): Verdict {
   const source = terrainLabel(i.terrain);
-  const sentences = i.ev.ok ? worksSentences(i) : failureSentences(i);
-  if (!i.ev.ok) {
+  const pc = i.power ?? null;
+  const ok = okOf(i);
+  let sentences: string[];
+  if (i.ev.ok && pc && !pc.ok) sentences = powerFailureSentences(pc, i.profile);
+  else if (!i.ev.ok) {
+    sentences = failureSentences(i);
+    if (pc && !pc.ok) sentences.push(...powerFailureSentences(pc, i.profile).map((t) => t.replace(/^Fails[^:]*: /, 'Also, ')));
+  } else {
+    sentences = worksSentences(i);
+    const extra = pc ? powerWorksSentence(pc, i.profile) : null;
+    if (extra) sentences.splice(1, 0, extra);
+  }
+  if (!ok) {
     if (i.nextWindowStartMs === null) {
       sentences.push('No landing date in the following year works for this mission profile.');
     } else {
@@ -364,11 +413,11 @@ export function describeVerdict(i: VerdictInput): Verdict {
     );
   }
   if (i.terrain === 'smooth-sphere') sentences.push('This is a geometric estimate with no terrain.');
-  const word = i.ev.ok ? 'Works' : 'Fails';
+  const word = ok ? 'Works' : 'Fails';
   // For a pass the word stands in front of the sentence; for a failure the first sentence already
   // says "Fails ...", so the word is not repeated.
-  const text = i.ev.ok ? `Works. ${sentences.join(' ')}` : sentences.join(' ');
-  return { ok: i.ev.ok, word, sentences, text, source };
+  const text = ok ? `Works. ${sentences.join(' ')}` : sentences.join(' ');
+  return { ok, word, sentences, text, source };
 }
 
 // ---------------------------------------------------------------------------------------
@@ -381,10 +430,16 @@ export interface PlanSummary {
   ev: Evaluation;
   slipMarginMs: number;
   profile: MissionProfile;
+  power?: PowerContact | null;
 }
 
 function reason(s: PlanSummary): string {
   const { ev } = s;
+  if (ev.ok && s.power && !s.power.ok) {
+    return s.power.failures.includes('battery')
+      ? `the battery falls below the ${fmtPct(s.profile.minBatteryCharge ?? 0)} reserve`
+      : `Deep Space Network contact drops to ${fmtDuration(s.power.worstDayContactH ?? 0)} on the worst day`;
+  }
   const first = ev.failures[0];
   switch (first) {
     case 'sun-down-at-landing':
@@ -412,7 +467,7 @@ export function compareSentence(a: PlanSummary, b: PlanSummary): string {
     parts.push(Math.abs(dMs) > 1 ? 'The plans differ in site and landing date.' : 'The plans differ in site.');
   }
 
-  if (a.ev.ok && b.ev.ok) {
+  if (okOf(a) && okOf(b)) {
     const sa = a.slipMarginMs / DAY_MS, sb = b.slipMarginMs / DAY_MS;
     if (Math.abs(sa - sb) < 1e-6) {
       parts.push(`Both work, and both can slip up to ${fmtDuration(a.slipMarginMs / HOUR_MS)}.`);
@@ -422,8 +477,8 @@ export function compareSentence(a: PlanSummary, b: PlanSummary): string {
         `Both work. Plan A can slip up to ${fmtDuration(a.slipMarginMs / HOUR_MS)} and plan B up to ${fmtDuration(b.slipMarginMs / HOUR_MS)}, so plan ${wider} has more room.`,
       );
     }
-  } else if (a.ev.ok !== b.ev.ok) {
-    const [okP, badP, okL, badL] = a.ev.ok ? [a, b, 'A', 'B'] : [b, a, 'B', 'A'];
+  } else if (okOf(a) !== okOf(b)) {
+    const [okP, badP, okL, badL] = okOf(a) ? [a, b, 'A', 'B'] : [b, a, 'B', 'A'];
     parts.push(
       `Plan ${okL} works and plan ${badL} fails because ${reason(badP)}; the Sun is up for ${fmtPct(okP.ev.sunShare)} of the stay in plan ${okL} against ${fmtPct(badP.ev.sunShare)} in plan ${badL}.`,
     );

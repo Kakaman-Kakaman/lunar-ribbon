@@ -62,9 +62,15 @@ describe('PROFILES', () => {
     expect(short).toMatchObject({ label: 'Short stay (6.5 days)', stayDays: 6.5, maxDarkGapHours: 0, minEarthShare: 1, needSunAtLanding: true, needEarthAtLanding: true });
     expect(lunarDay).toMatchObject({ label: 'One lunar day (14 days)', stayDays: 14, maxDarkGapHours: 0, minEarthShare: 0.75, needSunAtLanding: true, needEarthAtLanding: true });
     expect(rover).toMatchObject({ label: 'Long rover mission (100 days)', stayDays: 100, maxDarkGapHours: 96, minEarthShare: 0.5, needSunAtLanding: true, needEarthAtLanding: true });
-    expect(short.basis).toBe("NASA's Artemis III planning: a 6.5-day surface stay with continuous sunlight and direct-to-Earth communication, no relay.");
-    expect(lunarDay.basis).toBe("Solar-powered landers such as Blue Ghost Mission 1 operate for about 14 days of daylight. The 75% Earth-link share is this tool's default, not a NASA figure.");
-    expect(rover.basis).toBe("NASA's VIPER plan: 100 days, direct-to-Earth link, mission at risk after more than four days of cold and dark. The 50% Earth-link share is this tool's default, not a NASA figure.");
+    // Version 2: battery floor and contact hours per day; every basis names which numbers are NASA's and which are this tool's.
+    expect(short).toMatchObject({ minBatteryCharge: 0.2, minContactHoursPerDay: 24 });
+    expect(lunarDay).toMatchObject({ minBatteryCharge: 0.2, minContactHoursPerDay: 18 });
+    expect(rover.minBatteryCharge).toBeUndefined();
+    expect(rover.minContactHoursPerDay).toBe(12);
+    expect(short.basis).toMatch(/^NASA's Artemis III planning: a 6\.5-day surface stay with continuous sunlight and direct-to-Earth communication, no relay\./);
+    expect(lunarDay.basis).toMatch(/this tool's defaults, not NASA figures/);
+    expect(rover.basis).toMatch(/^NASA's VIPER plan: 100 days/);
+    for (const p of [short, lunarDay, rover]) expect(p.basis).toMatch(/this tool's/);
   });
 });
 

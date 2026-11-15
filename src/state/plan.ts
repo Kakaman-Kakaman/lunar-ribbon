@@ -20,7 +20,10 @@ import {
   type Envelope,
   type PathPoint,
 } from '../engine/ribbonGeometry';
-import { describeVerdict, failureContext, type FailureContext, type Verdict } from '../engine/verdict';
+import { describeVerdict, failureContext, type FailureContext, type PowerContact, type Verdict } from '../engine/verdict';
+import { DSN_RECEIVE_MIN_EL_DEG, type DsnSeries } from '../engine/dsn';
+import { DEFAULT_POWER } from '../engine/power';
+import { evaluateRequirements, scanRequirements, stayCount, type Requirements } from '../engine/requirements';
 import type { SiteSeries } from '../engine/visibility';
 import { LEAD_DAYS, SCAN_DAYS } from './compute';
 import { DAY_MS, HOUR_MS } from './scenario';
@@ -99,10 +102,35 @@ export function fitRange(
 /** Index of the anchor landing in the series. */
 export const anchorIndex = () => LEAD_DAYS * 24;
 
-/** The slip scan: one candidate per 6 hours of landing time for the year after the anchor. */
-export function scanFor(series: SiteSeries, profile: MissionProfile): SlipScan {
+/** The battery and contact rules of a profile as requirements, or null if it has neither. */
+export function powerContactRules(profile: MissionProfile): Requirements | null {
+  if (profile.minBatteryCharge === undefined && profile.minContactHoursPerDay === undefined) return null;
+  return {
+    stayDays: profile.stayDays,
+    upThreshold: 0.5,
+    sunAtLanding: false,
+    earthAtLanding: false,
+    power: profile.minBatteryCharge !== undefined ? { config: DEFAULT_POWER, minCharge: profile.minBatteryCharge } : undefined,
+    contact: profile.minContactHoursPerDay !== undefined ? { minHoursPerDay: profile.minContactHoursPerDay, minElDeg: DSN_RECEIVE_MIN_EL_DEG } : undefined,
+  };
+}
+
+/** Bit set in a slip-scan code when the battery or contact rule fails (1 = Sun, 2 = Earth). */
+export const POWER_CONTACT_BIT = 4;
+
+/**
+ * The slip scan: one candidate per 6 hours of landing time for the year after the anchor. With a
+ * DSN series, candidates that break the battery or contact rule also get POWER_CONTACT_BIT.
+ */
+export function scanFor(series: SiteSeries, profile: MissionProfile, dsn?: DsnSeries): SlipScan {
   const from = anchorIndex();
-  return slipScan(series, profile, from, from + SCAN_DAYS * 24, 6);
+  const scan = slipScan(series, profile, from, from + SCAN_DAYS * 24, 6);
+  const rules = powerContactRules(profile);
+  if (rules && dsn) {
+    const ex = scanRequirements(series, rules, from, from + SCAN_DAYS * 24, 6, dsn);
+    for (let k = 0; k < Math.min(scan.n, ex.ok.length); k++) if (!ex.ok[k]) scan.code[k] |= POWER_CONTACT_BIT;
+  }
+  return scan;
 }
 
 export interface PlanView {
@@ -110,6 +138,8 @@ export interface PlanView {
   landingIdx: number;
   profile: MissionProfile;
   ev: Evaluation;
+  /** Battery and contact outcome (version 2); null when the profile has neither rule. */
+  power: PowerContact | null;
   ctx: FailureContext;
   verdict: Verdict;
   scan: SlipScan;
@@ -152,10 +182,17 @@ export function planView(
   landingMs: number,
   profile: MissionProfile,
   scan: SlipScan,
+  dsn?: DsnSeries,
 ): PlanView {
   const { stepMs } = series;
   const landingIdx = Math.round((landingMs - series.startMs) / stepMs);
   const ev = evaluate(series, landingIdx, profile);
+  const rules = powerContactRules(profile);
+  let power: PowerContact | null = null;
+  if (rules && dsn && landingIdx >= 0 && landingIdx + stayCount(rules, stepMs) <= series.n) {
+    const r = evaluateRequirements(series, landingIdx, rules, dsn);
+    power = { ok: r.ok, failures: r.failures, firstFailureAfterH: r.firstFailureAfterH, minChargeFrac: r.minChargeFrac, batteryEmptyAfterH: r.batteryEmptyAfterH, worstDayContactH: r.worstDayContactH };
+  }
   const ctx = failureContext(series, mask, heightM, landingIdx, ev, profile);
   const margin = slipMarginMs(scan, landingMs);
   const scanEndMs = scan.startMs + (scan.n - 1) * scan.stepMs;
@@ -171,6 +208,7 @@ export function planView(
     terrain: mask.terrain,
     ctx,
     eclipse,
+    power,
   });
 
   const stayN = Math.max(1, Math.round((profile.stayDays * DAY_MS) / stepMs));
@@ -196,7 +234,7 @@ export function planView(
   const rate = deltas.length ? deltas[Math.floor(deltas.length / 2)] : null;
 
   return {
-    landingMs, landingIdx, profile, ev, ctx, verdict, scan,
+    landingMs, landingIdx, profile, ev, power, ctx, verdict, scan,
     slipMarginMs: margin,
     nextStartMs: next ? next.startMs : null,
     stayEndIdx, pathEndIdx, sunPath, earthPath, ticks, spans,

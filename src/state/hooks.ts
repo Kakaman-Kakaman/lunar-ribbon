@@ -1,5 +1,6 @@
 // React hooks: the scenario with its URL hash, the site catalogue, and one plan's data.
 
+import type { DsnSeries } from '../engine/dsn';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { HorizonMask } from '../engine/horizon';
 import type { MissionProfile } from '../engine/mission';
@@ -160,6 +161,7 @@ export interface PlanData {
   site: SiteInfo;
   mask: HorizonMask;
   series: SiteSeries;
+  dsn: DsnSeries;
   geom: SeriesGeometry;
   ms: number;
   inWorker: boolean;
@@ -192,7 +194,7 @@ export function usePlan(
       const mask = await loadMask(site);
       const r = await getSeries(mask, heightM, anchorMs);
       if (!live) return;
-      setData({ key, site, mask, series: r.series, geom: seriesGeometry(r.series), ms: r.ms, inWorker: r.inWorker });
+      setData({ key, site, mask, series: r.series, dsn: r.dsn, geom: seriesGeometry(r.series), ms: r.ms, inWorker: r.inWorker });
     })().catch((e: unknown) => {
       if (live) setError({ key, message: e instanceof Error ? e.message : String(e) });
     });
@@ -203,11 +205,12 @@ export function usePlan(
   }, [key, retry]);
 
   const fresh = data && data.key === key ? data : null;
+  // The year of landing dates depends only on the series and the rules, not on the chosen landing.
+  const scan = useMemo(() => (fresh ? scanFor(fresh.series, profile, fresh.dsn) : null), [fresh, profile]);
   const view = useMemo(() => {
-    if (!fresh) return null;
-    const scan = scanFor(fresh.series, profile);
-    return planView(fresh.mask, fresh.series, heightM, landingMs, profile, scan);
-  }, [fresh, heightM, landingMs, profile]);
+    if (!fresh || !scan) return null;
+    return planView(fresh.mask, fresh.series, heightM, landingMs, profile, scan, fresh.dsn);
+  }, [fresh, scan, heightM, landingMs, profile]);
 
   if (fresh && view) {
     lastGood.current = { data: fresh, view };

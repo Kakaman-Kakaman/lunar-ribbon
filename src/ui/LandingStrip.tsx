@@ -13,7 +13,14 @@ const LANE_H = 22;
 const HOUR = 3600000;
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
-const CODE_WORD = ['works', 'Sun fails', 'Earth fails', 'Sun and Earth fail'];
+const CODE_WORD = ['works', 'Sun fails', 'Earth fails', 'Sun and Earth fail', 'battery or contact fails'];
+
+/** Words for a scan code: bits 1 Sun, 2 Earth, 4 battery or contact (version 2). */
+function codeWord(code: number): string {
+  const base = code & 3;
+  if (base === 0) return code === 0 ? CODE_WORD[0] : CODE_WORD[4];
+  return code & 4 ? `${CODE_WORD[base]}, and battery or contact` : CODE_WORD[base];
+}
 
 interface Props {
   width: number;
@@ -40,12 +47,20 @@ export function CellDefs({ uid }: { uid: string }) {
         <rect width="6" height="6" fill="var(--dark)" />
         <path d="M0,0 L6,6 M6,0 L0,6" stroke="var(--alert)" strokeWidth="1.6" />
       </pattern>
+      <pattern id={`${uid}power`} width="6" height="6" patternUnits="userSpaceOnUse">
+        <rect width="6" height="6" fill="var(--dark)" />
+        <circle cx="3" cy="3" r="1.4" fill="var(--text)" />
+      </pattern>
     </defs>
   );
 }
 
-export const cellFill = (uid: string, code: number) =>
-  code === 0 ? 'var(--good)' : code === 1 ? `url(#${uid}sun)` : code === 2 ? `url(#${uid}earth)` : `url(#${uid}both)`;
+export const cellFill = (uid: string, code: number) => {
+  const base = code & 3;
+  if (code === 0) return 'var(--good)';
+  if (base === 0) return `url(#${uid}power)`;
+  return base === 1 ? `url(#${uid}sun)` : base === 2 ? `url(#${uid}earth)` : `url(#${uid}both)`;
+};
 
 export function LandingStrip({ width, view, onPick, label, showKey = true }: Props) {
   const uid = useId().replace(/:/g, '');
@@ -113,14 +128,14 @@ export function LandingStrip({ width, view, onPick, label, showKey = true }: Pro
       <div className="flex flex-wrap items-center gap-x-5 gap-y-1 pb-1 text-[13px]" style={{ paddingLeft: PLOT_LEFT - 70 }}>
         <span className="font-semibold text-ink">{label}: landing date, next year (UTC)</span>
         <svg width="0" height="0" aria-hidden="true"><CellDefs uid={`${uid}l`} /></svg>
-        {showKey && [0, 1, 2, 3].map((c) => (
+        {showKey && [0, 1, 2, 3, 4].map((c) => (
           <span key={c} className="flex items-center gap-1.5 text-ink2">
             <svg width="22" height="12" aria-hidden="true"><rect width="22" height="12" fill={cellFill(`${uid}l`, c)} stroke="var(--text2)" strokeWidth="0.6" /></svg>
-            {CODE_WORD[c][0].toUpperCase() + CODE_WORD[c].slice(1)}
+            {codeWord(c)[0].toUpperCase() + codeWord(c).slice(1)}
           </span>
         ))}
         <span className="mono min-h-[1.25rem] text-ink" aria-hidden="true">
-          {hoverMs !== null && `${fmtDateTimeUtc(hoverMs)}: ${CODE_WORD[scan.code[hover!]]}`}
+          {hoverMs !== null && `${fmtDateTimeUtc(hoverMs)}: ${codeWord(scan.code[hover!])}`}
         </span>
       </div>
       <svg
