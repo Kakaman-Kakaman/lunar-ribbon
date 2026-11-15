@@ -67,10 +67,22 @@ export function sampleDem(grid: DemGrid, x: number, y: number): number {
   return (top * (1 - fr) + bot * fr) * grid.dnToM;
 }
 
+/** Terrain that is not one in-memory grid, such as browser tiles: heights in metres, NaN where unknown. */
+export interface TerrainSource {
+  scaleM: number;
+  pole?: Pole;
+  sample(x: number, y: number): number;
+}
+
 /** One level of a nested terrain stack: used for samples within `maxKm` of the observer (no limit if absent). */
 export interface NestedGrid {
-  grid: DemGrid;
+  grid: DemGrid | TerrainSource;
   maxKm?: number;
+}
+
+/** Height from a grid or a terrain source; NaN outside it. */
+export function sampleTerrain(g: DemGrid | TerrainSource, x: number, y: number): number {
+  return 'sample' in g ? g.sample(x, y) : sampleDem(g, x, y);
 }
 
 export interface HorizonOptions {
@@ -138,7 +150,7 @@ function thinCrests(c: [number, number][], minGainDeg: number, max: number): [nu
 function nestedHeightAt(grids: NestedGrid[], x: number, y: number, distM: number): number {
   for (const g of grids) {
     if (g.maxKm !== undefined && distM > g.maxKm * 1000) continue;
-    const z = sampleDem(g.grid, x, y);
+    const z = sampleTerrain(g.grid, x, y);
     if (!Number.isNaN(z)) return z;
   }
   return NaN;
@@ -180,7 +192,7 @@ export function horizonProfile(o: HorizonOptions): HorizonResult {
   if (nested) {
     // Finest grid that covers the observer sets the near-field step (half a pixel); farther out the
     // step grows with distance so it matches the gap between neighbouring rays.
-    const local = nested.find((g) => !Number.isNaN(sampleDem(g.grid, sx, sy))) ?? nested[nested.length - 1];
+    const local = nested.find((g) => !Number.isNaN(sampleTerrain(g.grid, sx, sy))) ?? nested[nested.length - 1];
     const minStep = local.grid.scaleM / 2;
     const azRad = azStep * DEG;
     for (let d = minStep; d <= maxM; d += Math.max(minStep, azRad * d)) dists.push(d);
