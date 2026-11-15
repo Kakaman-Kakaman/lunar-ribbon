@@ -1,6 +1,6 @@
 # Ribbon
 
-Ribbon — a lunar landing-site navigator. At the Moon's south pole, the skyline is the calendar.
+Ribbon is a lunar landing-site navigator. At the Moon's south pole, the skyline is the calendar.
 
 Entry for the NASA Space Apps Challenge 2026, challenge "Lunar Landing Site Navigator".
 
@@ -33,6 +33,11 @@ landing can slip and still work, and the next landing date that works. A landing
 colours every landing time over the next year. Three mission profiles (6.5-day stay, one lunar
 day, 100-day rover) and two observer heights (2 m and 10 m) change the rules.
 
+Any point can be typed as latitude and longitude. Inside 80°S its skyline is computed in the
+browser from a 480 m NASA LOLA grid and labelled indicative; elsewhere the Moon is treated as a
+smooth sphere. Three real landings can be replayed (IM-1 Odysseus, IM-2 Athena, Blue Ghost
+Mission 1), each with what the app shows kept apart from what happened.
+
 The app opens on a real case at Malapert Massif. Plan A works. Plan B lands three days later,
 and the Sun goes behind a ridge 2.3 to 4.6 km to the west for 36 hours of the 6.5-day stay. The
 next landing that works is about 26 days later.
@@ -54,6 +59,8 @@ The app's Validation section has the full results (`src/data/validation.json`).
 
 - Craters and boulders smaller than the 80 m terrain grid are invisible.
 - Sites north of 60°S have no terrain, only a smooth sphere, and are labelled.
+- Typed points use a 480 m grid inside 80°S, so hills under about half a kilometre are missing;
+  the app labels these skylines indicative.
 - "Earth in view" is a line of sight, not a radio link budget.
 - Two of the three Earth-in-view thresholds are this tool's defaults, not NASA figures; the app
   says which.
