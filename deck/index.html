@@ -268,7 +268,7 @@ b, strong { font-weight: 600; color: var(--ink); }
       <div><div class="what mono">lands 2027-10-16 18:00 UTC</div><div class="v"><span class="verdict-word vw-bad">Fails</span> 5 days after landing. Terrain 4.6 km to the west hides the Sun for 42 hours, 36 of them during the stay.</div></div>
     </div>
     <div class="abs counter in" style="left:96px;top:330px;--d:500ms"><span class="ink2">Hours without sunlight during the 6.5-day stay:</span> <span class="num" id="hidCount">0</span></div>
-    <div class="abs tiny in" style="left:96px;top:966px;width:1728px;--d:600ms">Close-up of the same strip, from west to north-east. Thick yellow line: the Sun during the stay. Red dots: the Sun is behind the ridge.</div>
+    <div class="abs tiny in" style="left:96px;top:966px;width:1728px;--d:600ms">Close-up of the same strip, from west to north-east. The Sun is shown where it stands at landing. Thick yellow line: its path during the stay. Red dots: the Sun is behind the ridge.</div>
   </section>
 
   <!-- 6. The checks -->
@@ -397,7 +397,7 @@ function stateFor(n, t, now) {
   } else if (n === 4 || n === 6) {
     Object.assign(s, stateFor(3, 1e9, now)); s.alpha = 0;
   } else if (n === 5) {
-    s.v = ZOOM; s.track = 0.4; s.trackTo = STORY.end; s.win = clamp(t / 400);
+    s.v = ZOOM; s.band = 0; s.region = 0; s.track = 0; s.win = clamp(t / 400);
     s.winH = STILL ? HB : lerp(0, HB, clamp((t - 1000) / 2200));   // constant speed: three days in 2.2 s
     s.spanB = STILL ? 1 : clamp((t - 3000) / 400); s.next = STILL ? 1 : clamp((t - 3700) / 400);
   }
@@ -582,6 +582,7 @@ function trackElAt(az) {           // the story's Sun track elevation at an azim
 }
 function drawWindow(s, v) {
   const h0 = s.winH, SUN = STORY.sun;
+  E.win.appendChild(svgEl('path', { d: polyline(SUN, v), fill: 'none', stroke: '#ffc04d', 'stroke-width': 2, 'stroke-dasharray': '1 7', 'stroke-linecap': 'round', opacity: 0.55 * s.win }));
   let up = [], hid = [], hidden = 0;
   const flushUp = () => { if (up.length > 1) E.win.appendChild(svgEl('path', { d: polyline(up, v), fill: 'none', stroke: '#ffb020', 'stroke-width': 6, 'stroke-linecap': 'round', 'stroke-linejoin': 'round', opacity: s.win })); up = []; };
   const flushHid = () => { if (hid.length > 1) E.over.appendChild(svgEl('path', { d: polyline(hid, v), fill: 'none', stroke: '#ff5a5f', 'stroke-width': 5, 'stroke-dasharray': '0.1 10', 'stroke-linecap': 'round', opacity: s.win })); hid = []; };
@@ -605,7 +606,8 @@ function drawWindow(s, v) {
   }
   const L = pos(SUN, 1, h0); const lx = vx(v, L[0]), ly = vy(v, L[1]);
   E.over.appendChild(svgEl('line', { x1: lx, x2: lx, y1: ly, y2: ly - 70, stroke: '#f2f4f7', 'stroke-width': 2, opacity: s.win }));
-  E.over.appendChild(svgEl('circle', { cx: lx, cy: ly, r: 9, fill: '#ffb020', stroke: '#f2f4f7', 'stroke-width': 2.5, opacity: s.win }));
+  E.over.appendChild(svgEl('circle', { cx: lx, cy: ly, r: 46, fill: 'url(#sunGlow)', opacity: s.win }));
+  E.over.appendChild(svgEl('circle', { cx: lx, cy: ly, r: 7.5, fill: '#fffef9', opacity: s.win }));
   const stamp = new Date(LANDING_MS + h0 * 3600000).toISOString().slice(0, 13).replace('T', ' ') + ':00 UTC';
   E.over.appendChild(svgEl('text', halo({ x: lx + 10, y: ly - 56, 'font-size': 20, 'font-family': MONO, fill: '#f2f4f7', opacity: s.win }), 'landing ' + stamp));
   if (s.spanB > 0.001) {
