@@ -15,6 +15,7 @@ Versions are those installed in `node_modules/`; licences are read from each pac
 | @types/react-dom | 19.3.0 | MIT | dev dependency |
 | @vitejs/plugin-react | 6.3.0 | MIT | dev dependency |
 | tailwindcss | 4.3.5 | MIT | dev dependency |
+| geotiff | 3.0.5 | MIT | dev dependency (terrain pipeline only: reads NASA Goddard GeoTIFF elevation models) |
 | typescript | 7.0.2 | Apache-2.0 | dev dependency |
 | vite | 8.3.8 | MIT | dev dependency |
 | vitest | 5.1.0 | MIT | dev dependency |
@@ -34,6 +35,7 @@ Versions are those installed in `node_modules/`; licences are read from each pac
 | Data | Source | Use | Citation and terms |
 |------|--------|-----|--------------------|
 | Lunar Orbiter Laser Altimeter gridded data records, products `LDEM_80S_80M` and `LDEM_60S_240M` | NASA Planetary Data System, data set `LRO-L-LOLA-4-GDR-V1.0`; files from https://imbrium.mit.edu/DATA/LOLA_GDR/POLAR/IMG/ | Terrain behind every skyline | Neumann, G. A. (2011). *LRO Moon Laser Altimeter 4 GDR V1.0* [Data set]. NASA Planetary Data System. https://doi.org/10.17189/1520642. Cited as the PDS asks for PDS3 data: the data set by DOI, the products by ID (https://pds.nasa.gov/datastandards/pds3/citing-pds3-data.shtml). |
+| NASA Goddard crossover-adjusted LOLA south-pole elevation model, `LDEM_80S_20MPP_ADJ` (20 m per pixel) | NASA Goddard Planetary Geodesy Data Archive, https://pgda.gsfc.nasa.gov/products/90 | Fine terrain for skylines (version 2) | Barker, M. K., et al. (2023). *Planetary Science Journal* 4, 183. https://doi.org/10.3847/PSJ/acf3e1. Data: https://doi.org/10.60903/gsfcpgda-lola-spole |
 | JPL Horizons ephemerides | https://ssd.jpl.nasa.gov/horizons/ | Reference tables for testing Sun and Earth directions (`tests/fixtures/horizons/`) | NASA/JPL Solar System Dynamics. Data retrieved on 2026 November 14. Horizons System. https://ssd.jpl.nasa.gov (the citation form given at https://ssd.jpl.nasa.gov/about/) |
 | NASA Moon Trek (Solar System Treks, NASA JPL) | https://trek.nasa.gov/moon/ | Elevation values and NASA Goddard's average Sun and Earth visibility maps, used to check terrain and skylines (`tests/fixtures/trek/`) | Accessed 2026 November 14. No citation form or data-use terms were found on the portal. |
 | NASA Goddard average Sun and Earth visibility maps | Served by NASA Moon Trek | Reference for the skyline validation | Method: Mazarico, E., Neumann, G. A., Smith, D. E., Zuber, M. T., et al. (2011). Illumination conditions of the lunar polar regions using LOLA topography. *Icarus* 211, 1066–1081. https://doi.org/10.1016/j.icarus.2010.10.030 |
