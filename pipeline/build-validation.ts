@@ -203,7 +203,7 @@ const cmp = JSON.parse(readFileSync(join(ROOT, 'tests', 'fixtures', 'trek', 'com
     const status: Status = 'note';
     checks.push({
       id: body === 'sun' ? 'average-sunlight' : 'average-earth',
-      title: body === 'sun' ? 'Average sunlight against NASA Goddard maps' : 'Average Earth visibility against NASA Goddard maps',
+      title: body === 'sun' ? 'Version 1 terrain (80 m): average sunlight against NASA Goddard maps' : 'Version 1 terrain (80 m): average Earth visibility against NASA Goddard maps',
       reference: `NASA Goddard average ${label} visibility maps (Mazarico et al. 2011 method, 2016 release), read from NASA Moon Trek`,
       result: `Like-for-like, observer on the ground (0 m), ${c0.n} sites: correlation ${f(c0.pearson, 2)}, median absolute difference ${f(c0.medianAbsDiffPp)} percentage points, mean difference (ours minus NASA) ${sg(c0.meanDiffPp)} points; largest difference ${siteName(c0.worstSite)}: ours ${f(val(w0, 0))}%, NASA ${f(100 * w0.nasa[body].value)}% (${sg(c0.worstDiffPp)} points). At 2 m (shipped masks): correlation ${f(c2.pearson, 2)}, median ${f(c2.medianAbsDiffPp)} points, mean ${sg(c2.meanDiffPp)} points, largest ${sg(c2.worstDiffPp)} points.`,
       detail: `Quantity compared: share of time with any part of the ${label}'s disc above the skyline (NASA's definition), averaged over 18.6 years from 2020-01-01 every 2 hours (${cmp.period.samples} samples; NASA uses hourly steps over a full nutation cycle but gives no calendar dates). NASA's maps are for the ground surface, so the 0 m skylines are the like-for-like comparison; they were computed directly from the LOLA 80 m and 240 m grids with the same code as the shipped masks, which are unchanged. At 2 m the largest difference is ${siteName(w2.id)}: ours ${f(val(w2, 2))}%, NASA ${f(100 * w2.nasa[body].value)}% (${sg(c2.worstDiffPp)} points). At 10 m: correlation ${f(c10.pearson, 2)}, median absolute difference ${f(c10.medianAbsDiffPp)} points${c10.sitesOver30pp.length ? `, ${c10.sitesOver30pp.length} sites more than 30 points apart` : ', no site more than 30 points apart'}. Rank correlation at 0 m ${f(c0.spearman, 2)}. Crest points (${crests.length} derived highest-pixel sites): mean difference ${sg(bias(crests, 0))} points at 0 m against ${sg(bias(crests, 2))} at 2 m; other sites ${sg(bias(others, 0))} at 0 m and ${sg(bias(others, 2))} at 2 m. Observer height therefore explains about ${f(100 * (1 - bias(crests, 0) / bias(crests, 2)), 0)}% of the crest difference at 2 m, and a mean difference of ${sg(bias(crests, 0))} points remains at crests. Remaining limitation: an 80 m grid cannot see relief smaller than about 80 m, so sunlight at ridge crests may be overestimated. Differences at 0 m range from ${sg(Math.min(...d0))} to ${sg(Math.max(...d0))} points over all sites; negative values occur where our rounded coordinates fall off the NASA crest. Mean disc fraction instead of any-part share at 0 m: correlation ${f(m0.pearson, 2)}, median ${f(m0.medianAbsDiffPp)} points. Sites use the finest NASA map that covers them: 60 m (${res60} sites), 120 m (${res120}), 240 m (${res240}). Other caveats: NASA's maps are on a 60 m to 240 m grid and, per NASA's documentation, contain linear artefacts from the DEM; our site coordinates are rounded, so at ridge crests a 100 m shift changes the skyline by degrees. Status is 'note': ranking and median agreement are good, but the largest single-site difference is ${f(Math.abs(c0.worstDiffPp), 0)} points.`,
@@ -219,7 +219,7 @@ const cmp = JSON.parse(readFileSync(join(ROOT, 'tests', 'fixtures', 'trek', 'com
   const p = (v: number) => `${(100 * v).toFixed(1)}%`;
   checks.push({
     id: 'benchmark-barker',
-    title: 'Average illumination at Connecting Ridge against a published study',
+    title: 'Version 1 terrain (80 m): average illumination at Connecting Ridge against a published study',
     reference: 'Barker et al. (2021), Planetary and Space Science 203, 105119, Table 2: Site 1 (Shackleton-de Gerlache connecting ridge), January 2024 to January 2026',
     result: `Ours, mean Sun disc fraction 2024-01-01 to 2026-01-01: crest point ${p(crest.h2.sunMean)} at 2 m and ${p(crest.h10.sunMean)} at 10 m; listed point ${p(ridge.h2.sunMean)} at 2 m and ${p(ridge.h10.sunMean)} at 10 m. Published best regions: about 67-71% at 1 m and about 83-89% at 5 m.`,
     detail: `Plausibility check only. The published figures are first-percentile values over an ensemble of 100 elevation-model variants, for the best small regions on a 5 m grid at 1 m and 5 m above the ground; the digits were read from an image of the table. Ours are single points from an 80 m grid at 2 m and 10 m, hourly. Our crest point (the highest 80 m pixel within 8 km of the listed centre) is a favourable spot and gives ${p(crest.h2.sunMean)} at 2 m, above the published 1 m range and at the top of the 5 m range, although 2 m is closer to 1 m than to 5 m; because the published values are first percentiles (pessimistic), a higher best estimate is not a contradiction, but it is not a match either. Our listed point sits off the crest and gives ${p(ridge.h2.sunMean)} at 2 m, well below the published best regions, as expected for a point that is not among the best. The result is consistent with the published picture (a few tens of percent at 1 m rising by about 15-20 points at 5 m) but cannot confirm our numbers to better than about 20 percentage points.`,
@@ -293,6 +293,21 @@ const cmp = JSON.parse(readFileSync(join(ROOT, 'tests', 'fixtures', 'trek', 'com
   const tc = join(ROOT, 'pipeline/out/terrain-v2-comparison.json');
   if (existsSync(tc)) {
     const r = JSON.parse(readFileSync(tc, 'utf8'));
+    const sg = (v: number) => `${v >= 0 ? '+' : ''}${f(v)}`;
+    for (const body of ['sun', 'earth'] as const) {
+      const v2 = r.summary[body].v2, v1 = r.summary[body].v1;
+      const label = body === 'sun' ? 'sunlight' : 'Earth visibility';
+      const [wid0, wd] = String(v2.worst).split(' ');
+      const wid = (JSON.parse(readFileSync(join(ROOT, 'public/masks-v2/index.json'), 'utf8')).sites as { id: string; name: string }[]).find((x) => x.id === wid0)?.name ?? wid0;
+      checks.push({
+        id: body === 'sun' ? 'average-sunlight-v2' : 'average-earth-v2',
+        title: `Average ${label} against NASA Goddard maps, on the terrain the app uses`,
+        reference: `NASA Goddard average ${body === 'sun' ? 'Sun' : 'Earth'} visibility maps (Mazarico et al. 2011 method, 2016 release), read from NASA Moon Trek, 60 m to 240 m pixels`,
+        result: `Observer on the ground (0 m), ${v2.n} sites: correlation ${f(v2.pearson, 2)}, median absolute difference ${f(v2.medianAbsDiffPp)} percentage points, mean difference (ours minus NASA) ${sg(v2.meanDiffPp)} points; largest ${wid} (${sg(Number(wd))} points).`,
+        detail: `Terrain: ${r.stack.join(', ')}, skylines every ${r.azStepDeg.v2} degrees. Same quantity and period as the version 1 check (share of time with any part of the disc above the skyline, 18.6 years from 2020 every 2 hours). On version 1's 80 m terrain the same comparison gave correlation ${f(v1.pearson, 2)}, median ${f(v1.medianAbsDiffPp)} points, mean ${sg(v1.meanDiffPp)}. On the finer terrain, relief within tens of metres of a point at ground level hides the low Sun more often than NASA's coarser maps show, so ours runs darker, most at ridge crests; at lander heights this near-ground relief matters less (see the Malapert and Connecting Ridge checks). Status is 'note' for that reason.`,
+        status: 'note',
+      });
+    }
     const crest = r.barker.find((b: any) => b.id.endsWith('-crest'));
     if (crest) checks.push({
       id: 'barker-fine',

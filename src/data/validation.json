@@ -43,7 +43,7 @@
     },
     {
       "id": "average-sunlight",
-      "title": "Average sunlight against NASA Goddard maps",
+      "title": "Version 1 terrain (80 m): average sunlight against NASA Goddard maps",
       "reference": "NASA Goddard average Sun visibility maps (Mazarico et al. 2011 method, 2016 release), read from NASA Moon Trek",
       "result": "Like-for-like, observer on the ground (0 m), 23 sites: correlation 0.98, median absolute difference 1.3 percentage points, mean difference (ours minus NASA) +2.0 points; largest difference Malapert Massif (NASA Goddard study site 23): ours 18.2%, NASA 4.6% (+13.6 points). At 2 m (shipped masks): correlation 0.97, median 3.8 points, mean +6.8 points, largest +26.0 points.",
       "detail": "Quantity compared: share of time with any part of the Sun's disc above the skyline (NASA's definition), averaged over 18.6 years from 2020-01-01 every 2 hours (81523 samples; NASA uses hourly steps over a full nutation cycle but gives no calendar dates). NASA's maps are for the ground surface, so the 0 m skylines are the like-for-like comparison; they were computed directly from the LOLA 80 m and 240 m grids with the same code as the shipped masks, which are unchanged. At 2 m the largest difference is Connecting Ridge (NASA Goddard study site 1) — highest point within 8 km: ours 91.2%, NASA 65.2% (+26.0 points). At 10 m: correlation 0.89, median absolute difference 5.7 points, 5 sites more than 30 points apart. Rank correlation at 0 m 0.99. Crest points (5 derived highest-pixel sites): mean difference +7.5 points at 0 m against +15.6 at 2 m; other sites +0.5 at 0 m and +4.4 at 2 m. Observer height therefore explains about 52% of the crest difference at 2 m, and a mean difference of +7.5 points remains at crests. Remaining limitation: an 80 m grid cannot see relief smaller than about 80 m, so sunlight at ridge crests may be overestimated. Differences at 0 m range from -11.5 to +13.6 points over all sites; negative values occur where our rounded coordinates fall off the NASA crest. Mean disc fraction instead of any-part share at 0 m: correlation 0.98, median 0.9 points. Sites use the finest NASA map that covers them: 60 m (20 sites), 120 m (1), 240 m (2). Other caveats: NASA's maps are on a 60 m to 240 m grid and, per NASA's documentation, contain linear artefacts from the DEM; our site coordinates are rounded, so at ridge crests a 100 m shift changes the skyline by degrees. Status is 'note': ranking and median agreement are good, but the largest single-site difference is 14 points.",
@@ -51,7 +51,7 @@
     },
     {
       "id": "average-earth",
-      "title": "Average Earth visibility against NASA Goddard maps",
+      "title": "Version 1 terrain (80 m): average Earth visibility against NASA Goddard maps",
       "reference": "NASA Goddard average Earth visibility maps (Mazarico et al. 2011 method, 2016 release), read from NASA Moon Trek",
       "result": "Like-for-like, observer on the ground (0 m), 23 sites: correlation 1.00, median absolute difference 0.3 percentage points, mean difference (ours minus NASA) +0.1 points; largest difference Shackleton-de Gerlache connecting ridge (LROC point): ours 40.1%, NASA 53.5% (-13.4 points). At 2 m (shipped masks): correlation 0.99, median 0.4 points, mean +3.2 points, largest +22.6 points.",
       "detail": "Quantity compared: share of time with any part of the Earth's disc above the skyline (NASA's definition), averaged over 18.6 years from 2020-01-01 every 2 hours (81523 samples; NASA uses hourly steps over a full nutation cycle but gives no calendar dates). NASA's maps are for the ground surface, so the 0 m skylines are the like-for-like comparison; they were computed directly from the LOLA 80 m and 240 m grids with the same code as the shipped masks, which are unchanged. At 2 m the largest difference is Leibnitz Beta Plateau (NASA Goddard study site 20) — highest point within 8 km: ours 97.1%, NASA 74.6% (+22.6 points). At 10 m: correlation 0.98, median absolute difference 0.7 points, no site more than 30 points apart. Rank correlation at 0 m 0.99. Crest points (5 derived highest-pixel sites): mean difference +1.4 points at 0 m against +8.9 at 2 m; other sites -0.2 at 0 m and +1.6 at 2 m. Observer height therefore explains about 84% of the crest difference at 2 m, and a mean difference of +1.4 points remains at crests. Remaining limitation: an 80 m grid cannot see relief smaller than about 80 m, so sunlight at ridge crests may be overestimated. Differences at 0 m range from -13.4 to +5.2 points over all sites; negative values occur where our rounded coordinates fall off the NASA crest. Mean disc fraction instead of any-part share at 0 m: correlation 0.99, median 2.9 points. Sites use the finest NASA map that covers them: 60 m (20 sites), 120 m (1), 240 m (2). Other caveats: NASA's maps are on a 60 m to 240 m grid and, per NASA's documentation, contain linear artefacts from the DEM; our site coordinates are rounded, so at ridge crests a 100 m shift changes the skyline by degrees. Status is 'note': ranking and median agreement are good, but the largest single-site difference is 13 points.",
@@ -59,7 +59,7 @@
     },
     {
       "id": "benchmark-barker",
-      "title": "Average illumination at Connecting Ridge against a published study",
+      "title": "Version 1 terrain (80 m): average illumination at Connecting Ridge against a published study",
       "reference": "Barker et al. (2021), Planetary and Space Science 203, 105119, Table 2: Site 1 (Shackleton-de Gerlache connecting ridge), January 2024 to January 2026",
       "result": "Ours, mean Sun disc fraction 2024-01-01 to 2026-01-01: crest point 88.0% at 2 m and 92.2% at 10 m; listed point 40.7% at 2 m and 79.0% at 10 m. Published best regions: about 67-71% at 1 m and about 83-89% at 5 m.",
       "detail": "Plausibility check only. The published figures are first-percentile values over an ensemble of 100 elevation-model variants, for the best small regions on a 5 m grid at 1 m and 5 m above the ground; the digits were read from an image of the table. Ours are single points from an 80 m grid at 2 m and 10 m, hourly. Our crest point (the highest 80 m pixel within 8 km of the listed centre) is a favourable spot and gives 88.0% at 2 m, above the published 1 m range and at the top of the 5 m range, although 2 m is closer to 1 m than to 5 m; because the published values are first percentiles (pessimistic), a higher best estimate is not a contradiction, but it is not a match either. Our listed point sits off the crest and gives 40.7% at 2 m, well below the published best regions, as expected for a point that is not among the best. The result is consistent with the published picture (a few tens of percent at 1 m rising by about 15-20 points at 5 m) but cannot confirm our numbers to better than about 20 percentage points.",
@@ -85,16 +85,32 @@
       "id": "a3gt-malapert",
       "title": "Sunlit and Earth-in-view, date by date, at Malapert Massif",
       "reference": "ACT's Artemis III Geotechnical cubes in LROC QuickMap: Malapert Massif, 2 m pixels, every 6 h, December 2025, lit by the Sun's centre",
-      "result": "Ground level, 25,425 point-and-time cases: Sun verdict agrees in 95.2%, Earth in 97.4%.",
-      "detail": "Where the Sun verdicts differ, it is lit only in ours in 425 cases and only in theirs in 792. Their terrain is finer (NASA Goddard 5 m site maps and LROC NAC elevation models); ours is LDEM_85S_10M, LDEM_80S_20M, LDEM_60S_240M.",
+      "result": "Ground level, 25,425 point-and-time cases: Sun verdict agrees in 97.7%, Earth in 98.7%.",
+      "detail": "Where the Sun verdicts differ, it is lit only in ours in 500 cases and only in theirs in 87. Their terrain is finer (NASA Goddard 5 m site maps and LROC NAC elevation models); ours is LDEM_80S_20MPP_ADJ, LDEM_60S_240M.",
       "status": "pass"
+    },
+    {
+      "id": "average-sunlight-v2",
+      "title": "Average sunlight against NASA Goddard maps, on the terrain the app uses",
+      "reference": "NASA Goddard average Sun visibility maps (Mazarico et al. 2011 method, 2016 release), read from NASA Moon Trek, 60 m to 240 m pixels",
+      "result": "Observer on the ground (0 m), 23 sites: correlation 0.93, median absolute difference 1.4 percentage points, mean difference (ours minus NASA) -5.9 points; largest Shackleton Rim (NASA Goddard study site 4) — highest point within 8 km (-36.5 points).",
+      "detail": "Terrain: LDEM_80S_20MPP_ADJ, LDEM_60S_240M, skylines every 0.1 degrees. Same quantity and period as the version 1 check (share of time with any part of the disc above the skyline, 18.6 years from 2020 every 2 hours). On version 1's 80 m terrain the same comparison gave correlation 0.98, median 1.4 points, mean +2.0. On the finer terrain, relief within tens of metres of a point at ground level hides the low Sun more often than NASA's coarser maps show, so ours runs darker, most at ridge crests; at lander heights this near-ground relief matters less (see the Malapert and Connecting Ridge checks). Status is 'note' for that reason.",
+      "status": "note"
+    },
+    {
+      "id": "average-earth-v2",
+      "title": "Average Earth visibility against NASA Goddard maps, on the terrain the app uses",
+      "reference": "NASA Goddard average Earth visibility maps (Mazarico et al. 2011 method, 2016 release), read from NASA Moon Trek, 60 m to 240 m pixels",
+      "result": "Observer on the ground (0 m), 23 sites: correlation 0.96, median absolute difference 0.2 percentage points, mean difference (ours minus NASA) -5.0 points; largest Shackleton-de Gerlache connecting ridge (LROC point) (-33.5 points).",
+      "detail": "Terrain: LDEM_80S_20MPP_ADJ, LDEM_60S_240M, skylines every 0.1 degrees. Same quantity and period as the version 1 check (share of time with any part of the disc above the skyline, 18.6 years from 2020 every 2 hours). On version 1's 80 m terrain the same comparison gave correlation 1.00, median 0.3 points, mean +0.2. On the finer terrain, relief within tens of metres of a point at ground level hides the low Sun more often than NASA's coarser maps show, so ours runs darker, most at ridge crests; at lander heights this near-ground relief matters less (see the Malapert and Connecting Ridge checks). Status is 'note' for that reason.",
+      "status": "note"
     },
     {
       "id": "barker-fine",
       "title": "Connecting ridge crest at lander heights, on fine terrain",
       "reference": "Barker et al. (2021), Planetary and Space Science 203, 105119, Table 2: best regions about 67-71% at 1 m and 83-89% at 5 m, January 2024 to January 2026",
-      "result": "Ours, mean Sun disc fraction at the crest point: 58.0% at 1 m, 70.6% at 2 m, 84.2% at 5 m, 89.3% at 10 m.",
-      "detail": "Terrain: LDEM_85S_10M, LDEM_80S_20M, LDEM_60S_240M. The published figures are for the best area of the site; ours are one point, so this is a plausibility check.",
+      "result": "Ours, mean Sun disc fraction at the crest point: 64.8% at 1 m, 76.6% at 2 m, 89.6% at 5 m, 91.9% at 10 m.",
+      "detail": "Terrain: LDEM_80S_20MPP_ADJ, LDEM_60S_240M. The published figures are for the best area of the site; ours are one point, so this is a plausibility check.",
       "status": "note"
     },
     {

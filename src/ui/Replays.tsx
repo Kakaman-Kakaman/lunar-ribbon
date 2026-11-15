@@ -36,7 +36,7 @@ const MISSIONS: Mission[] = [
     landed: 'Landed 6 March 2025 at about 17:28 UTC at 84.79° S, 29.20° E. Shown here at 17:00.',
     happened: 'It came to rest on its side in a small crater about 250 m from its target, and surface operations lasted under 13 hours.',
     check: null,
-    limit: 'An 80 m grid cannot see a crater that small, so the strip shows the site around it, not the view from inside.',
+    limit: 'The skyline uses a 20 m terrain grid, which may miss the walls of a crater this small, so the strip may not show the view from inside it.',
   },
   {
     key: 'bg1',
