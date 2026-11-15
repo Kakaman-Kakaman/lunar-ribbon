@@ -25,6 +25,59 @@ export function discFractionAbove(centreElDeg: number, radiusDeg: number, horizo
   return (Math.acos(d) - d * Math.sqrt(1 - d * d)) / Math.PI;
 }
 
+/** Integral of sqrt(r^2 - x^2) from 0 to x, for |x| <= r. */
+function halfChordIntegral(x: number, r: number): number {
+  const c = Math.max(-r, Math.min(r, x));
+  return 0.5 * (c * Math.sqrt(Math.max(0, r * r - c * c)) + r * r * Math.asin(c / r));
+}
+
+/** Area of the part of a disc (radius r, centre at height 0) above height k, between horizontal offsets x0 and x1. */
+function stripAreaAbove(x0: number, x1: number, r: number, k: number): number {
+  const G = (x: number) => halfChordIntegral(x, r);
+  if (k >= r) return 0;
+  if (k <= -r) return 2 * (G(x1) - G(x0));
+  const xb = Math.sqrt(r * r - k * k);
+  // Where |x| < xb the line crosses the chord: area above is c(x) - k.
+  const a = Math.max(x0, -xb), b = Math.min(x1, xb);
+  let area = b > a ? G(b) - G(a) - k * (b - a) : 0;
+  // Where |x| >= xb the chord is entirely above (k < 0) or entirely below (k > 0) the line.
+  if (k < 0) {
+    if (x0 < -xb) area += 2 * (G(Math.min(x1, -xb)) - G(x0));
+    if (x1 > xb) area += 2 * (G(x1) - G(Math.max(x0, xb)));
+  }
+  return area;
+}
+
+/** Number of vertical strips a disc is cut into when the skyline under it is not flat. */
+export const DISC_STRIPS = 16;
+
+/**
+ * Fraction of a disc above the actual skyline under it. The disc (centre azimuth azDeg, elevation
+ * elDeg, angular radius radiusDeg) is cut into vertical strips; under each strip the skyline is
+ * taken at the strip's centre azimuth, and the area above it is integrated exactly. A flat skyline
+ * gives exactly discFractionAbove. Horizontal offsets on the sky map to azimuth by 1/cos(elevation).
+ */
+export function discFractionAboveSkyline(
+  azDeg: number,
+  elDeg: number,
+  radiusDeg: number,
+  profile: ArrayLike<number>,
+  azStepDeg: number,
+  strips = DISC_STRIPS,
+): number {
+  const r = radiusDeg;
+  const cosEl = Math.cos((elDeg * Math.PI) / 180);
+  if (cosEl < 0.05) return discFractionAbove(elDeg, r, horizonAt(profile, azStepDeg, azDeg));
+  let area = 0;
+  const w = (2 * r) / strips;
+  for (let i = 0; i < strips; i++) {
+    const x0 = -r + i * w, x1 = x0 + w;
+    const h = horizonAt(profile, azStepDeg, azDeg + (x0 + x1) / 2 / cosEl);
+    area += stripAreaAbove(x0, x1, r, h - elDeg);
+  }
+  return Math.min(1, Math.max(0, area / (Math.PI * r * r)));
+}
+
 /**
  * Fraction of the Sun's disc hidden behind Earth's disc, for two discs sepDeg apart (small-angle,
  * flat geometry). Seen from the Moon this is an eclipse of the Sun by Earth, which people on Earth
@@ -116,12 +169,12 @@ export function computeSeries(
     s.sunEl[i] = sun.el;
     s.sunHorizon[i] = sunH;
     const sunR = angularRadiusDeg(SUN_RADIUS_KM, sun.distKm);
-    s.sunFrac[i] = discFractionAbove(sun.el, sunR, sunH);
+    s.sunFrac[i] = discFractionAboveSkyline(sun.az, sun.el, sunR, profile, mask.azStepDeg);
     s.earthAz[i] = earth.az;
     s.earthEl[i] = earth.el;
     s.earthHorizon[i] = earthH;
     const earthR = angularRadiusDeg(EARTH_RADIUS_KM, earth.distKm);
-    s.earthFrac[i] = discFractionAbove(earth.el, earthR, earthH);
+    s.earthFrac[i] = discFractionAboveSkyline(earth.az, earth.el, earthR, profile, mask.azStepDeg);
     s.sunCover![i] = sunCoveredByEarth(separationDeg(sun.az, sun.el, earth.az, earth.el), sunR, earthR);
   }
   return s;
