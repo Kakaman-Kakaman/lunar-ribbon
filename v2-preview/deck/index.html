@@ -1,0 +1,695 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>Ribbon | Team Falcate</title>
+<meta name="description" content="Seven-slide demo of Ribbon, a lunar landing-site navigator. Team Falcate, 2026 NASA Space Apps Challenge, Lunar Landing Site Navigator.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --sky: #0a0c10; --panel: #1a1d23; --line: #2b2f38; --terrain: #30353f; --edge: #d9dce1;
+  --sun: #ffb020; --earth: #4da3ff; --dark: #3a3f4b; --ink: #f2f4f7; --ink2: #a7adb8; --ink3: #6f7684;
+  --alert: #ff5a5f; --good: #4cc38a;
+  --sans: "Inter", "Segoe UI", system-ui, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; background: var(--sky); color: var(--ink); overflow: hidden; }
+body { font-family: var(--sans); -webkit-font-smoothing: antialiased; }
+#stage { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 0 0; background: var(--sky); overflow: hidden; }
+#rib { position: absolute; inset: 0; width: 1920px; height: 1080px; }
+.mono { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+
+/* Slides: text layers above the one persistent ribbon */
+.slide { position: absolute; inset: 0; opacity: 0; visibility: hidden; transition: opacity .45s ease, visibility 0s linear .45s; pointer-events: none; }
+.slide.on { opacity: 1; visibility: visible; transition: opacity .45s ease, visibility 0s; }
+.abs { position: absolute; }
+.eyebrow { font-size: 20px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink2); font-weight: 500; }
+.h0 { font-size: 150px; font-weight: 700; letter-spacing: -.03em; line-height: 1; }
+.h1 { font-size: 66px; font-weight: 600; letter-spacing: -.015em; line-height: 1.08; }
+.h2 { font-size: 46px; font-weight: 500; letter-spacing: -.01em; line-height: 1.15; }
+.lead { font-size: 30px; line-height: 1.35; color: var(--ink2); }
+.body { font-size: 26px; line-height: 1.38; }
+.small { font-size: 20px; line-height: 1.4; color: var(--ink2); }
+.tiny { font-size: 18px; line-height: 1.4; color: var(--ink2); }
+.ink2 { color: var(--ink2); }
+b, strong { font-weight: 600; color: var(--ink); }
+.sun { color: var(--sun); } .earth { color: var(--earth); }
+
+/* Enter animations: each element rests on a complete final frame */
+.in { opacity: 0; transform: translateY(12px); }
+.slide.on .in { animation: rise .55s cubic-bezier(.2,.7,.2,1) both; animation-delay: var(--d, 0ms); }
+.slide.on .fade { animation-name: fadeonly; }
+@keyframes rise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+@keyframes fadeonly { from { opacity: 0; transform: none; } to { opacity: 1; transform: none; } }
+.still .slide .in, .still .slide.on .in { animation: none !important; opacity: 1; transform: none; }
+.still .slide { transition: none !important; }
+
+/* Footer */
+.foot { position: absolute; left: 96px; right: 96px; bottom: 34px; display: flex; justify-content: space-between; font-size: 18px; color: var(--ink3); }
+.foot .n { font-family: var(--mono); }
+
+/* Slide 1 */
+.team { right: 96px; top: 100px; width: 470px; text-align: right; }
+.team .name { font-size: 22px; line-height: 1.55; color: var(--ink2); }
+.team .tn { font-size: 30px; font-weight: 600; color: var(--ink); margin-bottom: 10px; }
+
+/* Slide 2 */
+.cards { display: flex; gap: 26px; }
+.card { width: 300px; height: 176px; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 18px 20px; position: relative; }
+.card .cap { font-size: 20px; color: var(--ink2); margin-top: 10px; }
+.card .stackA, .card .stackB { position: absolute; inset: 0; border: 1px solid var(--line); border-radius: 10px; background: var(--panel); z-index: -1; }
+.cardwrap { position: relative; z-index: 0; }
+.cardwrap .ghost { position: absolute; width: 300px; height: 176px; border: 1px solid var(--line); border-radius: 10px; background: #15181d; }
+.quote { border-left: 3px solid var(--line); padding-left: 28px; }
+.quote .q { font-size: 31px; line-height: 1.38; }
+.quote .src { font-size: 20px; color: var(--ink2); margin-top: 18px; line-height: 1.45; }
+
+/* Slide 3 */
+.keys { display: flex; gap: 44px; }
+.key { width: 520px; display: flex; gap: 16px; align-items: flex-start; }
+.key .sw { flex: none; width: 22px; height: 22px; border-radius: 50%; margin-top: 7px; }
+.key .t { font-size: 27px; line-height: 1.32; }
+
+/* Slide 4 */
+.shot { left: 96px; top: 210px; width: 1180px; height: 737.5px; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; background: var(--sky); }
+.shot img { width: 100%; height: 100%; display: block; }
+.hl { position: absolute; border: 2px solid var(--ink); border-radius: 6px; }
+.badge { position: absolute; width: 34px; height: 34px; border-radius: 50%; background: var(--ink); color: var(--sky); font: 700 19px/34px var(--mono); text-align: center; }
+.callouts { left: 1330px; top: 222px; width: 494px; }
+.callout { display: flex; gap: 18px; margin-bottom: 44px; }
+.callout .badge { position: static; flex: none; }
+.callout .t { font-size: 27px; line-height: 1.32; }
+.callout .t .small { display: block; margin-top: 8px; }
+
+/* Slide 5 */
+.plan { display: flex; gap: 18px; align-items: flex-start; }
+.plan .tag { flex: none; width: 46px; height: 46px; border: 2px solid var(--ink2); border-radius: 6px; font: 600 24px/42px var(--sans); text-align: center; }
+.plan .what { font-size: 22px; color: var(--ink2); }
+.plan .v { font-size: 27px; line-height: 1.32; margin-top: 2px; }
+.verdict-word { font-weight: 700; }
+.vw-good::before { content: "\2713\00a0"; color: var(--good); }
+.vw-bad::before { content: "\2715\00a0"; color: var(--alert); }
+.counter { font-size: 26px; }
+.counter .num { font-family: var(--mono); font-weight: 700; font-size: 40px; color: var(--ink); }
+
+/* Slide 6 */
+.panels { left: 96px; top: 196px; width: 1728px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 48px; }
+.pnl { border-top: 2px solid var(--line); padding-top: 18px; height: 330px; position: relative; }
+.pnl .k { font-size: 21px; color: var(--ink2); line-height: 1.35; }
+.pnl .big { font: 700 64px/1.1 var(--mono); margin-top: 14px; letter-spacing: -.02em; }
+.pnl .big small { font-size: 26px; font-weight: 500; color: var(--ink2); letter-spacing: 0; }
+.pnl .note { font-size: 20px; line-height: 1.4; color: var(--ink2); margin-top: 12px; }
+.pnl svg text { font-family: var(--mono); }
+.pnl .row { display: flex; gap: 18px; margin-top: 10px; }
+.pnl .row .side { width: 210px; }
+.pnl .row .side .big { font-size: 46px; margin-top: 0; }
+
+/* Slide 7 */
+.uses { font-size: 28px; line-height: 1.5; }
+.uses div { margin-bottom: 6px; }
+.uses div { display: grid; grid-template-columns: 250px 1fr; }
+.qr { right: 96px; top: 96px; width: 470px; text-align: center; }
+.qr .url, .qr .tiny { white-space: nowrap; }
+.qr img { width: 210px; height: 210px; border-radius: 8px; display: block; margin: 0 auto 12px; }
+.url { font: 500 21px/1.4 var(--mono); }
+
+/* Labels placed on the strip */
+.lbl { font-size: 20px; line-height: 1.35; color: var(--ink); text-shadow: 0 0 4px #0a0c10, 0 0 8px #0a0c10; }
+/* Slide 6 */
+.chk .k { font-size: 24px; color: var(--ink2); }
+.chk .big { font: 700 104px/1.05 var(--mono); letter-spacing: -.02em; margin: 10px 0 18px; }
+
+/* Navigation */
+#nav { position: fixed; right: 18px; bottom: 14px; display: flex; gap: 8px; z-index: 5; opacity: .35; transition: opacity .2s; }
+#nav:hover, #nav:focus-within { opacity: 1; }
+#nav button { width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--line); background: var(--panel); color: var(--ink); font-size: 18px; cursor: pointer; }
+#nav button:focus-visible { outline: 2px solid var(--earth); outline-offset: 2px; }
+#bar { position: fixed; left: 0; top: 0; height: 3px; background: var(--ink2); transition: width .3s; z-index: 5; }
+.still #nav, .still #bar { display: none; }
+@media (prefers-reduced-motion: reduce) { .slide { transition: none; } }
+</style>
+</head>
+<body>
+<div id="bar"></div>
+<div id="stage">
+  <svg id="rib" viewBox="0 0 1920 1080" aria-hidden="true">
+    <defs>
+      <clipPath id="plotclip"><rect id="cliprect" x="96" y="590" width="1728" height="346"/></clipPath>
+      <pattern id="hatch" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+        <rect width="8" height="8" fill="#3a3f4b"/><line x1="0" y1="0" x2="0" y2="8" stroke="#a7adb8" stroke-width="2"/>
+      </pattern>
+      <pattern id="hatchAlert" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+        <rect width="8" height="8" fill="#3a3f4b"/><line x1="0" y1="0" x2="0" y2="8" stroke="#ff5a5f" stroke-width="2.4"/>
+      </pattern>
+      <radialGradient id="sunGlow">
+        <stop offset="0" stop-color="#fffdf4" stop-opacity="1"/>
+        <stop offset="0.16" stop-color="#fff6d6" stop-opacity="0.95"/>
+        <stop offset="0.32" stop-color="#ffd98a" stop-opacity="0.55"/>
+        <stop offset="0.6" stop-color="#ffb020" stop-opacity="0.16"/>
+        <stop offset="1" stop-color="#ffb020" stop-opacity="0"/>
+      </radialGradient>
+      <radialGradient id="earthDay" cx="0.62" cy="0.4" r="0.75">
+        <stop offset="0" stop-color="#bfe3ff"/>
+        <stop offset="0.35" stop-color="#4f9bf0"/>
+        <stop offset="0.8" stop-color="#1f56b8"/>
+        <stop offset="1" stop-color="#173f88"/>
+      </radialGradient>
+    </defs>
+    <g id="ribAll">
+      <g clip-path="url(#plotclip)">
+        <g id="gGrid"></g>
+        <path id="pBandPrev" fill="#ffb020" fill-opacity="0.1" stroke="#ffb020" stroke-opacity="0.45" stroke-width="1" stroke-linejoin="round"/>
+        <path id="pRegionPrev" fill="#4da3ff" fill-opacity="0.15" stroke="#4da3ff" stroke-opacity="0.75" stroke-width="1.2" stroke-linejoin="round"/>
+        <path id="pBand" fill="#ffb020" fill-opacity="0.1" stroke="#ffb020" stroke-opacity="0.45" stroke-width="1" stroke-linejoin="round"/>
+        <path id="pRegion" fill="#4da3ff" fill-opacity="0.15" stroke="#4da3ff" stroke-opacity="0.75" stroke-width="1.2" stroke-linejoin="round"/>
+        <path id="pTrack" fill="none" stroke="#ffb020" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+        <g id="gTicks"></g>
+        <path id="pEarthTrack" fill="none" stroke="#4da3ff" stroke-width="1.6" stroke-opacity="0.9" stroke-linejoin="round"/>
+        <g id="gOrbits"></g>
+        <g id="gBodies"></g>
+        <path id="pTerrain" fill="#30353f"/>
+        <path id="pEdge" fill="none" stroke="#d9dce1" stroke-width="1.6" stroke-linejoin="round"/>
+        <g id="gWin"></g>
+        <g id="gSpans"></g>
+      </g>
+      <g id="gAxis"></g>
+      <g id="gOver"></g>
+    </g>
+  </svg>
+
+  <!-- 1. Title -->
+  <section class="slide" data-n="1" aria-label="Title">
+    <div class="abs eyebrow in" style="left:96px;top:100px;--d:2300ms">NASA Space Apps Challenge 2026 · Lunar Landing Site Navigator</div>
+    <div class="abs h0 in" style="left:90px;top:150px;--d:2400ms">Ribbon</div>
+    <div class="abs h2 in" style="left:96px;top:322px;width:1180px;--d:2650ms">At the Moon's south pole, the skyline is the calendar.</div>
+    <div class="abs lead in" style="left:96px;top:420px;width:1180px;--d:2900ms">A web app that shows whether a landing site near the lunar south pole keeps sunlight and a view of Earth, for any landing date.</div>
+    <div class="abs team in" style="--d:3100ms">
+      <div class="tn">Team Falcate</div>
+      <div class="name">Muhammad Asif</div>
+      <div class="name">Muhammad Ahmad Qidwai</div>
+      <div class="name">Syed Muzammil Hassan</div>
+      <div class="name">Mohammad Hassan</div>
+      <div class="name">Rameesha Sheeraz</div>
+      <div class="name">Aqsa Awan</div>
+    </div>
+  </section>
+
+  <!-- 2. The question -->
+  <section class="slide" data-n="2" aria-label="The question">
+    <div class="abs h1 in" style="left:96px;top:96px;width:1060px">If the landing slips three days, does the site still work?</div>
+    <div class="abs lead in" style="left:96px;top:264px;width:1000px;--d:350ms">Today you check one site and one date at a time, across several tools.</div>
+    <div class="abs" style="left:96px;top:352px">
+      <div class="cards">
+        <div class="cardwrap in" style="--d:700ms">
+          <div class="ghost in fade" style="left:16px;top:-12px;--d:1900ms"></div><div class="ghost in fade" style="left:8px;top:-6px;--d:1700ms"></div>
+          <div class="card"><svg width="260" height="96" viewBox="0 0 260 96"><g fill="#3a3f4b"><rect x="0" y="4" width="60" height="10" rx="2"/><rect x="74" y="4" width="80" height="10" rx="2"/><rect x="168" y="4" width="70" height="10" rx="2"/><rect x="0" y="30" width="60" height="10" rx="2"/><rect x="74" y="30" width="80" height="10" rx="2"/><rect x="168" y="30" width="70" height="10" rx="2"/><rect x="0" y="56" width="60" height="10" rx="2"/><rect x="74" y="56" width="80" height="10" rx="2"/><rect x="168" y="56" width="70" height="10" rx="2"/><rect x="0" y="82" width="60" height="10" rx="2"/><rect x="74" y="82" width="80" height="10" rx="2"/><rect x="168" y="82" width="70" height="10" rx="2"/></g></svg><div class="cap">A table of angles</div></div>
+        </div>
+        <div class="cardwrap in" style="--d:950ms">
+          <div class="ghost in fade" style="left:16px;top:-12px;--d:2000ms"></div><div class="ghost in fade" style="left:8px;top:-6px;--d:1800ms"></div>
+          <div class="card"><svg width="260" height="96" viewBox="0 0 260 96"><g fill="none" stroke="#3a3f4b" stroke-width="2"><rect x="1" y="6" width="200" height="30" rx="4"/><rect x="1" y="52" width="200" height="30" rx="4"/></g><g fill="#3a3f4b"><rect x="12" y="16" width="120" height="10" rx="2"/><rect x="12" y="62" width="96" height="10" rx="2"/><rect x="214" y="52" width="44" height="30" rx="4"/></g></svg><div class="cap">Typed timestamps</div></div>
+        </div>
+        <div class="cardwrap in" style="--d:1200ms">
+          <div class="ghost in fade" style="left:16px;top:-12px;--d:2100ms"></div><div class="ghost in fade" style="left:8px;top:-6px;--d:1900ms"></div>
+          <div class="card"><svg width="260" height="96" viewBox="0 0 260 96"><g fill="none" stroke="#3a3f4b" stroke-width="2"><circle cx="130" cy="48" r="44"/><circle cx="130" cy="48" r="28"/><circle cx="130" cy="48" r="12"/></g><circle cx="152" cy="34" r="7" fill="#a7adb8"/></svg><div class="cap">One pin on a map</div></div>
+        </div>
+      </div>
+      <div class="small in" style="margin-top:16px;--d:2200ms">Then you start again for the next date.</div>
+    </div>
+    <div class="abs quote in" style="left:1200px;top:110px;width:624px;--d:2500ms">
+      <div class="q">A launch slip past November 2025 "would require waiting 9 to 12 months until the right lighting conditions return at the landing site in the polar region."</div>
+      <div class="src">SpaceNews, 17 July 2024, on why NASA cancelled the VIPER rover.</div>
+    </div>
+  </section>
+
+  <!-- 3. How to read the strip -->
+  <section class="slide" data-n="3" aria-label="How to read the strip">
+    <div class="abs h1 in" style="left:96px;top:96px">How to read the strip</div>
+    <div class="abs lead in" style="left:96px;top:196px;width:1500px;--d:200ms">The full circle of horizon around one landing site on Malapert Massif, laid flat. North is in the middle.</div>
+    <div class="abs body in" style="left:96px;top:330px;width:1560px;--d:6000ms">Where the hills rise above the Sun's path, the lander gets no sunlight. Count the day ticks a hill covers and you have the days of darkness.</div>
+    <div id="s3sun" class="abs lbl in fade" style="--d:500ms">The Sun's path over one lunar day (29.5 Earth days). Each tick is one day.</div>
+    <div id="s3earth" class="abs lbl in fade" style="--d:900ms">Earth stays inside this patch of sky</div>
+    <div id="s3hill" class="abs lbl in fade" style="--d:4800ms">Hills, from NASA laser altimeter data</div>
+    <div id="s3spanA" class="abs lbl in fade" style="--d:5700ms"></div>
+    <div id="s3spanB" class="abs lbl in fade" style="--d:5700ms"></div>
+  </section>
+
+  <!-- 4. The app -->
+  <section class="slide" data-n="4" aria-label="The app">
+    <div class="abs h1 in" style="left:96px;top:96px">The app compares two landing plans</div>
+    <div class="abs shot in fade" style="--d:150ms">
+      <img src="app-two-plans.png?v=2" alt="The Ribbon app comparing plan A and plan B at Malapert Massif, with a verdict for each plan.">
+      <div class="hl in fade" style="left:37.5%;top:75.9%;width:60.3%;height:6.4%;--d:900ms"></div>
+      <div class="badge in fade" style="left:34.6%;top:77.1%;--d:900ms">1</div>
+      <div class="hl in fade" style="left:72.3%;top:31.6%;width:14.3%;height:3.2%;--d:1400ms"></div>
+      <div class="badge in fade" style="left:87.4%;top:31.2%;--d:1400ms">2</div>
+    </div>
+    <div class="abs tiny in" style="left:96px;top:958px;--d:400ms">The app as it opens: Malapert Massif, with plan B three days after plan A.</div>
+    <div class="abs callouts">
+      <div class="callout in" style="--d:900ms"><span class="badge">1</span><span class="t">Each plan gets a verdict in plain words: works or fails, and the reason.</span></div>
+      <div class="callout in" style="--d:1400ms"><span class="badge">2</span><span class="t">It shows how late a landing can be and still work, and the next date that does.</span></div>
+      <div class="small in" style="--d:1900ms">Runs in a web browser. 54 landing sites and 5 nearby high points, 23 of them with real terrain.</div>
+    </div>
+  </section>
+
+  <!-- 5. The slip -->
+  <section class="slide" data-n="5" aria-label="The slip">
+    <div class="abs h1 in" style="left:96px;top:96px">Three days later, the same site fails</div>
+    <div class="abs plan in" style="left:96px;top:206px;width:820px;--d:200ms">
+      <span class="tag">A</span>
+      <div><div class="what mono">lands 2027-10-13 18:00 UTC</div><div class="v"><span class="verdict-word vw-good">Works.</span> The landing can slip up to 36 hours.</div></div>
+    </div>
+    <div class="abs plan in" style="left:960px;top:206px;width:864px;--d:3300ms">
+      <span class="tag" style="border-color:var(--alert)">B</span>
+      <div><div class="what mono">lands 2027-10-16 18:00 UTC</div><div class="v"><span class="verdict-word vw-bad">Fails</span> 5 days after landing. Terrain 4.6 km to the west hides the Sun for 42 hours, 36 of them during the stay.</div></div>
+    </div>
+    <div class="abs counter in" style="left:96px;top:330px;--d:500ms"><span class="ink2">Hours without sunlight during the 6.5-day stay:</span> <span class="num" id="hidCount">0</span></div>
+    <div class="abs tiny in" style="left:96px;top:966px;width:1728px;--d:600ms">Close-up of the same strip, from west to north-east. The Sun is shown where it stands at landing. Thick yellow line: its path during the stay. Red dots: the Sun is behind the ridge.</div>
+  </section>
+
+  <!-- 6. The checks -->
+  <section class="slide" data-n="6" aria-label="The checks">
+    <div class="abs h1 in" style="left:96px;top:96px">We checked the results against NASA's data</div>
+    <div class="abs chk in" style="left:96px;top:300px;width:780px;--d:300ms">
+      <div class="k">A real landing</div>
+      <div class="big">347.8 hours</div>
+      <div class="body ink2">Our predicted time from landing to sunset for Blue Ghost Mission 1 in March 2025. Firefly reported 346 hours of operations in daylight.</div>
+    </div>
+    <div class="abs chk in" style="left:1000px;top:300px;width:824px;--d:900ms">
+      <div class="k">NASA's sunlight maps</div>
+      <div class="big">23 sites</div>
+      <div class="body ink2">We compared our sunlight figures with NASA Goddard's maps of the south pole. At half the sites we are within 1.35 percentage points.</div>
+    </div>
+    <div class="abs small in" style="left:96px;top:680px;width:1728px;--d:1500ms">Sun and Earth positions match NASA JPL's Horizons system to within 0.008°.<br>Terrain comes from the laser altimeter (LOLA) on NASA's Lunar Reconnaissance Orbiter. The rule for when the Sun counts as up follows ESA's lunar lander site study.</div>
+  </section>
+
+  <!-- 7. Try it -->
+  <section class="slide" data-n="7" aria-label="Try it">
+    <div class="abs h1 in" style="left:96px;top:96px;width:1240px">Try Ribbon in your browser</div>
+    <div class="abs url in" style="left:96px;top:206px;font-size:34px;--d:300ms">kakaman-kakaman.github.io/lunar-ribbon</div>
+    <div class="abs body in" style="left:96px;top:300px;width:1180px;--d:600ms">Mission planners can check a landing site when the date moves. Students can see why landing at the lunar south pole is so difficult.</div>
+    <div class="abs qr in" style="--d:600ms">
+      <img src="qr-live-app.svg" alt="QR code for the live app">
+      <div class="tiny">Scan to open the live app</div>
+      <div class="tiny" style="margin-top:28px">Source code</div><div class="tiny mono">github.com/Kakaman-Kakaman/lunar-ribbon</div>
+    </div>
+  </section>
+
+  <div class="foot"><span id="footL">Ribbon · Team Falcate · Lunar Landing Site Navigator</span><span class="n" id="footN">1 / 7</span></div>
+</div>
+<div id="nav"><button id="prev" aria-label="Previous slide">&#8592;</button><button id="next" aria-label="Next slide">&#8594;</button></div>
+
+<script src="ribbon-data.js?v=8"></script>
+<script>
+(() => {
+'use strict';
+const D = window.RIBBON_DATA;
+const STRETCH = 4;                 // vertical exaggeration, the same on every slide
+const NS = 'http://www.w3.org/2000/svg';
+const $ = (id) => document.getElementById(id);
+const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
+const lerp = (a, b, t) => a + (b - a) * t;
+const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+const STILL = new URLSearchParams(location.search).has('still') || matchMedia('(prefers-reduced-motion: reduce)').matches;
+const stageEl = $('stage');
+if (STILL) { document.documentElement.classList.add('still'); stageEl.classList.add('still'); }
+
+// ---------- Views: plot rectangle + data window + height exaggeration (printed under the strip) ----------
+function view(x, y, w, h, az0, az1, elMin, stretch = STRETCH) {
+  const pxAz = w / (az1 - az0), pxEl = pxAz * stretch;
+  return { x, y, w, h, az0, az1, elMin, pxAz, pxEl, stretch };
+}
+const FULL = view(96, 590, 1728, 346, -180, 180, -5);
+const ZOOM = view(96, 440, 1728, 440, -125, 45, -2.4);
+// The title, question and closing slides: heights closer to true (x2.5), so the Sun and Earth sit
+// at about their real height above the hills.
+const AMB = view(96, 690, 1728, 246, -180, 180, -5, 2.5);
+const vx = (v, az) => v.x + (az - v.az0) * v.pxAz;
+const vy = (v, el) => v.y + v.h - (el - v.elMin) * v.pxEl;
+
+// ---------- Sites: every shape comes from ribbon-data.js (npm run demo-assets) ----------
+const SKY0 = -180, SKYSTEP = D.skylineStepDeg;
+function site(label, lat, sunUp, sky, band, region, sun, sunStep, earth, earthStep, startMs) {
+  return { label, lat, sunUp, sky, band, region, sun, sunStep, earth, earthStep, startMs, end: (sun.length - 1) * sunStep };
+}
+// The story site at full time resolution (hourly Sun, two-hourly Earth)
+const STORY = site('Malapert Massif', D.site.lat, null, D.skyline, D.sunBand, D.earthRegion,
+  D.A.sun.map((p) => [p[1], p[2], p[3]]), 1, D.A.earth.map((p) => [p[1], p[2], p[3]]), 2, D.A.landingMs);
+// The sites the title and closing slides cycle through
+const SITES = D.sites.map((s) => site(s.label, s.lat, s.sunUpShareThisLunation, s.skyline, s.sunBand, s.earthRegion, s.sun, s.sunStepH, s.earth, s.earthStepH, s.startMs));
+const LANDING_MS = D.A.landingMs;
+const HB = D.slipDays * 24;                  // plan B lands this many hours after plan A
+const STAY_H = D.B.stayEndHours;             // 156
+const NEXT_H = (D.next.landingMs - LANDING_MS) / 3600000;
+
+// Position of a body at hour h: [azimuth, elevation, fraction of disc above the skyline]
+function pos(arr, step, h) {
+  const f = clamp(h / step, 0, arr.length - 1); const i = Math.floor(f); const j = Math.min(arr.length - 1, i + 1); const t = f - i;
+  const a = arr[i], b = arr[j];
+  if (Math.abs(b[0] - a[0]) > 180) return t < 0.5 ? a : b;
+  return [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t];
+}
+
+// ---------- One clock for the Sun and Earth ----------
+const DAYS_PER_S = { ambient: 1.5, read: 8 };            // time-lapse rates, printed under the strip
+const FADE_MS = 700;
+const hPerMs = (r) => r * 24 / 1000;
+const LAP_MS = SITES[0].end / hPerMs(DAYS_PER_S.ambient);
+const T0 = performance.now();
+function ambient(now) {           // runs continuously across slides 1, 2 and 7
+  if (STILL) return { site: SITES[0], prev: SITES[0], morph: 1, h: 120, o: 1 };
+  const t = Math.max(0, now - T0); const k = Math.floor(t / LAP_MS); const tau = t - k * LAP_MS;
+  const n = SITES.length; const cur = SITES[k % n], prev = SITES[(k - 1 + n) % n];
+  const h = tau * hPerMs(DAYS_PER_S.ambient);
+  const o = ease(clamp(tau / FADE_MS)) * ease(clamp((LAP_MS - tau) / FADE_MS)); // fade out and in as the site changes
+  return { site: cur, prev: k === 0 ? cur : prev, morph: k === 0 ? 1 : ease(clamp(tau / 1400)), h, o };
+}
+
+// ---------- State per slide (t = ms since the slide was entered) ----------
+const base = {
+  v: FULL, alpha: 1, grid: 0.6, band: 1, region: 1, sky: 1, rise: 1, reveal: 1,
+  track: 0, trackTo: 0, ticks: 0, earthTrack: 0, earthTo: 0, spans: 0,
+  sunO: 0, sunH: 0, earthO: 0, earthH: 0, win: 0, winH: 0, next: 0, spanB: 0, axis: 1,
+  site: STORY, prev: STORY, morph: 1, clock: null, orbit: 0,
+};
+function stateFor(n, t, now) {
+  const s = Object.assign({}, base);
+  if (n === 1 || n === 2 || n === 7) {
+    const a = ambient(now);
+    Object.assign(s, { v: AMB, band: 0, region: 0, orbit: a.o, site: a.site, prev: a.prev, morph: a.morph, sunH: a.h, earthH: a.h, sunO: a.o, earthO: a.o, clock: { h: a.h, rate: DAYS_PER_S.ambient } });
+    if (n === 1 && !STILL) { const k = ease(clamp((t - 1200) / 700)); s.reveal = clamp(t / 1300); s.orbit *= k; s.sunO *= k; s.earthO *= k; }
+    if (n === 2) s.alpha = 0.5;
+  } else if (n === 3) {
+    // One clock: the Sun and Earth trace their paths together, then keep going
+    const h = STILL ? 120 : Math.max(0, t - 300) * hPerMs(DAYS_PER_S.read);
+    const hh = STILL ? 120 : h % STORY.end;
+    s.band = clamp(t / 400); s.region = clamp((t - 300) / 500);
+    s.track = 1; s.trackTo = STILL ? STORY.end : Math.min(h, STORY.end); s.ticks = 1;
+    s.earthTrack = 1; s.earthTo = s.trackTo;
+    const o = STILL ? 1 : clamp(hh / 10) * clamp((STORY.end - hh) / 10) * clamp((t - 300) / 200);
+    s.sunH = hh; s.earthH = hh; s.sunO = o; s.earthO = o;
+    s.rise = STILL ? 1 : ease(clamp((t - 4100) / 1500));
+    s.spans = STILL ? 1 : clamp((t - 5700) / 500);
+    s.clock = { h: hh, rate: DAYS_PER_S.read };
+  } else if (n === 4 || n === 6) {
+    Object.assign(s, stateFor(3, 1e9, now)); s.alpha = 0;
+  } else if (n === 5) {
+    s.v = ZOOM; s.band = 0; s.region = 0; s.track = 0; s.win = clamp(t / 400);
+    s.winH = STILL ? HB : lerp(0, HB, clamp((t - 1000) / 2200));   // constant speed: three days in 2.2 s
+    s.spanB = STILL ? 1 : clamp((t - 3000) / 400); s.next = STILL ? 1 : clamp((t - 3700) / 400);
+  }
+  return s;
+}
+// Blend two states during a slide change. Sun and Earth never slide backwards: they fade.
+function mix(a, b, k) {
+  const o = {};
+  for (const key in b) {
+    const x = a[key], y = b[key];
+    if (typeof y === 'number' && typeof x === 'number') o[key] = lerp(x, y, k); else o[key] = y;
+  }
+  const va = a.v, vb = b.v;
+  o.v = view(lerp(va.x, vb.x, k), lerp(va.y, vb.y, k), lerp(va.w, vb.w, k), lerp(va.h, vb.h, k), lerp(va.az0, vb.az0, k), lerp(va.az1, vb.az1, k), lerp(va.elMin, vb.elMin, k), lerp(va.stretch, vb.stretch, k));
+  if (a.site !== b.site) { o.site = b.site; o.prev = a.site; o.morph = k; } else { o.site = b.site; o.prev = b.prev; o.morph = b.morph; }
+  for (const [h, op] of [['sunH', 'sunO'], ['earthH', 'earthO']]) {
+    o[h] = b[h];
+    if (a.site !== b.site || Math.abs(a[h] - b[h]) > 6) o[op] = b[op] * ease(k);
+  }
+  if (a.site !== b.site) o.orbit = b.orbit * ease(k);
+  {
+  }
+  return o;
+}
+
+// ---------- Drawing ----------
+function polyline(pts, v) {         // [[az, el]], split where the azimuth wraps
+  let d = '', prev = null;
+  for (const p of pts) {
+    d += (!prev || Math.abs(p[0] - prev[0]) > 180 ? 'M' : 'L') + vx(v, p[0]).toFixed(1) + ',' + vy(v, p[1]).toFixed(1);
+    prev = p;
+  }
+  return d;
+}
+function bandPath(runs, v) {
+  let d = '';
+  for (const r of runs) {
+    const top = r.map((p, i) => [p[0] - (i === 0 ? 0.5 : 0), p[2]]);
+    const bot = r.slice().reverse().map((p, i) => [p[0] + (i === 0 ? 0.5 : 0), p[1]]);
+    d += top.concat(bot).map((p, i) => (i ? 'L' : 'M') + vx(v, p[0]).toFixed(1) + ',' + vy(v, p[1]).toFixed(1)).join('') + 'Z';
+  }
+  return d;
+}
+function svgEl(tag, attrs, text) { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (text != null) e.textContent = text; return e; }
+const MONO = 'JetBrains Mono, monospace', SANS = 'Inter, sans-serif';
+const halo = (extra) => Object.assign({ stroke: '#0a0c10', 'stroke-width': 5, 'paint-order': 'stroke' }, extra);
+const E = { orbits: $('gOrbits'), all: $('ribAll'), grid: $('gGrid'), band: $('pBand'), bandPrev: $('pBandPrev'), region: $('pRegion'), regionPrev: $('pRegionPrev'), track: $('pTrack'), ticks: $('gTicks'), et: $('pEarthTrack'), bodies: $('gBodies'), terrain: $('pTerrain'), edge: $('pEdge'), win: $('gWin'), spans: $('gSpans'), axis: $('gAxis'), over: $('gOver'), clip: $('cliprect') };
+let curSlide = 1;
+
+function render(s) {
+  const v = s.v, S = s.site, P = s.prev, m = clamp(s.morph);
+  E.all.setAttribute('opacity', s.alpha.toFixed(3));
+  E.clip.setAttribute('x', v.x); E.clip.setAttribute('y', v.y); E.clip.setAttribute('width', v.w); E.clip.setAttribute('height', v.h);
+  // the flat horizon and the four compass directions
+  E.grid.replaceChildren();
+  { const y = vy(v, 0); E.grid.appendChild(svgEl('line', { x1: v.x, x2: v.x + v.w, y1: y, y2: y, stroke: '#3a3f4b', 'stroke-width': 1.2, 'stroke-dasharray': '6 6', opacity: s.grid })); }
+  for (let a = Math.ceil(v.az0 / 90) * 90; a <= v.az1; a += 90) {
+    const x = vx(v, a); E.grid.appendChild(svgEl('line', { x1: x, x2: x, y1: v.y, y2: v.y + v.h, stroke: '#20242b', 'stroke-width': 1, opacity: s.grid }));
+  }
+  // where the Sun and Earth can be: the new site fades in over the old one
+  E.band.setAttribute('d', bandPath(S.band, v)); E.band.setAttribute('opacity', clamp(s.band) * m);
+  E.region.setAttribute('d', bandPath(S.region, v)); E.region.setAttribute('opacity', clamp(s.region) * m);
+  E.bandPrev.setAttribute('d', m < 1 ? bandPath(P.band, v) : ''); E.bandPrev.setAttribute('opacity', clamp(s.band) * (1 - m));
+  E.regionPrev.setAttribute('d', m < 1 ? bandPath(P.region, v) : ''); E.regionPrev.setAttribute('opacity', clamp(s.region) * (1 - m));
+  // the story's Sun path and day ticks (slide 3, faint on slide 5)
+  if (s.track > 0.001 && s.trackTo > 0) {
+    const pts = []; for (let i = 0; i * STORY.sunStep <= s.trackTo; i++) pts.push(STORY.sun[i]);
+    const e = pos(STORY.sun, STORY.sunStep, s.trackTo); pts.push(e);
+    E.track.setAttribute('d', polyline(pts, v)); E.track.setAttribute('stroke-opacity', s.track);
+  } else E.track.setAttribute('d', '');
+  E.ticks.replaceChildren();
+  if (s.ticks > 0.001) {
+    for (const tk of D.A.ticks) {
+      if (tk[0] * 24 > s.trackTo + 0.01) continue;
+      const x = vx(v, tk[1]), y = vy(v, tk[2]);
+      E.ticks.appendChild(svgEl('line', { x1: x, x2: x, y1: y - 6, y2: y + 6, stroke: '#ffb020', 'stroke-width': 2, opacity: s.ticks }));
+      if (tk[0] % 2 === 0) E.ticks.appendChild(svgEl('text', halo({ x, y: y - 12, 'text-anchor': 'middle', 'font-size': 18, 'font-family': MONO, fill: '#a7adb8', 'stroke-width': 4, opacity: s.ticks }), String(tk[0])));
+    }
+  }
+  // the story's Earth track
+  if (s.earthTrack > 0.001 && s.earthTo > 0) {
+    const pts = []; for (let i = 0; i * STORY.earthStep <= s.earthTo; i++) pts.push(STORY.earth[i]);
+    E.et.setAttribute('d', polyline(pts, v)); E.et.setAttribute('stroke-opacity', 0.9 * s.earthTrack);
+  } else E.et.setAttribute('d', '');
+  // Orbit trails: where the Sun and Earth have been this lunar day (solid) and where they go next (dotted)
+  E.orbits.replaceChildren();
+  const ep = pos(S.earth, S.earthStep, s.earthH), sp = pos(S.sun, S.sunStep, s.sunH);
+  if (s.orbit > 0.001) {
+    const trail = (arr, step, h, colour, width) => {
+      const cut = Math.min(arr.length - 1, Math.floor(h / step));
+      const past = arr.slice(0, cut + 1).concat([pos(arr, step, h)]);
+      const ahead = [pos(arr, step, h)].concat(arr.slice(cut + 1));
+      E.orbits.appendChild(svgEl('path', { d: polyline(ahead, v), fill: 'none', stroke: colour, 'stroke-width': width, 'stroke-dasharray': '1 7', 'stroke-linecap': 'round', opacity: 0.55 * s.orbit }));
+      E.orbits.appendChild(svgEl('path', { d: polyline(past, v), fill: 'none', stroke: colour, 'stroke-width': width, 'stroke-linecap': 'round', 'stroke-linejoin': 'round', opacity: 0.85 * s.orbit }));
+    };
+    trail(S.earth, S.earthStep, s.earthH, '#6fb4ff', 1.8);
+    trail(S.sun, S.sunStep, s.sunH, '#ffc04d', 2);
+  }
+  // Sun and Earth, drawn under the terrain so hills hide them
+  E.bodies.replaceChildren();
+  if (s.earthO > 0.001) E.bodies.appendChild(earthGlobe(vx(v, ep[0]), vy(v, ep[1]), ep, sp, v, s.earthO));
+  if (s.sunO > 0.001) {
+    E.bodies.appendChild(svgEl('circle', { cx: vx(v, sp[0]), cy: vy(v, sp[1]), r: 46, fill: 'url(#sunGlow)', opacity: s.sunO }));
+    E.bodies.appendChild(svgEl('circle', { cx: vx(v, sp[0]), cy: vy(v, sp[1]), r: 7.5, fill: '#fffef9', opacity: s.sunO }));
+  }
+  // terrain: the skyline morphs from the old site to the new one
+  const nTo = Math.round(clamp(s.reveal) * (S.sky.length - 1));
+  const sk = []; for (let i = 0; i <= nTo; i++) sk.push([SKY0 + i * SKYSTEP, lerp(P.sky[i], S.sky[i], m) * s.rise]);
+  if (sk.length > 1) {
+    const bottom = v.y + v.h + 4;
+    const line = sk.map((p, i) => (i ? 'L' : 'M') + vx(v, p[0]).toFixed(1) + ',' + vy(v, p[1]).toFixed(1)).join('');
+    E.edge.setAttribute('d', line);
+    E.terrain.setAttribute('d', 'M' + vx(v, sk[0][0]).toFixed(1) + ',' + bottom + line.replace(/^M/, 'L') + 'L' + vx(v, sk[sk.length - 1][0]).toFixed(1) + ',' + bottom + 'Z');
+  } else { E.edge.setAttribute('d', ''); E.terrain.setAttribute('d', ''); }
+  E.terrain.setAttribute('opacity', s.sky); E.edge.setAttribute('opacity', s.sky);
+  // dark spans in the story's lunation, along the bottom of the plot
+  E.spans.replaceChildren();
+  if (s.spans > 0.001) {
+    for (const span of D.A.spans) {
+      const x0 = vx(v, span.x0), x1 = vx(v, span.x1), yb = v.y + v.h - 34;
+      E.spans.appendChild(svgEl('rect', { x: x0, y: yb, width: Math.max(2, x1 - x0), height: 16, fill: 'url(#hatch)', stroke: '#a7adb8', 'stroke-width': 1.2, opacity: s.spans }));
+      for (const az of [span.x0, span.x1]) {
+        const top = trackElAt(az);
+        if (top !== null) E.spans.appendChild(svgEl('line', { x1: vx(v, az), x2: vx(v, az), y1: vy(v, top), y2: yb, stroke: '#a7adb8', 'stroke-width': 1, 'stroke-dasharray': '3 4', opacity: s.spans }));
+      }
+    }
+  }
+  E.win.replaceChildren(); E.over.replaceChildren();
+  if (s.win > 0.001) drawWindow(s, v);
+  // behind a hill: a faint outline shows where the Sun or Earth is (while it is still inside the strip)
+  const inStrip = (p) => vy(v, p[1]) < v.y + v.h - 14 && vy(v, p[1]) > v.y + 10;
+  const sunShown = sp[2] >= 0.5 || inStrip(sp), earthShown = ep[2] >= 0.5 || inStrip(ep);
+  if (s.sunO > 0.05 && sp[2] < 0.5 && sunShown) E.over.appendChild(svgEl('circle', { cx: vx(v, sp[0]), cy: vy(v, sp[1]), r: 8, fill: 'none', stroke: '#ffc04d', 'stroke-width': 1.5, 'stroke-dasharray': '2 3', opacity: 0.7 * s.sunO * s.alpha }));
+  if (s.earthO > 0.05 && ep[2] < 0.5 && earthShown) E.over.appendChild(svgEl('circle', { cx: vx(v, ep[0]), cy: vy(v, ep[1]), r: 13, fill: 'none', stroke: '#6fb4ff', 'stroke-width': 1.5, 'stroke-dasharray': '2 3', opacity: 0.7 * s.earthO * s.alpha }));
+  // names on the Sun and Earth (marked hidden when a hill is in the way)
+  if (s.sunO > 0.5 && sunShown) E.over.appendChild(svgEl('text', halo({ x: vx(v, sp[0]) + 16, y: vy(v, sp[1]) - 18, fill: '#ffb020', 'font-family': SANS, 'font-size': 20, 'font-weight': 600, opacity: s.sunO * s.alpha * (sp[2] >= 0.5 ? 1 : 0.7) }), sp[2] >= 0.5 ? 'Sun' : 'Sun, behind the hills'));
+  if (s.earthO > 0.5 && earthShown) E.over.appendChild(svgEl('text', halo({ x: vx(v, ep[0]) + 21, y: vy(v, ep[1]) + 7, fill: '#4da3ff', 'font-family': SANS, 'font-size': 20, 'font-weight': 600, opacity: s.earthO * s.alpha * (ep[2] >= 0.5 ? 1 : 0.7) }), ep[2] >= 0.5 ? 'Earth' : 'Earth, behind the hills'));
+  // compass letters, the clock, and the caption
+  E.axis.replaceChildren();
+  const ay = v.y + v.h + 30;
+  for (const [a, lab] of [[-180, 'S'], [-90, 'W'], [0, 'N'], [90, 'E'], [180, 'S']]) {
+    if (a < v.az0 - 0.01 || a > v.az1 + 0.01) continue;
+    E.axis.appendChild(svgEl('text', { x: vx(v, a), y: ay, 'text-anchor': a <= v.az0 + 1 ? 'start' : a >= v.az1 - 1 ? 'end' : 'middle', 'font-size': 20, 'font-family': SANS, 'font-weight': 600, fill: '#f2f4f7' }, lab));
+  }
+  const lat = Math.abs(S.lat).toFixed(1);
+  const lit = S.sunUp === null ? '' : ' Sun up ' + Math.round(S.sunUp * 100) + '% of this lunar day.';
+  E.axis.appendChild(svgEl('text', { x: v.x + v.w, y: ay + 32, 'text-anchor': 'end', 'font-size': 18, 'font-family': SANS, fill: '#a7adb8' }, S.label + ', ' + lat + '° S.' + lit + ' Horizon from NASA LOLA data. Heights ×' + (Math.round(v.stretch * 10) / 10) + '.'));
+  if (s.clock) {
+    const day = new Date(S.startMs + s.clock.h * 3600000).toISOString().slice(0, 10);
+    E.axis.appendChild(svgEl('text', { x: v.x, y: ay + 32, 'font-size': 18, 'font-family': MONO, fill: '#a7adb8' }, day + ' · time-lapse, ' + s.clock.rate + ' days per second'));
+  }
+  E.axis.appendChild(svgEl('text', { x: v.x + 8, y: vy(v, 0) - 8, 'font-size': 18, 'font-family': SANS, fill: '#6f7684', opacity: s.grid > 0.3 ? 1 : 0 }, 'flat horizon'));
+  E.axis.setAttribute('opacity', s.axis);
+}
+// Earth as seen from the Moon: a globe lit from the Sun's side, so it shows its real phase.
+// Phase angle at Earth = 180 deg minus the Sun-Earth separation seen from the site.
+function earthGlobe(x, y, ep, sp, v, o) {
+  const R = 13, D = Math.PI / 180;
+  const g = svgEl('g', { transform: `translate(${x.toFixed(1)},${y.toFixed(1)})`, opacity: o });
+  const c = Math.sin(ep[1] * D) * Math.sin(sp[1] * D) + Math.cos(ep[1] * D) * Math.cos(sp[1] * D) * Math.cos((sp[0] - ep[0]) * D);
+  const sep = Math.acos(Math.max(-1, Math.min(1, c))) / D;
+  const alpha = 180 - sep;                                   // 0 = full Earth, 180 = new Earth
+  // Direction from Earth to the Sun on the strip (right = azimuth, up = elevation, with the stretch)
+  const dAz = ((sp[0] - ep[0] + 540) % 360) - 180;
+  const east = Math.sin(dAz * D) * Math.cos(sp[1] * D);
+  const north = Math.cos(ep[1] * D) * Math.sin(sp[1] * D) - Math.sin(ep[1] * D) * Math.cos(sp[1] * D) * Math.cos(dAz * D);
+  const ang = Math.atan2(-north * v.pxEl, east * v.pxAz) / D;
+  g.appendChild(svgEl('circle', { r: R, fill: '#0b1830' }));                 // night side
+  const rx = Math.abs(Math.cos(alpha * D)) * R;
+  const lit = `M0,${-R} A${R},${R} 0 0 1 0,${R} A${rx.toFixed(2)},${R} 0 0 ${alpha < 90 ? 1 : 0} 0,${-R}Z`;
+  g.appendChild(svgEl('path', { d: lit, fill: 'url(#earthDay)', transform: `rotate(${ang.toFixed(1)})` }));
+  g.appendChild(svgEl('circle', { r: R + 0.8, fill: 'none', stroke: '#9fd0ff', 'stroke-width': 1.4, 'stroke-opacity': 0.55 }));
+  return g;
+}
+function trackElAt(az) {           // the story's Sun track elevation at an azimuth (first pass)
+  const A = STORY.sun;
+  for (let i = 1; i < A.length; i++) {
+    const a = A[i - 1], b = A[i];
+    if (Math.abs(b[0] - a[0]) > 180) continue;
+    if ((a[0] - az) * (b[0] - az) <= 0) { const t = (az - a[0]) / ((b[0] - a[0]) || 1); return a[1] + (b[1] - a[1]) * t; }
+  }
+  return null;
+}
+function drawWindow(s, v) {
+  const h0 = s.winH, SUN = STORY.sun;
+  E.win.appendChild(svgEl('path', { d: polyline(SUN, v), fill: 'none', stroke: '#ffc04d', 'stroke-width': 2, 'stroke-dasharray': '1 7', 'stroke-linecap': 'round', opacity: 0.55 * s.win }));
+  let up = [], hid = [], hidden = 0;
+  const flushUp = () => { if (up.length > 1) E.win.appendChild(svgEl('path', { d: polyline(up, v), fill: 'none', stroke: '#ffb020', 'stroke-width': 6, 'stroke-linecap': 'round', 'stroke-linejoin': 'round', opacity: s.win })); up = []; };
+  const flushHid = () => { if (hid.length > 1) E.over.appendChild(svgEl('path', { d: polyline(hid, v), fill: 'none', stroke: '#ff5a5f', 'stroke-width': 5, 'stroke-dasharray': '0.1 10', 'stroke-linecap': 'round', opacity: s.win })); hid = []; };
+  for (let k = 0; k <= STAY_H; k++) {
+    const p = pos(SUN, 1, h0 + k);
+    if (k < STAY_H && pos(SUN, 1, Math.round(h0 + k))[2] < 0.5) hidden++;
+    if (p[2] >= 0.5) { if (hid.length) { hid.push(p); flushHid(); } up.push(p); }
+    else { if (up.length) { up.push(p); flushUp(); } hid.push(p); }
+  }
+  flushUp(); flushHid();
+  const hc = $('hidCount'); if (hc && curSlide === 5) hc.textContent = String(hidden);
+  for (let d = 0; d <= 6; d++) {
+    const p = pos(SUN, 1, h0 + d * 24); const x = vx(v, p[0]), y = vy(v, p[1]);
+    E.over.appendChild(svgEl('line', { x1: x, x2: x, y1: y - 9, y2: y + 9, stroke: '#ffb020', 'stroke-width': 2.5, opacity: s.win }));
+    if (d) E.over.appendChild(svgEl('text', halo({ x, y: y - 16, 'text-anchor': 'middle', 'font-size': 20, 'font-family': MONO, fill: '#f2f4f7', 'stroke-width': 4, opacity: s.win }), 'day ' + d));
+  }
+  if (h0 > 1) {
+    const A0 = pos(SUN, 1, 0); const ax = vx(v, A0[0]), ay = vy(v, A0[1]); const k = s.win * clamp(h0 / 12);
+    E.over.appendChild(svgEl('circle', { cx: ax, cy: ay, r: 8, fill: '#0a0c10', stroke: '#a7adb8', 'stroke-width': 2, opacity: k }));
+    E.over.appendChild(svgEl('text', halo({ x: ax, y: ay - 18, 'text-anchor': 'middle', 'font-size': 20, 'font-family': MONO, fill: '#a7adb8', opacity: k }), 'plan A'));
+  }
+  const L = pos(SUN, 1, h0); const lx = vx(v, L[0]), ly = vy(v, L[1]);
+  E.over.appendChild(svgEl('line', { x1: lx, x2: lx, y1: ly, y2: ly - 70, stroke: '#f2f4f7', 'stroke-width': 2, opacity: s.win }));
+  E.over.appendChild(svgEl('circle', { cx: lx, cy: ly, r: 46, fill: 'url(#sunGlow)', opacity: s.win }));
+  E.over.appendChild(svgEl('circle', { cx: lx, cy: ly, r: 7.5, fill: '#fffef9', opacity: s.win }));
+  const stamp = new Date(LANDING_MS + h0 * 3600000).toISOString().slice(0, 13).replace('T', ' ') + ':00 UTC';
+  E.over.appendChild(svgEl('text', halo({ x: lx + 10, y: ly - 56, 'font-size': 20, 'font-family': MONO, fill: '#f2f4f7', opacity: s.win }), 'landing ' + stamp));
+  if (s.spanB > 0.001) {
+    const sp = D.B.spans.find((q) => q.inStayHours > 0) || D.B.spans[0];
+    const x0 = vx(v, sp.x0), x1 = vx(v, sp.x1), yb = v.y + v.h - 40;
+    E.over.appendChild(svgEl('rect', { x: x0, y: yb, width: x1 - x0, height: 18, fill: 'url(#hatchAlert)', stroke: '#ff5a5f', 'stroke-width': 1.5, opacity: s.spanB }));
+    E.over.appendChild(svgEl('text', halo({ x: (x0 + x1) / 2, y: yb - 12, 'text-anchor': 'middle', 'font-size': 20, 'font-family': MONO, fill: '#f2f4f7', opacity: s.spanB }), 'Ridge hides the Sun for 42 hours'));
+  }
+  if (s.next > 0.001) {
+    const p = pos(SUN, 1, NEXT_H); const x = vx(v, p[0]), y = vy(v, p[1]);
+    E.over.appendChild(svgEl('circle', { cx: x, cy: y, r: 10, fill: 'none', stroke: '#4cc38a', 'stroke-width': 3, opacity: s.next }));
+    E.over.appendChild(svgEl('text', halo({ x: x - 18, y: y + 48, 'text-anchor': 'end', 'font-size': 22, 'font-family': SANS, 'font-weight': 600, fill: '#f2f4f7', opacity: s.next }), 'Next landing date that works: 11 Nov 2027'));
+    E.over.appendChild(svgEl('text', halo({ x: x - 18, y: y + 76, 'text-anchor': 'end', 'font-size': 20, 'font-family': SANS, fill: '#a7adb8', opacity: s.next }), '25.8 days after plan B'));
+  }
+}
+
+// ---------- Slide 3: labels placed on the strip ----------
+function placeS3Labels() {
+  const v = FULL;
+  const put = (id, x, y, w, align) => { const el = $(id); el.style.left = x + 'px'; el.style.top = y + 'px'; el.style.width = w + 'px'; el.style.textAlign = align || 'left'; };
+  D.A.spans.forEach((sp, i) => {
+    const id = i === 0 ? 's3spanA' : 's3spanB';
+    $(id).textContent = 'Sun hidden ' + (sp.days < 2 ? sp.days.toFixed(2) : sp.days.toFixed(1)) + ' days';
+    put(id, (vx(v, sp.x0) + vx(v, sp.x1)) / 2 - 160, v.y + v.h - 64, 320, 'center');
+  });
+  put('s3sun', vx(v, -176), vy(v, 6.4), 540);
+  put('s3earth', vx(v, 11), vy(v, 12.4), 420);
+  put('s3hill', vx(v, 40), vy(v, 1.4), 420);
+}
+
+// ---------- Deck control ----------
+const slides = Array.from(document.querySelectorAll('.slide'));
+const N = slides.length;
+let t0 = performance.now(), from = null, cur = null;
+function show(n, instant) {
+  n = Math.max(1, Math.min(N, n));
+  from = instant ? null : cur; curSlide = n; t0 = performance.now();
+  slides.forEach((s, i) => {
+    const on = i === n - 1;
+    if (on && !s.classList.contains('on')) { s.classList.remove('on'); void s.offsetWidth; }
+    s.classList.toggle('on', on);
+  });
+  $('footN').textContent = n + ' / ' + N;
+  $('bar').style.width = (n / N * 100) + '%';
+  if (location.hash !== '#' + n) history.replaceState(null, '', location.pathname + location.search + '#' + n);
+}
+function frame(now) {
+  now = Math.max(now, t0);
+  const t = STILL ? 1e9 : now - t0;
+  const target = stateFor(curSlide, t, now);
+  const k = from ? ease(clamp((now - t0) / 650)) : 1;
+  cur = from && k < 1 ? mix(from, target, k) : target;
+  if (k >= 1) from = null;
+  render(cur);
+  requestAnimationFrame(frame);
+}
+function fit() {
+  const s = Math.min(innerWidth / 1920, innerHeight / 1080);
+  stageEl.style.transform = 'scale(' + s + ')';
+  stageEl.style.left = ((innerWidth - 1920 * s) / 2) + 'px';
+  stageEl.style.top = ((innerHeight - 1080 * s) / 2) + 'px';
+}
+addEventListener('resize', fit); fit();
+addEventListener('keydown', (e) => {
+  if (['ArrowRight', 'PageDown', ' ', 'Enter'].includes(e.key)) { e.preventDefault(); show(curSlide + 1); }
+  else if (['ArrowLeft', 'PageUp', 'Backspace'].includes(e.key)) { e.preventDefault(); show(curSlide - 1); }
+  else if (e.key === 'Home') show(1); else if (e.key === 'End') show(N);
+  else if (/^[1-7]$/.test(e.key)) show(+e.key);
+});
+stageEl.addEventListener('click', (e) => { const r = stageEl.getBoundingClientRect(); show(curSlide + ((e.clientX - r.left) < r.width / 3 ? -1 : 1)); });
+$('prev').addEventListener('click', () => show(curSlide - 1));
+$('next').addEventListener('click', () => show(curSlide + 1));
+let tx0 = null; addEventListener('touchstart', (e) => { tx0 = e.touches[0].clientX; }, { passive: true });
+addEventListener('touchend', (e) => { if (tx0 === null) return; const dx = e.changedTouches[0].clientX - tx0; if (Math.abs(dx) > 40) show(curSlide + (dx < 0 ? 1 : -1)); tx0 = null; }, { passive: true });
+addEventListener('hashchange', () => { const n = parseInt(location.hash.slice(1), 10); if (n && n !== curSlide) show(n); });
+
+placeS3Labels();
+show(parseInt(location.hash.slice(1), 10) || 1, true);
+requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

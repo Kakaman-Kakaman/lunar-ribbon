@@ -1,0 +1,20 @@
+{
+ "terrain": [
+  "LDEM_85S_10M",
+  "LDEM_80S_20M",
+  "LDEM_60S_240M"
+ ],
+ "regions": [
+  {
+   "id": "pgda-site04-shackleton-rim-crest",
+   "cx": -2679.662772378557,
+   "cy": -6119.235654208328,
+   "spacingM": 250,
+   "n": 40,
+   "heightsM": [
+    2,
+    10
+   ]
+  }
+ ]
+}
