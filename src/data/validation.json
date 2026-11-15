@@ -69,9 +69,33 @@
       "id": "eclipses-nasa",
       "title": "Eclipses: Earth crossing the Sun, against NASA's eclipse table",
       "reference": "NASA lunar eclipse table 2021-2030 (F. Espenak, eclipse.gsfc.nasa.gov): ten lunar eclipses in 2027-2030",
-      "result": "Engine, Apollo 11 site, hourly 2027-2030: Earth covers part of the Sun on 8 occasions; 8 of NASA's 10 eclipse dates are found, 0 extra. At the three total eclipses Earth covers all of the Sun. Missed: 2027-07-18 (penumbral), 2027-08-17 (penumbral).",
-      "detail": "A lunar eclipse seen from Earth is Earth passing in front of the Sun seen from the Moon. The engine computes the overlap of the two discs from its own Sun and Earth directions; nothing is tuned to the eclipse table. Hourly sampling can miss a very shallow penumbral eclipse, which covers only a sliver of the Sun from part of the Moon. Events found: 2027-02-20 29% for 2 h; 2028-01-12 47% for 2 h; 2028-07-06 87% for 4 h; 2028-12-31 100% for 5 h; 2029-06-26 100% for 4 h; 2029-12-20 100% for 5 h; 2030-06-15 96% for 3 h; 2030-12-09 28% for 3 h.",
+      "result": "Engine, whole near side of the Moon, 2027-2030: 10 of NASA's 10 eclipses found, each within 1 minute of NASA's time of greatest eclipse; 0 extra.",
+      "detail": "Earth's disc includes a 75 km opaque layer of atmosphere (Danjon's method, used by NASA's eclipse predictions). An eclipse counts if Earth covers part of the Sun anywhere on the Moon's near side, as the table does; at a single site a shallow eclipse may not be seen at all. NASA's times are Terrestrial Dynamical Time, about a minute ahead of UTC.",
       "status": "pass"
+    },
+    {
+      "id": "dsn-horizons",
+      "title": "Deep Space Network: Moon elevation at Goldstone, Canberra and Madrid",
+      "reference": "NASA JPL Horizons, Moon seen from the 70 m antennas (positions from DSN handbook 810-005, module 301 Rev. N, Table 5), hourly for a week, no refraction",
+      "result": "Largest elevation difference: Goldstone 0.0007 deg, Canberra 0.0008 deg, Madrid 0.0008 deg.",
+      "detail": "Contact needs Earth in view from the lander and the Moon at least 6 degrees up at a complex (the handbook gives the mechanical limit as approximately six degrees). Terrain masks at the complexes, refraction and antenna scheduling are not modelled.",
+      "status": "pass"
+    },
+    {
+      "id": "a3gt-malapert",
+      "title": "Sunlit and Earth-in-view, date by date, at Malapert Massif",
+      "reference": "ACT's Artemis III Geotechnical cubes in LROC QuickMap: Malapert Massif, 2 m pixels, every 6 h, December 2025, lit by the Sun's centre",
+      "result": "Ground level, 25,425 point-and-time cases: Sun verdict agrees in 95.2%, Earth in 97.4%.",
+      "detail": "Where the Sun verdicts differ, it is lit only in ours in 425 cases and only in theirs in 792. Their terrain is finer (NASA Goddard 5 m site maps and LROC NAC elevation models); ours is LDEM_85S_10M, LDEM_80S_20M, LDEM_60S_240M.",
+      "status": "pass"
+    },
+    {
+      "id": "barker-fine",
+      "title": "Connecting ridge crest at lander heights, on fine terrain",
+      "reference": "Barker et al. (2021), Planetary and Space Science 203, 105119, Table 2: best regions about 67-71% at 1 m and 83-89% at 5 m, January 2024 to January 2026",
+      "result": "Ours, mean Sun disc fraction at the crest point: 58.0% at 1 m, 70.6% at 2 m, 84.2% at 5 m, 89.3% at 10 m.",
+      "detail": "Terrain: LDEM_85S_10M, LDEM_80S_20M, LDEM_60S_240M. The published figures are for the best area of the site; ours are one point, so this is a plausibility check.",
+      "status": "note"
     }
   ]
 }

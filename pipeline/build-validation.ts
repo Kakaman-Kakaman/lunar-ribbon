@@ -5,7 +5,7 @@
 // The engine files import each other without the .ts extension, which plain Node cannot resolve,
 // so this script registers a tiny resolve hook (in this file only; the engine is not edited).
 
-import { readdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { register } from 'node:module';
 import { join } from 'node:path';
 
@@ -20,7 +20,8 @@ register(
 
 const { moonFrame, siteBasis, skyPosition } = await import('../src/engine/ephemeris.ts');
 const { smoothSphereMask } = await import('../src/engine/horizon.ts');
-const { FrameCache, computeSeries } = await import('../src/engine/visibility.ts');
+const { FrameCache, computeSeries, eclipseGapAnywhereDeg } = await import('../src/engine/visibility.ts');
+const { DSN_COMPLEXES, moonElevationDeg } = await import('../src/engine/dsn.ts');
 const { evaluate, PROFILES } = await import('../src/engine/mission.ts');
 const { MOON_RADIUS_M, horizonProfile, llToXY } = await import('../src/engine/raymarch.ts');
 type DemGrid = import('../src/engine/raymarch.ts').DemGrid;
@@ -226,44 +227,82 @@ const cmp = JSON.parse(readFileSync(join(ROOT, 'tests', 'fixtures', 'trek', 'com
   });
 }
 
-// ---------- 8. eclipses: Earth crossing the Sun, against NASA's lunar eclipse table ----------
+// ---------- 8. eclipses: Earth crossing the Sun anywhere on the Moon, against NASA's table ----------
 {
   // NASA lunar eclipses 2027-2030 (F. Espenak, https://eclipse.gsfc.nasa.gov/LEdecade/LEdecade2021.html):
-  // seen from the Moon, Earth passes in front of the Sun at these times.
+  // date and TD of greatest eclipse. A lunar eclipse seen from Earth is Earth covering the Sun seen
+  // from the Moon; the table counts it if any part of the Moon is in Earth's shadow.
   const NASA: [string, string][] = [
-    ['2027-02-20', 'penumbral'], ['2027-07-18', 'penumbral'], ['2027-08-17', 'penumbral'],
-    ['2028-01-12', 'partial'], ['2028-07-06', 'partial'], ['2028-12-31', 'total'],
-    ['2029-06-26', 'total'], ['2029-12-20', 'total'], ['2030-06-15', 'partial'], ['2030-12-09', 'penumbral'],
+    ['2027-02-20T23:14:06', 'penumbral'], ['2027-07-18T16:04:09', 'penumbral'], ['2027-08-17T07:14:59', 'penumbral'],
+    ['2028-01-12T04:14:13', 'partial'], ['2028-07-06T18:20:57', 'partial'], ['2028-12-31T16:53:15', 'total'],
+    ['2029-06-26T03:23:22', 'total'], ['2029-12-20T22:43:12', 'total'], ['2030-06-15T18:34:34', 'partial'],
+    ['2030-12-09T22:28:51', 'penumbral'],
   ];
-  const start = Date.UTC(2027, 0, 1), n = 4 * 365 * 24;
-  const mask = smoothSphereMask('apollo-11', 'Apollo 11', 0.674, 23.473, [2]);
-  const s = computeSeries(mask, 2, start, HOUR, n, new FrameCache());
-  const events: { day: string; max: number; hours: number }[] = [];
-  let cur: { iMax: number; max: number; i0: number } | null = null;
-  for (let i = 0; i < n; i++) {
-    const c = s.sunCover![i];
-    if (c > 0) {
-      if (!cur) cur = { iMax: i, max: c, i0: i };
-      else if (c > cur.max) { cur.max = c; cur.iMax = i; }
-    } else if (cur) {
-      events.push({ day: new Date(start + cur.iMax * HOUR).toISOString().slice(0, 10), max: cur.max, hours: i - cur.i0 });
-      cur = null;
-    }
+  const frames = new FrameCache();
+  let found = 0, worstMin = 0;
+  for (const [td] of NASA) {
+    const t0 = Date.parse(td + 'Z');
+    let best = Infinity, bestT = 0;
+    for (let k = -360; k <= 360; k++) { const g = eclipseGapAnywhereDeg(frames.get(t0 + k * 60000)); if (g < best) { best = g; bestT = t0 + k * 60000; } }
+    if (best < 0) { found++; worstMin = Math.max(worstMin, Math.abs(bestT - t0) / 60000); }
   }
-  const near = (a: string, b: string) => Math.abs(Date.parse(a) - Date.parse(b)) <= 86400000;
-  const found = NASA.filter(([d]) => events.some((e) => near(e.day, d)));
-  const missed = NASA.filter(([d]) => !events.some((e) => near(e.day, d)));
-  const extra = events.filter((e) => !NASA.some(([d]) => near(e.day, d)));
-  const totals = NASA.filter(([, k]) => k === 'total').map(([d]) => events.find((e) => near(e.day, d)));
-  const allTotalsFull = totals.every((e) => e && e.max >= 0.999);
+  // Extra events: scan 2027-2030 every 10 minutes and count separate events.
+  const start = Date.UTC(2027, 0, 1), stop = Date.UTC(2031, 0, 1);
+  let events = 0, inside = false;
+  for (let t = start; t < stop; t += 600000) { const g = eclipseGapAnywhereDeg(frames.get(t)); if (g < 0 && !inside) events++; inside = g < 0; }
   checks.push({
     id: 'eclipses-nasa',
     title: "Eclipses: Earth crossing the Sun, against NASA's eclipse table",
     reference: 'NASA lunar eclipse table 2021-2030 (F. Espenak, eclipse.gsfc.nasa.gov): ten lunar eclipses in 2027-2030',
-    result: `Engine, Apollo 11 site, hourly 2027-2030: Earth covers part of the Sun on ${events.length} occasions; ${found.length} of NASA's ${NASA.length} eclipse dates are found, ${extra.length} extra. At the three total eclipses Earth covers ${allTotalsFull ? 'all' : 'not all'} of the Sun.${missed.length ? ' Missed: ' + missed.map(([d, k]) => d + ' (' + k + ')').join(', ') + '.' : ''}`,
-    detail: `A lunar eclipse seen from Earth is Earth passing in front of the Sun seen from the Moon. The engine computes the overlap of the two discs from its own Sun and Earth directions; nothing is tuned to the eclipse table. Hourly sampling can miss a very shallow penumbral eclipse, which covers only a sliver of the Sun from part of the Moon. Events found: ${events.map((e) => e.day + ' ' + Math.round(e.max * 100) + '% for ' + e.hours + ' h').join('; ')}.`,
-    status: extra.length === 0 && allTotalsFull && missed.every(([, k]) => k === 'penumbral') ? 'pass' : 'note',
+    result: `Engine, whole near side of the Moon, 2027-2030: ${found} of NASA's ${NASA.length} eclipses found, each within ${Math.max(1, Math.ceil(worstMin))} minute${Math.max(1, Math.ceil(worstMin)) === 1 ? "" : "s"} of NASA's time of greatest eclipse; ${events - found} extra.`,
+    detail: "Earth's disc includes a 75 km opaque layer of atmosphere (Danjon's method, used by NASA's eclipse predictions). An eclipse counts if Earth covers part of the Sun anywhere on the Moon's near side, as the table does; at a single site a shallow eclipse may not be seen at all. NASA's times are Terrestrial Dynamical Time, about a minute ahead of UTC.",
+    status: found === NASA.length && events === found ? 'pass' : 'note',
   });
+}
+
+// ---------- 9. Deep Space Network: the Moon's elevation at the three complexes ----------
+{
+  const fx = JSON.parse(readFileSync(join(ROOT, 'tests/fixtures/dsn/moon-2027.json'), 'utf8')) as { rows: Record<string, [number, number, number][]> };
+  const worst = DSN_COMPLEXES.map((c) => Math.max(...fx.rows[c.id].map(([ms, , el]) => Math.abs(moonElevationDeg(c, ms) - el))));
+  checks.push({
+    id: 'dsn-horizons',
+    title: 'Deep Space Network: Moon elevation at Goldstone, Canberra and Madrid',
+    reference: 'NASA JPL Horizons, Moon seen from the 70 m antennas (positions from DSN handbook 810-005, module 301 Rev. N, Table 5), hourly for a week, no refraction',
+    result: `Largest elevation difference: ${DSN_COMPLEXES.map((c, i) => `${c.name.split(',')[0]} ${f(worst[i], 4)} deg`).join(', ')}.`,
+    detail: 'Contact needs Earth in view from the lander and the Moon at least 6 degrees up at a complex (the handbook gives the mechanical limit as approximately six degrees). Terrain masks at the complexes, refraction and antenna scheduling are not modelled.',
+    status: Math.max(...worst) < 0.005 ? 'pass' : 'note',
+  });
+}
+
+// ---------- 10. Per-date shadows against ACT's Malapert cubes, and Barker at lander heights ----------
+{
+  const a3 = join(ROOT, 'pipeline/out/a3gt-check.json');
+  if (existsSync(a3)) {
+    const r = JSON.parse(readFileSync(a3, 'utf8'));
+    const g0 = r.summary.find((x: any) => x.heightM === 0);
+    const n = g0.sun.both + g0.sun.oursOnly + g0.sun.theirsOnly + g0.sun.neither;
+    checks.push({
+      id: 'a3gt-malapert',
+      title: 'Sunlit and Earth-in-view, date by date, at Malapert Massif',
+      reference: "ACT's Artemis III Geotechnical cubes in LROC QuickMap: Malapert Massif, 2 m pixels, every 6 h, December 2025, lit by the Sun's centre",
+      result: `Ground level, ${n.toLocaleString('en-GB')} point-and-time cases: Sun verdict agrees in ${pc(g0.sunAgreement)}, Earth in ${pc(g0.earthAgreement)}.`,
+      detail: `Where the Sun verdicts differ, it is lit only in ours in ${g0.sun.oursOnly} cases and only in theirs in ${g0.sun.theirsOnly}. Their terrain is finer (NASA Goddard 5 m site maps and LROC NAC elevation models); ours is ${r.stack.join(', ')}.`,
+      status: g0.sunAgreement > 0.9 ? 'pass' : 'note',
+    });
+  }
+  const tc = join(ROOT, 'pipeline/out/terrain-v2-comparison.json');
+  if (existsSync(tc)) {
+    const r = JSON.parse(readFileSync(tc, 'utf8'));
+    const crest = r.barker.find((b: any) => b.id.endsWith('-crest'));
+    if (crest) checks.push({
+      id: 'barker-fine',
+      title: 'Connecting ridge crest at lander heights, on fine terrain',
+      reference: 'Barker et al. (2021), Planetary and Space Science 203, 105119, Table 2: best regions about 67-71% at 1 m and 83-89% at 5 m, January 2024 to January 2026',
+      result: `Ours, mean Sun disc fraction at the crest point: ${pc(crest.h1)} at 1 m, ${pc(crest.h2)} at 2 m, ${pc(crest.h5)} at 5 m, ${pc(crest.h10)} at 10 m.`,
+      detail: `Terrain: ${r.stack.join(', ')}. The published figures are for the best area of the site; ours are one point, so this is a plausibility check.`,
+      status: 'note',
+    });
+  }
 }
 
 const out = { generated: new Date().toISOString().slice(0, 10), checks };
