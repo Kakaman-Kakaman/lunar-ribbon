@@ -2,7 +2,8 @@
 // 30 m: crest points and real landing sites), short-stay rules (REQUIREMENT_PRESETS 'short-stay'),
 // 2 m, landing times every 6 h through 2027-2028: a pair (A, B = A + N days, N = 1..7) qualifies when
 // A works and B fails at the centre and at all 16 band points, and the cause of B's failure is the
-// same everywhere. Ranked by the delay to B's next window, then by A's smallest slip margin.
+// same everywhere. D-053: by default the cause must include the battery dropping below its floor or Earth
+// hidden by terrain (--any-cause drops that). Ranked by the delay to B's next window, then A's margin.
 // Run: node pipeline/find-stories-v2.ts      Output: pipeline/out/stories-v2.json
 
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
@@ -38,6 +39,9 @@ const { stack } = loadTerrainStack();
 console.log(`nested stack: ${stack.map((g) => g.name).join(' > ')}`);
 const frames = new FrameCache();
 const dsn = computeDsnSeries(START, HOUR, N);
+// D-053: a contact failure counts only if it remains with every complex always available, i.e. terrain hides Earth.
+const dsnAlways = { ...dsn, moonElDeg: dsn.moonElDeg.map(() => new Float32Array(N).fill(90)) };
+const CONSEQUENCE = process.argv.includes('--any-cause') ? null : true;
 
 function offset(lat: number, lon: number, azDeg: number, d: number): [number, number] {
   const t = d / MOON_RADIUS_M, a = azDeg * DEG, la = lat * DEG;
@@ -73,12 +77,15 @@ for (const site of index) {
       if (L + cnt > N) break;
       const r = evaluateRequirements(s, L, req, dsn);
       o[k] = r.ok ? 1 : 0;
-      c[k] = r.failures.join('+');
+      let f = r.failures.join('+');
+      if (r.failures.includes('contact') && evaluateRequirements(s, L, req, dsnAlways).failures.includes('contact')) f += '+earth-hidden';
+      c[k] = f;
     }
     ok.push(o); cause.push(c);
   }
   const allOk = (k: number) => ok.every((o) => o[k] === 1);
-  const allFailSame = (k: number) => ok.every((o) => o[k] === 0) && cause.every((c) => c[k] === cause[0][k]);
+  const consequence = (f: string) => !CONSEQUENCE || /battery|earth-hidden/.test(f);
+  const allFailSame = (k: number) => ok.every((o) => o[k] === 0) && cause.every((c) => c[k] === cause[0][k]) && consequence(cause[0][k]);
   let found = 0;
   for (let a = 0; a < nCand; a++) {
     if (!allOk(a)) continue;

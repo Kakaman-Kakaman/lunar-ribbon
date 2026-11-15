@@ -84,6 +84,10 @@ export function compassName(azDeg: number): string {
 /** One line naming where the skyline data came from. */
 export function terrainLabel(t: TerrainSource): string {
   switch (t) {
+    case 'lola-10m':
+      return 'Terrain: NASA LOLA elevation grids (10 m near the site, then 20 m and 240 m)';
+    case 'lola-20m':
+      return 'Terrain: NASA LOLA elevation grids (20 m near the site, 240 m beyond)';
     case 'lola-80m+240m':
       return 'Terrain: NASA LOLA elevation grids (80 m near the site, 240 m beyond)';
     case 'lola-240m':
@@ -97,7 +101,14 @@ export function terrainLabel(t: TerrainSource): string {
 
 /** Short badge text. */
 export function terrainBadge(t: TerrainSource): string {
-  return t === 'smooth-sphere' ? 'No terrain: geometric estimate' : t === 'lola-80m+240m' ? 'NASA LOLA terrain, 80 m' : t === 'lola-240m' ? 'NASA LOLA terrain, 240 m' : 'NASA LOLA terrain, 480 m: indicative';
+  switch (t) {
+    case 'smooth-sphere': return 'No terrain: geometric estimate';
+    case 'lola-10m': return 'NASA LOLA terrain, 10 m';
+    case 'lola-20m': return 'NASA LOLA terrain, 20 m';
+    case 'lola-80m+240m': return 'NASA LOLA terrain, 80 m';
+    case 'lola-240m': return 'NASA LOLA terrain, 240 m';
+    case 'lola-480m': return 'NASA LOLA terrain, 480 m: indicative';
+  }
 }
 
 /** Distance to the terrain that sets the skyline at an azimuth, km; null if the mask has none. */

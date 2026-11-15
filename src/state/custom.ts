@@ -12,7 +12,7 @@ import type { SiteInfo } from './sites';
 export const CUSTOM_PREFIX = 'pt:';
 /** The coarse grid covers the pole out to 80° S. */
 export const COARSE_LIMIT_LAT = -80;
-const HEIGHTS = [2, 10];
+const HEIGHTS = [1, 2, 5, 10];
 
 export function customId(lat: number, lon: number): string {
   return `${CUSTOM_PREFIX}${lat.toFixed(4)},${lon.toFixed(4)}`;

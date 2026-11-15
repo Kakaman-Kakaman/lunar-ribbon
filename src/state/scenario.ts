@@ -6,7 +6,8 @@ export const HOUR_MS = 3600000;
 export const DAY_MS = 86400000;
 
 export type BMode = 'same' | 'plus' | 'own';
-export type HeightM = 2 | 10;
+export type HeightM = 1 | 2 | 5 | 10;
+export const HEIGHTS: HeightM[] = [1, 2, 5, 10];
 
 export interface Scenario {
   siteA: string;
@@ -151,7 +152,7 @@ export function decodeScenario(hash: string): Scenario {
   const t = stampToMs(p.get('t'));
   if (t !== null) s.landingMs = clamp(t, LIMITS.landingMin, LIMITS.landingMax);
   const h = num(p.get('h'));
-  if (h === 2 || h === 10) s.heightM = h;
+  if (h === 1 || h === 2 || h === 5 || h === 10) s.heightM = h;
   const m = p.get('m');
   if (m === 'same' || m === 'plus' || m === 'own') s.bMode = m;
   const n = num(p.get('n'));

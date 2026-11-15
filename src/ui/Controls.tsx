@@ -5,7 +5,7 @@ import { useEffect, useId, useState, type ReactNode } from 'react';
 import { PROFILES } from '../engine/mission';
 import { fmtDuration, fmtNum, fmtPct } from '../engine/verdict';
 import type { ScenarioApi } from '../state/hooks';
-import { HOUR_MS, LIMITS, isModified, type BMode, type HeightM } from '../state/scenario';
+import { HEIGHTS, HOUR_MS, LIMITS, isModified, type BMode, type HeightM } from '../state/scenario';
 
 const SHORT_LABEL: Record<string, string> = {
   'short-stay': 'Short stay',
@@ -223,10 +223,7 @@ export function Controls({ api }: { api: ScenarioApi }) {
             name="height"
             label="Observer height above the ground"
             value={s.heightM}
-            options={[
-              { value: 2, text: '2 m' },
-              { value: 10, text: '10 m' },
-            ]}
+            options={HEIGHTS.map((h) => ({ value: h, text: `${h} m` }))}
             onChange={api.setHeight}
           />
         </Field>
