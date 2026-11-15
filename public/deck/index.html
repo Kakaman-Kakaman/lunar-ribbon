@@ -493,6 +493,7 @@ function render(s) {
       E.orbits.appendChild(svgEl('path', { d: polyline(ahead, v), fill: 'none', stroke: colour, 'stroke-width': width, 'stroke-dasharray': '1 7', 'stroke-linecap': 'round', opacity: 0.55 * s.orbit }));
       E.orbits.appendChild(svgEl('path', { d: polyline(past, v), fill: 'none', stroke: colour, 'stroke-width': width, 'stroke-linecap': 'round', 'stroke-linejoin': 'round', opacity: 0.85 * s.orbit }));
     };
+    trail(S.earth, S.earthStep, s.earthH, '#6fb4ff', 1.8);
     trail(S.sun, S.sunStep, s.sunH, '#ffc04d', 2);
   }
   // Sun and Earth, drawn under the terrain so hills hide them
