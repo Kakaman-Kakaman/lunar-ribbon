@@ -702,7 +702,7 @@ if (forcedMs === null) {
     ['pgda-site07-peak-near-shackleton', 'Peak near Shackleton crater'],
     ['pgda-site01-connecting-ridge', 'Connecting Ridge'],
     ['mons-mouton', 'Mons Mouton'],
-    ['de-gerlache-crater', 'Floor of de Gerlache crater'],
+    ['im-2-athena', 'Athena (IM-2) landing site'],
   ];
   // Each site takes the next lunar day in turn, starting at plan A's landing, so the clock never runs backwards.
   const deckFrames = new FrameCache();
