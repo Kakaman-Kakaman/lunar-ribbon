@@ -307,6 +307,14 @@ export function Controls({ api }: { api: ScenarioApi }) {
               id="req-earth" label="Share of stay with Earth in view" min={0} max={1} step={LIMITS.minEarthShare.step}
               value={s.minEarthShare} display={`at least ${fmtPct(s.minEarthShare)}`} onChange={api.setMinEarth}
             />
+            <Slider
+              id="req-battery" label="Battery reserve kept" min={LIMITS.minBatteryCharge.min} max={LIMITS.minBatteryCharge.max} step={LIMITS.minBatteryCharge.step}
+              value={Math.max(LIMITS.minBatteryCharge.min, s.minBatteryCharge)} display={s.minBatteryCharge < 0 ? 'no battery rule' : `at least ${fmtPct(s.minBatteryCharge)}`} onChange={api.setMinBattery}
+            />
+            <Slider
+              id="req-contact" label="Deep Space Network contact each day" min={LIMITS.minContactHours.min} max={LIMITS.minContactHours.max} step={LIMITS.minContactHours.step}
+              value={s.minContactHours} display={s.minContactHours === 0 ? 'no contact rule' : `at least ${s.minContactHours} h`} onChange={api.setMinContact}
+            />
           </div>
           <div className="mt-1 flex items-center gap-3 text-xs text-ink2">
             <span>{modified ? 'Changed from the preset above.' : 'Matches the preset above.'}</span>

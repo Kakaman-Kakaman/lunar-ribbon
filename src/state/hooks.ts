@@ -38,6 +38,8 @@ export interface ScenarioApi {
   setStay(v: number): void;
   setMaxDark(v: number): void;
   setMinEarth(v: number): void;
+  setMinBattery(v: number): void;
+  setMinContact(v: number): void;
   setHeight(h: HeightM): void;
   /** fromStrip: moved by clicking the landing-date strip, so the scanned year stays put. */
   setLandingA(ms: number, fromStrip?: boolean): void;
@@ -92,6 +94,8 @@ export function useScenario(): ScenarioApi {
       setStay: (v) => patch((c) => ({ ...c, stayDays: clamp(v, LIMITS.stayDays.min, LIMITS.stayDays.max) })),
       setMaxDark: (v) => patch((c) => ({ ...c, maxDarkGapHours: clamp(v, 0, LIMITS.maxDarkGapHours.max) })),
       setMinEarth: (v) => patch((c) => ({ ...c, minEarthShare: clamp(v, 0, 1) })),
+      setMinBattery: (v) => patch((c) => ({ ...c, minBatteryCharge: v < 0 ? -1 : clamp(v, 0, LIMITS.minBatteryCharge.max) })),
+      setMinContact: (v) => patch((c) => ({ ...c, minContactHours: clamp(Math.round(v), 0, 24) })),
       setHeight: (h) => patch((c) => ({ ...c, heightM: h })),
       setLandingA: (ms, fromStrip = false) =>
         setCore((c) => {

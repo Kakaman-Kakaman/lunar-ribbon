@@ -25,6 +25,10 @@ export interface Scenario {
   stayDays: number;
   maxDarkGapHours: number;
   minEarthShare: number;
+  /** Battery reserve, share of capacity; below 0 means no battery rule (version 2). */
+  minBatteryCharge: number;
+  /** DSN contact hours needed in every Earth day; 0 means no contact rule (version 2). */
+  minContactHours: number;
 }
 
 /**
@@ -49,9 +53,13 @@ export const DEFAULT_PROFILE_ID: string = DEFAULTS.profileId;
 export const presetOf = (id: string): MissionProfile => PROFILES.find((p) => p.id === id) ?? PROFILES[1];
 
 /** A scenario using a preset's numbers unchanged. */
+/** The battery and contact sliders' values for a preset (no rule = -1 and 0). */
+const batteryOf = (p: MissionProfile) => p.minBatteryCharge ?? -1;
+const contactOf = (p: MissionProfile) => p.minContactHoursPerDay ?? 0;
+
 export function withPreset(s: Scenario, profileId: string): Scenario {
   const p = presetOf(profileId);
-  return { ...s, profileId: p.id, stayDays: p.stayDays, maxDarkGapHours: p.maxDarkGapHours, minEarthShare: p.minEarthShare };
+  return { ...s, profileId: p.id, stayDays: p.stayDays, maxDarkGapHours: p.maxDarkGapHours, minEarthShare: p.minEarthShare, minBatteryCharge: batteryOf(p), minContactHours: contactOf(p) };
 }
 
 export function defaultScenario(): Scenario {
@@ -68,18 +76,25 @@ export function defaultScenario(): Scenario {
     stayDays: p.stayDays,
     maxDarkGapHours: p.maxDarkGapHours,
     minEarthShare: p.minEarthShare,
+    minBatteryCharge: batteryOf(p),
+    minContactHours: contactOf(p),
   };
 }
 
 /** The profile the sliders currently describe. */
 export function effectiveProfile(s: Scenario): MissionProfile {
   const base = presetOf(s.profileId);
-  return { ...base, stayDays: s.stayDays, maxDarkGapHours: s.maxDarkGapHours, minEarthShare: s.minEarthShare };
+  return {
+    ...base, stayDays: s.stayDays, maxDarkGapHours: s.maxDarkGapHours, minEarthShare: s.minEarthShare,
+    minBatteryCharge: s.minBatteryCharge < 0 ? undefined : s.minBatteryCharge,
+    minContactHoursPerDay: s.minContactHours > 0 ? s.minContactHours : undefined,
+  };
 }
 
 export function isModified(s: Scenario): boolean {
   const base = presetOf(s.profileId);
-  return base.stayDays !== s.stayDays || base.maxDarkGapHours !== s.maxDarkGapHours || base.minEarthShare !== s.minEarthShare;
+  return base.stayDays !== s.stayDays || base.maxDarkGapHours !== s.maxDarkGapHours || base.minEarthShare !== s.minEarthShare
+    || batteryOf(base) !== s.minBatteryCharge || contactOf(base) !== s.minContactHours;
 }
 
 export function landingBMs(s: Scenario): number {
@@ -116,6 +131,8 @@ export const LIMITS = {
   stayDays: { min: 1, max: 100, step: 0.5 },
   maxDarkGapHours: { min: 0, max: 240, step: 6 },
   minEarthShare: { min: 0, max: 1, step: 0.05 },
+  minBatteryCharge: { min: -0.05, max: 0.9, step: 0.05 },
+  minContactHours: { min: 0, max: 24, step: 1 },
   plusDays: { min: 0, max: 365, step: 0.25 },
   /** Landing times are held to this range so the series stays a sensible length. */
   landingMin: Date.UTC(2024, 0, 1),
@@ -136,6 +153,8 @@ export function encodeScenario(s: Scenario): string {
   if (s.stayDays !== base.stayDays) p.set('stay', String(s.stayDays));
   if (s.maxDarkGapHours !== base.maxDarkGapHours) p.set('gap', String(s.maxDarkGapHours));
   if (s.minEarthShare !== base.minEarthShare) p.set('earth', String(s.minEarthShare));
+  if (s.minBatteryCharge !== batteryOf(base)) p.set('bat', String(s.minBatteryCharge));
+  if (s.minContactHours !== contactOf(base)) p.set('dsn', String(s.minContactHours));
   return p.toString();
 }
 
@@ -165,5 +184,9 @@ export function decodeScenario(hash: string): Scenario {
   if (gap !== null) s.maxDarkGapHours = clamp(gap, 0, LIMITS.maxDarkGapHours.max);
   const earth = num(p.get('earth'));
   if (earth !== null) s.minEarthShare = clamp(earth, 0, 1);
+  const bat = num(p.get('bat'));
+  if (bat !== null) s.minBatteryCharge = bat < 0 ? -1 : clamp(bat, 0, LIMITS.minBatteryCharge.max);
+  const dsn = num(p.get('dsn'));
+  if (dsn !== null) s.minContactHours = clamp(Math.round(dsn), 0, 24);
   return s;
 }

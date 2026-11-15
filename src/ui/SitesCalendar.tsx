@@ -41,7 +41,7 @@ export function SitesCalendar({ sites, heightM, anchorMs, profile, onPick }: Pro
   const [forKey, setForKey] = useState('');
   const [hover, setHover] = useState<{ r: number; d: number } | null>(null);
   const terrainSites = sites.filter((s) => s.terrain !== 'smooth-sphere' && s.lat <= -60);
-  const key = `${heightM}|${anchorMs}|${profile.id}|${profile.stayDays}|${profile.maxDarkGapHours}|${profile.minEarthShare}`;
+  const key = `${heightM}|${anchorMs}|${profile.id}|${profile.stayDays}|${profile.maxDarkGapHours}|${profile.minEarthShare}|${profile.minBatteryCharge}|${profile.minContactHoursPerDay}`;
   const stale = rows.length > 0 && forKey !== key;
 
   async function run() {
