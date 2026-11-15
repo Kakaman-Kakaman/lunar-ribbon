@@ -12,7 +12,7 @@ import { MissionStrip } from './MissionStrip';
 import { Ribbon, hoverReadout, ribbonHeight } from './Ribbon';
 import { useWidth, type Cursor } from './hooks';
 
-const REAL_ORDER = ['clps', 'south-pole-feature', 'study-site', 'india'];
+const REAL_ORDER = ['clps', 'south-pole-feature', 'study-site', 'india', 'north-pole-feature'];
 const OTHER_ORDER = ['clps', 'apollo', 'surveyor', 'luna', 'china', 'japan', 'other'];
 
 /** Option groups for the site picker: real-terrain sites first. */
@@ -20,7 +20,7 @@ export function groupSites(sites: SiteInfo[]): { label: string; sites: SiteInfo[
   const out: { label: string; sites: SiteInfo[] }[] = [];
   const real = sites.filter((s) => s.terrain !== 'smooth-sphere');
   const none = sites.filter((s) => s.terrain === 'smooth-sphere');
-  for (const g of REAL_ORDER) {
+  for (const g of [...REAL_ORDER, ...[...new Set(real.map((s) => s.group))].filter((g) => !REAL_ORDER.includes(g))]) {
     const list = real.filter((s) => s.group === g);
     if (list.length) out.push({ label: `Real terrain: ${groupLabel(g)}`, sites: list });
   }
