@@ -242,33 +242,33 @@ b, strong { font-weight: 600; color: var(--ink); }
   <section class="slide" data-n="4" aria-label="The app">
     <div class="abs h1 in" style="left:96px;top:96px">The app compares two landing plans</div>
     <div class="abs shot in fade" style="--d:150ms">
-      <img src="app-two-plans.png?v=2" alt="The Ribbon app comparing plan A and plan B at Malapert Massif, with a verdict for each plan.">
-      <div class="hl in fade" style="left:37.5%;top:75.9%;width:60.3%;height:6.4%;--d:900ms"></div>
-      <div class="badge in fade" style="left:34.6%;top:77.1%;--d:900ms">1</div>
-      <div class="hl in fade" style="left:72.3%;top:31.6%;width:14.3%;height:3.2%;--d:1400ms"></div>
-      <div class="badge in fade" style="left:87.4%;top:31.2%;--d:1400ms">2</div>
+      <img src="app-two-plans.png?v=3" alt="The Ribbon app at Malapert Massif: plan A works, plan B three days later fails, with the skyline strip and the power and contact timeline.">
+      <div class="hl in fade" style="left:37.4%;top:32.6%;width:60.4%;height:6.3%;--d:900ms"></div>
+      <div class="badge in fade" style="left:34.5%;top:34.2%;--d:900ms">1</div>
+      <div class="hl in fade" style="left:1.0%;top:4.6%;width:73.0%;height:3.6%;--d:1400ms"></div>
+      <div class="badge in fade" style="left:74.8%;top:4.7%;--d:1400ms">2</div>
     </div>
-    <div class="abs tiny in" style="left:96px;top:958px;--d:400ms">The app as it opens: Malapert Massif, with plan B three days after plan A.</div>
+    <div class="abs tiny in" style="left:96px;top:958px;--d:400ms">The app as it opens: the highest point of Malapert Massif, with plan B three days after plan A.</div>
     <div class="abs callouts">
-      <div class="callout in" style="--d:900ms"><span class="badge">1</span><span class="t">Each plan gets a verdict in plain words: works or fails, and the reason.</span></div>
-      <div class="callout in" style="--d:1400ms"><span class="badge">2</span><span class="t">It shows how late a landing can be and still work, and the next date that does.</span></div>
-      <div class="small in" style="--d:1900ms">Runs in a web browser. 54 landing sites and 5 nearby high points, 23 of them with real terrain.</div>
+      <div class="callout in" style="--d:900ms"><span class="badge">1</span><span class="t">Each plan gets a verdict in plain words: works or fails, the reason, and how late the landing can be and still work.</span></div>
+      <div class="callout in" style="--d:1400ms"><span class="badge">2</span><span class="t">One sentence compares the plans. Below each: power, battery and Deep Space Network contact through the stay.</span></div>
+      <div class="small in" style="--d:1900ms">Runs in a web browser. 85 sites at both poles, 49 of them with real NASA terrain.</div>
     </div>
   </section>
 
   <!-- 5. The slip -->
   <section class="slide" data-n="5" aria-label="The slip">
-    <div class="abs h1 in" style="left:96px;top:96px">Three days later, the same site fails</div>
+    <div class="abs h1 in" style="left:96px;top:96px">Three days later, the same site loses Earth</div>
     <div class="abs plan in" style="left:96px;top:206px;width:820px;--d:200ms">
       <span class="tag">A</span>
-      <div><div class="what mono">lands 2027-10-13 18:00 UTC</div><div class="v"><span class="verdict-word vw-good">Works.</span> The landing can slip up to 36 hours.</div></div>
+      <div><div class="what mono" id="s5a">lands</div><div class="v"><span class="verdict-word vw-good">Works.</span> <span id="s5aText"></span></div></div>
     </div>
     <div class="abs plan in" style="left:960px;top:206px;width:864px;--d:3300ms">
       <span class="tag" style="border-color:var(--alert)">B</span>
-      <div><div class="what mono">lands 2027-10-16 18:00 UTC</div><div class="v"><span class="verdict-word vw-bad">Fails</span> 5 days after landing. Terrain 4.6 km to the west hides the Sun for 42 hours, 36 of them during the stay.</div></div>
+      <div><div class="what mono" id="s5b">lands</div><div class="v"><span class="verdict-word vw-bad">Fails</span> <span id="s5bText"></span></div></div>
     </div>
-    <div class="abs counter in" style="left:96px;top:330px;--d:500ms"><span class="ink2">Hours without sunlight during the 6.5-day stay:</span> <span class="num" id="hidCount">0</span></div>
-    <div class="abs tiny in" style="left:96px;top:966px;width:1728px;--d:600ms">Close-up of the same strip, from west to north-east. The Sun is shown where it stands at landing. Thick yellow line: its path during the stay. Red dots: the Sun is behind the ridge.</div>
+    <div class="abs counter in" style="left:96px;top:330px;--d:500ms"><span class="ink2">Hours without Earth during plan B's 6.5-day stay:</span> <span class="num" id="hidCount">0</span></div>
+    <div class="abs tiny in" style="left:96px;top:966px;width:1728px;--d:600ms">Close-up of the strip around north, at true proportions. Thick blue line: Earth's path during plan B's stay, one tick per day. Red dots: Earth is behind the ground, so there is no contact. Thin dotted line: plan A's Earth, three days earlier.</div>
   </section>
 
   <!-- 6. The checks -->
@@ -324,7 +324,7 @@ function view(x, y, w, h, az0, az1, elMin, stretch = STRETCH) {
   return { x, y, w, h, az0, az1, elMin, pxAz, pxEl, stretch };
 }
 const FULL = view(96, 590, 1728, 346, -180, 180, -5);
-const ZOOM = view(96, 440, 1728, 440, -125, 45, -2.4);
+const ZOOM = view(96, 380, 1728, 500, -24, 23, -3.6, 1); // slide 5: Earth's corner of the sky, true proportions
 // The title, question and closing slides: heights closer to true (x2.5), so the Sun and Earth sit
 // at about their real height above the hills.
 const AMB = view(96, 690, 1728, 246, -180, 180, -5, 2.5);
@@ -337,14 +337,18 @@ function site(label, lat, sunUp, sky, band, region, sun, sunStep, earth, earthSt
   return { label, lat, sunUp, sky, band, region, sun, sunStep, earth, earthStep, startMs, end: (sun.length - 1) * sunStep };
 }
 // The story site at full time resolution (hourly Sun, two-hourly Earth)
-const STORY = site('Malapert Massif', D.site.lat, null, D.skyline, D.sunBand, D.earthRegion,
+const STORY = site(D.sites[0].label, D.site.lat, null, D.skyline, D.sunBand, D.earthRegion,
   D.A.sun.map((p) => [p[1], p[2], p[3]]), 1, D.A.earth.map((p) => [p[1], p[2], p[3]]), 2, D.A.landingMs);
 // The sites the title and closing slides cycle through
 const SITES = D.sites.map((s) => site(s.label, s.lat, s.sunUpShareThisLunation, s.skyline, s.sunBand, s.earthRegion, s.sun, s.sunStepH, s.earth, s.earthStepH, s.startMs));
 const LANDING_MS = D.A.landingMs;
 const HB = D.slipDays * 24;                  // plan B lands this many hours after plan A
 const STAY_H = D.B.stayEndHours;             // 156
-const NEXT_H = (D.next.landingMs - LANDING_MS) / 3600000;
+// Slide 5 follows Earth through plan B's stay (hourly from plan B's landing).
+const B_EARTH = D.B.earthStay.map((p) => [p[1], p[2], p[3]]);
+const A_EARTH = D.A.earthStay.map((p) => [p[1], p[2], p[3]]);
+const B_SUN = D.B.sun.map((p) => [p[1], p[2], p[3]]);
+const E_HID = D.B.earthHidden.slice().sort((a, b) => b.hours - a.hours)[0] || null;
 
 // Position of a body at hour h: [azimuth, elevation, fraction of disc above the skyline]
 function pos(arr, step, h) {
@@ -399,8 +403,8 @@ function stateFor(n, t, now) {
     Object.assign(s, stateFor(3, 1e9, now)); s.alpha = 0;
   } else if (n === 5) {
     s.v = ZOOM; s.band = 0; s.region = 0; s.track = 0; s.win = clamp(t / 400);
-    s.winH = STILL ? HB : lerp(0, HB, clamp((t - 1000) / 2200));   // constant speed: three days in 2.2 s
-    s.spanB = STILL ? 1 : clamp((t - 3000) / 400); s.next = STILL ? 1 : clamp((t - 3700) / 400);
+    s.winH = STILL ? STAY_H : lerp(0, STAY_H, clamp((t - 1000) / 3200));   // constant speed: the 6.5-day stay in 3.2 s
+    s.spanB = STILL ? 1 : clamp((t - 4300) / 400); s.next = STILL ? 1 : clamp((t - 4900) / 400);
   }
   return s;
 }
@@ -545,7 +549,7 @@ function render(s) {
   }
   const lat = Math.abs(S.lat).toFixed(1);
   const lit = S.sunUp === null ? '' : ' Sun up ' + Math.round(S.sunUp * 100) + '% of this lunar day.';
-  E.axis.appendChild(svgEl('text', { x: v.x + v.w, y: ay + 32, 'text-anchor': 'end', 'font-size': 18, 'font-family': SANS, fill: '#a7adb8' }, S.label + ', ' + lat + '° S.' + lit + ' Horizon from NASA LOLA data. Heights ×' + (Math.round(v.stretch * 10) / 10) + '.'));
+  E.axis.appendChild(svgEl('text', { x: v.x + v.w, y: ay + 32, 'text-anchor': 'end', 'font-size': 18, 'font-family': SANS, fill: '#a7adb8' }, S.label + ', ' + lat + '° S.' + lit + ' Horizon from NASA elevation data. Heights ×' + (Math.round(v.stretch * 10) / 10) + '.'));
   if (s.clock) {
     const day = new Date(S.startMs + s.clock.h * 3600000).toISOString().slice(0, 10);
     E.axis.appendChild(svgEl('text', { x: v.x, y: ay + 32, 'font-size': 18, 'font-family': MONO, fill: '#a7adb8' }, day + ' · time-lapse, ' + s.clock.rate + ' days per second'));
@@ -583,61 +587,73 @@ function trackElAt(az) {           // the story's Sun track elevation at an azim
   return null;
 }
 function drawWindow(s, v) {
-  const h0 = s.winH, SUN = STORY.sun;
-  E.win.appendChild(svgEl('path', { d: polyline(SUN, v), fill: 'none', stroke: '#ffc04d', 'stroke-width': 2, 'stroke-dasharray': '1 7', 'stroke-linecap': 'round', opacity: 0.55 * s.win }));
+  const h0 = s.winH;
+  // plan A's Earth, three days earlier: it stays above the ground for the whole stay
+  E.win.appendChild(svgEl('path', { d: polyline(A_EARTH, v), fill: 'none', stroke: '#6fb4ff', 'stroke-width': 2, 'stroke-dasharray': '1 6', 'stroke-linecap': 'round', opacity: 0.7 * s.win }));
+  { const a0 = A_EARTH[0]; E.over.appendChild(svgEl('text', halo({ x: vx(v, a0[0]) - 14, y: vy(v, a0[1]) + 6, 'text-anchor': 'end', 'font-size': 20, 'font-family': MONO, fill: '#a7adb8', opacity: s.win }), 'plan A lands')); }
+  // plan B's Earth through the stay, up to the clock
   let up = [], hid = [], hidden = 0;
-  const flushUp = () => { if (up.length > 1) E.win.appendChild(svgEl('path', { d: polyline(up, v), fill: 'none', stroke: '#ffb020', 'stroke-width': 6, 'stroke-linecap': 'round', 'stroke-linejoin': 'round', opacity: s.win })); up = []; };
+  const flushUp = () => { if (up.length > 1) E.win.appendChild(svgEl('path', { d: polyline(up, v), fill: 'none', stroke: '#4da3ff', 'stroke-width': 6, 'stroke-linecap': 'round', 'stroke-linejoin': 'round', opacity: s.win })); up = []; };
   const flushHid = () => { if (hid.length > 1) E.over.appendChild(svgEl('path', { d: polyline(hid, v), fill: 'none', stroke: '#ff5a5f', 'stroke-width': 5, 'stroke-dasharray': '0.1 10', 'stroke-linecap': 'round', opacity: s.win })); hid = []; };
-  for (let k = 0; k <= STAY_H; k++) {
-    const p = pos(SUN, 1, h0 + k);
-    if (k < STAY_H && pos(SUN, 1, Math.round(h0 + k))[2] < 0.5) hidden++;
+  for (let k = 0; k <= h0; k++) {
+    const p = pos(B_EARTH, 1, k);
+    if (k < STAY_H && B_EARTH[Math.min(B_EARTH.length - 1, k)][2] < 0.5) hidden++;
     if (p[2] >= 0.5) { if (hid.length) { hid.push(p); flushHid(); } up.push(p); }
     else { if (up.length) { up.push(p); flushUp(); } hid.push(p); }
   }
+  { const p = pos(B_EARTH, 1, h0); if (p[2] >= 0.5) up.push(p); else hid.push(p); }
   flushUp(); flushHid();
   const hc = $('hidCount'); if (hc && curSlide === 5) hc.textContent = String(hidden);
-  for (let d = 0; d <= 6; d++) {
-    const p = pos(SUN, 1, h0 + d * 24); const x = vx(v, p[0]), y = vy(v, p[1]);
-    E.over.appendChild(svgEl('line', { x1: x, x2: x, y1: y - 9, y2: y + 9, stroke: '#ffb020', 'stroke-width': 2.5, opacity: s.win }));
-    if (d) E.over.appendChild(svgEl('text', halo({ x, y: y - 16, 'text-anchor': 'middle', 'font-size': 20, 'font-family': MONO, fill: '#f2f4f7', 'stroke-width': 4, opacity: s.win }), 'day ' + d));
+  for (let d = 1; d <= 6; d++) {
+    if (d * 24 > h0) break;
+    const p = pos(B_EARTH, 1, d * 24); const x = vx(v, p[0]), y = vy(v, p[1]);
+    if (p[2] < 0.5) continue; // behind the ground: no tick
+    E.over.appendChild(svgEl('line', { x1: x - 9, x2: x + 9, y1: y, y2: y, stroke: '#9fd0ff', 'stroke-width': 2.5, opacity: s.win }));
+    E.over.appendChild(svgEl('text', halo({ x: x + 16, y: y + 7, 'font-size': 20, 'font-family': MONO, fill: '#f2f4f7', 'stroke-width': 4, opacity: s.win }), 'day ' + d));
   }
-  if (h0 > 1) {
-    const A0 = pos(SUN, 1, 0); const ax = vx(v, A0[0]), ay = vy(v, A0[1]); const k = s.win * clamp(h0 / 12);
-    E.over.appendChild(svgEl('circle', { cx: ax, cy: ay, r: 8, fill: '#0a0c10', stroke: '#a7adb8', 'stroke-width': 2, opacity: k }));
-    E.over.appendChild(svgEl('text', halo({ x: ax, y: ay - 18, 'text-anchor': 'middle', 'font-size': 20, 'font-family': MONO, fill: '#a7adb8', opacity: k }), 'plan A'));
+  // Earth at the clock, under the terrain so the ground hides it
+  const ep = pos(B_EARTH, 1, h0), sp = pos(B_SUN, 1, h0);
+  const ex = vx(v, ep[0]), ey = vy(v, ep[1]);
+  E.bodies.appendChild(earthGlobe(ex, ey, ep, sp, v, s.win));
+  if (ep[2] < 0.5) E.over.appendChild(svgEl('circle', { cx: ex, cy: ey, r: 13, fill: 'none', stroke: '#6fb4ff', 'stroke-width': 1.5, 'stroke-dasharray': '2 3', opacity: 0.8 * s.win }));
+  { const b0 = B_EARTH[0]; E.over.appendChild(svgEl('text', halo({ x: vx(v, b0[0]) + 22, y: vy(v, b0[1]) - 14, 'font-size': 20, 'font-family': MONO, fill: '#f2f4f7', opacity: s.win }), 'plan B lands')); }
+  const stamp = new Date(D.B.landingMs + h0 * 3600000).toISOString().slice(0, 13).replace('T', ' ') + ':00 UTC';
+  E.over.appendChild(svgEl('text', halo({ x: v.x, y: v.y + 30, 'font-size': 18, 'font-family': MONO, fill: '#a7adb8', opacity: s.win }), 'plan B, ' + stamp));
+  if (s.spanB > 0.001 && E_HID) {
+    const p = pos(B_EARTH, 1, E_HID.startH), x = vx(v, p[0]), y = vy(v, p[1]);
+    const whole = E_HID.endH >= STAY_H - 0.5 ? 'the last ' + E_HID.hours + ' hours of the stay' : E_HID.hours + ' hours';
+    E.over.appendChild(svgEl('line', { x1: x + 8, x2: x + 52, y1: y - 6, y2: y - 66, stroke: '#a7adb8', 'stroke-width': 1.2, opacity: s.spanB }));
+    E.over.appendChild(svgEl('text', halo({ x: x + 60, y: y - 98, 'font-size': 22, 'font-family': SANS, 'font-weight': 600, fill: '#f2f4f7', opacity: s.spanB }), 'Day ' + (E_HID.startH / 24).toFixed(1) + ': ground ' + E_HID.distKmMin + ' km to the ' + E_HID.compass + ' hides Earth'));
+    E.over.appendChild(svgEl('text', halo({ x: x + 60, y: y - 70, 'font-size': 20, 'font-family': SANS, fill: '#a7adb8', opacity: s.spanB }), 'for ' + whole + ': no line of sight, so no contact'));
   }
-  const L = pos(SUN, 1, h0); const lx = vx(v, L[0]), ly = vy(v, L[1]);
-  E.over.appendChild(svgEl('line', { x1: lx, x2: lx, y1: ly, y2: ly - 70, stroke: '#f2f4f7', 'stroke-width': 2, opacity: s.win }));
-  E.over.appendChild(svgEl('circle', { cx: lx, cy: ly, r: 46, fill: 'url(#sunGlow)', opacity: s.win }));
-  E.over.appendChild(svgEl('circle', { cx: lx, cy: ly, r: 7.5, fill: '#fffef9', opacity: s.win }));
-  const stamp = new Date(LANDING_MS + h0 * 3600000).toISOString().slice(0, 13).replace('T', ' ') + ':00 UTC';
-  E.over.appendChild(svgEl('text', halo({ x: lx + 10, y: ly - 56, 'font-size': 20, 'font-family': MONO, fill: '#f2f4f7', opacity: s.win }), 'landing ' + stamp));
-  if (s.spanB > 0.001) {
-    const sp = D.B.spans.find((q) => q.inStayHours > 0) || D.B.spans[0];
-    const x0 = vx(v, sp.x0), x1 = vx(v, sp.x1), yb = v.y + v.h - 40;
-    E.over.appendChild(svgEl('rect', { x: x0, y: yb, width: x1 - x0, height: 18, fill: 'url(#hatchAlert)', stroke: '#ff5a5f', 'stroke-width': 1.5, opacity: s.spanB }));
-    E.over.appendChild(svgEl('text', halo({ x: (x0 + x1) / 2, y: yb - 12, 'text-anchor': 'middle', 'font-size': 20, 'font-family': MONO, fill: '#f2f4f7', opacity: s.spanB }), 'Ridge hides the Sun for 42 hours'));
-  }
-  if (s.next > 0.001) {
-    const p = pos(SUN, 1, NEXT_H); const x = vx(v, p[0]), y = vy(v, p[1]);
-    E.over.appendChild(svgEl('circle', { cx: x, cy: y, r: 10, fill: 'none', stroke: '#4cc38a', 'stroke-width': 3, opacity: s.next }));
-    E.over.appendChild(svgEl('text', halo({ x: x - 18, y: y + 48, 'text-anchor': 'end', 'font-size': 22, 'font-family': SANS, 'font-weight': 600, fill: '#f2f4f7', opacity: s.next }), 'Next landing date that works: 11 Nov 2027'));
-    E.over.appendChild(svgEl('text', halo({ x: x - 18, y: y + 76, 'text-anchor': 'end', 'font-size': 20, 'font-family': SANS, fill: '#a7adb8', opacity: s.next }), '25.8 days after plan B'));
+  if (s.next > 0.001 && D.next) {
+    const nd = new Date(D.next.landingMs).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
+    E.over.appendChild(svgEl('text', halo({ x: v.x + v.w - 10, y: v.y + 40, 'text-anchor': 'end', 'font-size': 24, 'font-family': SANS, 'font-weight': 600, fill: '#4cc38a', opacity: s.next }), 'Next landing date that works: ' + nd));
+    E.over.appendChild(svgEl('text', halo({ x: v.x + v.w - 10, y: v.y + 70, 'text-anchor': 'end', 'font-size': 20, 'font-family': SANS, fill: '#a7adb8', opacity: s.next }), String(D.next.daysAfterB) + ' days after plan B'));
   }
 }
+
+// Slide 5's plan boxes, from the same data
+(() => {
+  const aSent = D.A.verdict.sentences.find((t) => /slip/.test(t)) || '';
+  $('s5a').textContent = 'lands ' + D.A.landingUtc; $('s5aText').textContent = aSent;
+  $('s5b').textContent = 'lands ' + D.B.landingUtc;
+  const first = (D.B.verdict.sentences[0] || '').replace(/^Fails\s*/, '');
+  $('s5bText').textContent = first + (E_HID ? ' Ground ' + E_HID.distKmMin + ' km to the ' + E_HID.compass + ' hides Earth for ' + E_HID.hours + ' hours, so contact through the Deep Space Network is lost.' : '');
+})();
 
 // ---------- Slide 3: labels placed on the strip ----------
 function placeS3Labels() {
   const v = FULL;
   const put = (id, x, y, w, align) => { const el = $(id); el.style.left = x + 'px'; el.style.top = y + 'px'; el.style.width = w + 'px'; el.style.textAlign = align || 'left'; };
-  D.A.spans.forEach((sp, i) => {
+  D.A.spans.filter((sp) => sp.label !== false).slice(0, 2).forEach((sp, i) => {
     const id = i === 0 ? 's3spanA' : 's3spanB';
     $(id).textContent = 'Sun hidden ' + (sp.days < 2 ? sp.days.toFixed(2) : sp.days.toFixed(1)) + ' days';
     put(id, (vx(v, sp.x0) + vx(v, sp.x1)) / 2 - 160, v.y + v.h - 64, 320, 'center');
   });
   put('s3sun', vx(v, -176), vy(v, 6.4), 540);
   put('s3earth', vx(v, 11), vy(v, 12.4), 420);
-  put('s3hill', vx(v, 40), vy(v, 1.4), 420);
+  put('s3hill', vx(v, -84), vy(v, -2.7), 420);
 }
 
 // ---------- Deck control ----------
