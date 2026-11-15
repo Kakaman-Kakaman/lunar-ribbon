@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="dark">
-<title>Ribbon — Team Falcate</title>
+<title>Ribbon | Team Falcate</title>
 <meta name="description" content="Seven-slide demo of Ribbon, a lunar landing-site navigator. Team Falcate, 2026 NASA Space Apps Challenge, Lunar Landing Site Navigator.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -118,6 +118,12 @@ b, strong { font-weight: 600; color: var(--ink); }
 .qr img { width: 210px; height: 210px; border-radius: 8px; display: block; margin: 0 auto 12px; }
 .url { font: 500 21px/1.4 var(--mono); }
 
+/* Labels placed on the strip */
+.lbl { font-size: 20px; line-height: 1.35; color: var(--ink); text-shadow: 0 0 4px #0a0c10, 0 0 8px #0a0c10; }
+/* Slide 6 */
+.chk .k { font-size: 24px; color: var(--ink2); }
+.chk .big { font: 700 104px/1.05 var(--mono); letter-spacing: -.02em; margin: 10px 0 18px; }
+
 /* Navigation */
 #nav { position: fixed; right: 18px; bottom: 14px; display: flex; gap: 8px; z-index: 5; opacity: .35; transition: opacity .2s; }
 #nav:hover, #nav:focus-within { opacity: 1; }
@@ -144,8 +150,8 @@ b, strong { font-weight: 600; color: var(--ink); }
     <g id="ribAll">
       <g clip-path="url(#plotclip)">
         <g id="gGrid"></g>
-        <path id="pBand" fill="#ffb020" fill-opacity="0.2"/>
-        <path id="pRegion" fill="#4da3ff" fill-opacity="0.28"/>
+        <path id="pBand" fill="#ffb020" fill-opacity="0.1" stroke="#ffb020" stroke-opacity="0.45" stroke-width="1" stroke-linejoin="round"/>
+        <path id="pRegion" fill="#4da3ff" fill-opacity="0.15" stroke="#4da3ff" stroke-opacity="0.75" stroke-width="1.2" stroke-linejoin="round"/>
         <path id="pTrack" fill="none" stroke="#ffb020" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
         <g id="gTicks"></g>
         <path id="pEarthTrack" fill="none" stroke="#4da3ff" stroke-width="1.6" stroke-opacity="0.9" stroke-linejoin="round"/>
@@ -162,10 +168,10 @@ b, strong { font-weight: 600; color: var(--ink); }
 
   <!-- 1. Title -->
   <section class="slide" data-n="1" aria-label="Title">
-    <div class="abs eyebrow in" style="left:96px;top:100px;--d:2300ms">2026 NASA Space Apps Challenge · Lunar Landing Site Navigator</div>
+    <div class="abs eyebrow in" style="left:96px;top:100px;--d:2300ms">NASA Space Apps Challenge 2026 · Lunar Landing Site Navigator</div>
     <div class="abs h0 in" style="left:90px;top:150px;--d:2400ms">Ribbon</div>
     <div class="abs h2 in" style="left:96px;top:322px;width:1180px;--d:2650ms">At the Moon's south pole, the skyline is the calendar.</div>
-    <div class="abs lead in" style="left:96px;top:450px;width:1100px;--d:2900ms">A landing-site navigator for mission planners, educators, and everyone else.</div>
+    <div class="abs lead in" style="left:96px;top:420px;width:1180px;--d:2900ms">A web app that shows whether a landing site near the lunar south pole keeps sunlight and a view of Earth, for any landing date.</div>
     <div class="abs team in" style="--d:3100ms">
       <div class="tn">Team Falcate</div>
       <div class="name">Muhammad Ahmad Qidwai</div>
@@ -179,8 +185,8 @@ b, strong { font-weight: 600; color: var(--ink); }
 
   <!-- 2. The question -->
   <section class="slide" data-n="2" aria-label="The question">
-    <div class="abs h1 in" style="left:96px;top:96px;width:1060px">The landing slipped three days.<br>Is the site still good?</div>
-    <div class="abs lead in" style="left:96px;top:264px;width:1000px;--d:350ms">Today that answer takes several tools, one site and one date at a time.</div>
+    <div class="abs h1 in" style="left:96px;top:96px;width:1060px">If the landing slips three days, does the site still work?</div>
+    <div class="abs lead in" style="left:96px;top:264px;width:1000px;--d:350ms">Today you check one site and one date at a time, across several tools.</div>
     <div class="abs" style="left:96px;top:352px">
       <div class="cards">
         <div class="cardwrap in" style="--d:700ms">
@@ -196,103 +202,83 @@ b, strong { font-weight: 600; color: var(--ink); }
           <div class="card"><svg width="260" height="96" viewBox="0 0 260 96"><g fill="none" stroke="#3a3f4b" stroke-width="2"><circle cx="130" cy="48" r="44"/><circle cx="130" cy="48" r="28"/><circle cx="130" cy="48" r="12"/></g><circle cx="152" cy="34" r="7" fill="#a7adb8"/></svg><div class="cap">One pin on a map</div></div>
         </div>
       </div>
-      <div class="small in" style="margin-top:16px;--d:2200ms">…then again for the next site, and again for the next date.</div>
+      <div class="small in" style="margin-top:16px;--d:2200ms">Then you start again for the next date.</div>
     </div>
     <div class="abs quote in" style="left:1200px;top:110px;width:624px;--d:2500ms">
-      <div class="q">A launch slip past November 2025 “would require waiting 9 to 12 months until the right lighting conditions return at the landing site in the polar region.”</div>
-      <div class="src">SpaceNews, 18 July 2024, reporting NASA's explanation for cancelling the VIPER rover.</div>
+      <div class="q">A launch slip past November 2025 "would require waiting 9 to 12 months until the right lighting conditions return at the landing site in the polar region."</div>
+      <div class="src">SpaceNews, 18 July 2024, on why NASA cancelled the VIPER rover.</div>
     </div>
   </section>
 
-  <!-- 3. The insight -->
-  <section class="slide" data-n="3" aria-label="The insight">
-    <div class="abs h1 in" style="left:96px;top:96px">One skyline. One band. One box.</div>
-    <div class="abs small in" style="left:96px;top:190px;--d:200ms">Unroll the full circle of horizon at a landing site into one strip. Real skyline: Malapert Massif, lunar south pole.</div>
-    <div class="abs keys" style="left:96px;top:290px">
-      <div class="key in" style="--d:300ms"><span class="sw" style="background:#ffb020"></span><span class="t">The Sun laps the horizon every 29.5 days and never climbs. Ticks mark days.</span></div>
-      <div class="key in" style="--d:2300ms"><span class="sw" style="background:#4da3ff;border-radius:4px"></span><span class="t">Earth stays put and wobbles in a small box.</span></div>
-      <div class="key in" style="--d:3700ms"><span class="sw" style="background:#30353f;border:2px solid #d9dce1;border-radius:3px"></span><span class="t">The terrain decides the rest.</span></div>
-    </div>
-    <div class="abs h2 in" style="left:96px;top:470px;--d:5600ms">The width of a mountain is days of darkness.</div>
-    <div id="s3spanA" class="abs tiny mono in fade" style="--d:5300ms"></div>
-    <div id="s3spanB" class="abs tiny mono in fade" style="--d:5300ms"></div>
+  <!-- 3. How to read the strip -->
+  <section class="slide" data-n="3" aria-label="How to read the strip">
+    <div class="abs h1 in" style="left:96px;top:96px">How to read the strip</div>
+    <div class="abs lead in" style="left:96px;top:196px;width:1500px;--d:200ms">The full circle of horizon around one landing site on Malapert Massif, laid flat. North is in the middle.</div>
+    <div class="abs body in" style="left:96px;top:330px;width:1560px;--d:5600ms">Where the hills rise above the Sun's path, the lander gets no sunlight. Count the day ticks a hill covers and you have the days of darkness.</div>
+    <div id="s3sun" class="abs lbl in fade" style="--d:600ms">The Sun's path over one lunar day (29.5 Earth days). Each tick is one day.</div>
+    <div id="s3earth" class="abs lbl in fade" style="--d:2500ms">Earth stays inside this patch of sky</div>
+    <div id="s3hill" class="abs lbl in fade" style="--d:4600ms">Hills, from NASA laser altimeter data</div>
+    <div id="s3spanA" class="abs lbl in fade" style="--d:5300ms"></div>
+    <div id="s3spanB" class="abs lbl in fade" style="--d:5300ms"></div>
   </section>
 
-  <!-- 4. The tool -->
-  <section class="slide" data-n="4" aria-label="The tool">
-    <div class="abs h1 in" style="left:96px;top:96px">Two plans, two ribbons, one glance.</div>
+  <!-- 4. The app -->
+  <section class="slide" data-n="4" aria-label="The app">
+    <div class="abs h1 in" style="left:96px;top:96px">The app compares two landing plans</div>
     <div class="abs shot in fade" style="--d:150ms">
-      <img src="app-two-plans.png" alt="The Ribbon app comparing plan A and plan B at Malapert Massif: a comparison sentence, two ribbons, and a verdict for each plan.">
-      <div class="hl in fade" style="left:1.2%;top:4.9%;width:74%;height:5.8%;--d:900ms"></div>
-      <div class="badge in fade" style="left:75.8%;top:5.4%;--d:900ms">1</div>
-      <div class="hl in fade" style="left:37.5%;top:67.7%;width:60.2%;height:6.3%;--d:1300ms"></div>
-      <div class="badge in fade" style="left:34.4%;top:68.6%;--d:1300ms">2</div>
-      <div class="hl in fade" style="left:71.6%;top:25.4%;width:15.4%;height:3.4%;--d:1700ms"></div>
-      <div class="badge in fade" style="left:87.6%;top:24.6%;--d:1700ms">3</div>
+      <img src="app-two-plans.png" alt="The Ribbon app comparing plan A and plan B at Malapert Massif, with a verdict for each plan.">
+      <div class="hl in fade" style="left:37.5%;top:67.7%;width:60.2%;height:6.3%;--d:900ms"></div>
+      <div class="badge in fade" style="left:34.4%;top:68.6%;--d:900ms">1</div>
+      <div class="hl in fade" style="left:71.6%;top:25.4%;width:15.4%;height:3.4%;--d:1400ms"></div>
+      <div class="badge in fade" style="left:87.6%;top:24.6%;--d:1400ms">2</div>
     </div>
-    <div class="abs tiny in" style="left:96px;top:958px;--d:400ms">The live app, as it opens: Malapert Massif, plan B lands three days after plan A.</div>
+    <div class="abs tiny in" style="left:96px;top:958px;--d:400ms">The app as it opens: Malapert Massif, with plan B three days after plan A.</div>
     <div class="abs callouts">
-      <div class="callout in" style="--d:900ms"><span class="badge">1</span><span class="t">One sentence compares the two plans.</span></div>
-      <div class="callout in" style="--d:1300ms"><span class="badge">2</span><span class="t">A verdict in plain words: works or fails, why, where, and when.<span class="small">“Fails 5 days after landing. The Sun goes behind terrain 4.6 km away to the west…”</span></span></div>
-      <div class="callout in" style="--d:1700ms"><span class="badge">3</span><span class="t">How far the date can slip, and the next date that works.</span></div>
-      <div class="small in" style="--d:2100ms">54 catalogued sites, real skylines for 23 polar points, three mission profiles. Runs in any browser; no install, no account.</div>
+      <div class="callout in" style="--d:900ms"><span class="badge">1</span><span class="t">Each plan gets a verdict in plain words: works or fails, and the reason.</span></div>
+      <div class="callout in" style="--d:1400ms"><span class="badge">2</span><span class="t">It shows how late a landing can be and still work, and the next date that does.</span></div>
+      <div class="small in" style="--d:1900ms">Runs in a web browser. 54 landing sites, 23 of them with real terrain.</div>
     </div>
   </section>
 
   <!-- 5. The slip -->
   <section class="slide" data-n="5" aria-label="The slip">
-    <div class="abs h1 in" style="left:96px;top:96px">Slide the date. Read the cost.</div>
+    <div class="abs h1 in" style="left:96px;top:96px">Three days later, the same site fails</div>
     <div class="abs plan in" style="left:96px;top:206px;width:820px;--d:200ms">
       <span class="tag">A</span>
       <div><div class="what mono">lands 2027-10-13 18:00 UTC</div><div class="v"><span class="verdict-word vw-good">Works.</span> The landing can slip up to 36 hours.</div></div>
     </div>
     <div class="abs plan in" style="left:960px;top:206px;width:864px;--d:3300ms">
       <span class="tag" style="border-color:var(--alert)">B</span>
-      <div><div class="what mono">lands 2027-10-16 18:00 UTC · three days later</div><div class="v"><span class="verdict-word vw-bad">Fails</span> 5 days after landing. The Sun goes behind terrain 4.6 km to the west for 42 hours; 36 of them fall inside the stay.</div></div>
+      <div><div class="what mono">lands 2027-10-16 18:00 UTC</div><div class="v"><span class="verdict-word vw-bad">Fails</span> 5 days after landing. Terrain 4.6 km to the west hides the Sun for 42 hours, 36 of them during the stay.</div></div>
     </div>
-    <div class="abs counter in" style="left:96px;top:330px;--d:500ms"><span class="ink2">Sun hidden during the 6.5-day stay:</span> <span class="num" id="hidCount">0</span></div>
-    <div class="abs tiny in" style="left:96px;top:966px;width:1728px;--d:600ms">Close-up of the same strip, west to north-east. Thick amber: the Sun's path during the stay, one tick per day. Red dots: Sun behind terrain.</div>
+    <div class="abs counter in" style="left:96px;top:330px;--d:500ms"><span class="ink2">Hours without sunlight during the 6.5-day stay:</span> <span class="num" id="hidCount">0</span></div>
+    <div class="abs tiny in" style="left:96px;top:966px;width:1728px;--d:600ms">Close-up of the same strip, from west to north-east. Thick yellow line: the Sun during the stay. Red dots: the Sun is behind the ridge.</div>
   </section>
 
-  <!-- 6. The proof -->
-  <section class="slide" data-n="6" aria-label="The proof">
-    <div class="abs h1 in" style="left:96px;top:96px">Built on NASA data. Checked against it.</div>
-    <div class="abs panels">
-      <div class="pnl in" style="--d:250ms">
-        <div class="k">Sun and Earth directions against NASA JPL Horizons, 6,610 rows per body, six cases</div>
-        <div class="big">0.0078°<small> Sun</small></div>
-        <div class="big" style="margin-top:0">0.0034°<small> Earth</small></div>
-        <div class="note">Largest difference found. The Sun's disc is about 0.53° across.</div>
-      </div>
-      <div class="pnl in" style="--d:1000ms">
-        <div class="k">Our skylines against NASA Goddard's sunlight maps, 23 south-pole sites</div>
-        <div class="row">
-          <svg id="scatter" width="316" height="262" viewBox="0 0 316 262" role="img" aria-label="Scatter of our long-term sunlight share against NASA Goddard's map for 23 sites; correlation 0.975; the largest gap is the Malapert listed point, 18% against 5%."></svg>
-          <div class="side"><div class="big">0.975</div><div class="small">correlation</div><div class="note" style="margin-top:14px">Largest gap: our story site, 18% against 5%. Plan B fails either way; plan A's margin is the fragile part.</div></div>
-        </div>
-      </div>
-      <div class="pnl in" style="--d:1800ms">
-        <div class="k">A real landing: Blue Ghost Mission 1, March 2025</div>
-        <svg id="bg1" width="544" height="120" viewBox="0 0 544 120" role="img" aria-label="Sunset predicted 347.8 hours after landing; the mission reported about 346 hours."></svg>
-        <div class="note">Sunset 347.8 hours after landing in our tool; the mission reported about 346. No terrain needed at this mid-latitude site.</div>
-      </div>
+  <!-- 6. The checks -->
+  <section class="slide" data-n="6" aria-label="The checks">
+    <div class="abs h1 in" style="left:96px;top:96px">We checked the results against NASA's data</div>
+    <div class="abs chk in" style="left:96px;top:300px;width:780px;--d:300ms">
+      <div class="k">A real landing</div>
+      <div class="big">347.8 hours</div>
+      <div class="body ink2">Our predicted time from landing to sunset for Blue Ghost Mission 1 in March 2025. The mission reported about 346 hours.</div>
     </div>
-    <div class="abs small in" style="left:96px;top:522px;width:1728px;--d:2400ms">Terrain: NASA LRO Lunar Orbiter Laser Altimeter (LOLA) 80 m and 240 m grids, NASA Planetary Data System. Checked with JPL Horizons and NASA Moon Trek.<br>“Sun up” means at least half the disc above the skyline, the convention of ESA's lunar lander site study (De Rosa et al. 2012).</div>
+    <div class="abs chk in" style="left:1000px;top:300px;width:824px;--d:900ms">
+      <div class="k">NASA's sunlight maps</div>
+      <div class="big">23 sites</div>
+      <div class="body ink2">We compared our sunlight figures with NASA Goddard's maps of the south pole. At half the sites we are within 1.35 percentage points.</div>
+    </div>
+    <div class="abs small in" style="left:96px;top:680px;width:1728px;--d:1500ms">Sun and Earth positions match NASA JPL's Horizons system to within 0.008°.<br>Terrain comes from the laser altimeter (LOLA) on NASA's Lunar Reconnaissance Orbiter. The rule for when the Sun counts as up follows ESA's lunar lander site study.</div>
   </section>
 
-  <!-- 7. The point -->
-  <section class="slide" data-n="7" aria-label="The point">
-    <div class="abs h1 in" style="left:96px;top:96px;width:1240px">A planner's question, answered in seconds. A picture anyone can read.</div>
-    <div class="abs uses in" style="left:96px;top:270px;width:1200px;--d:400ms">
-      <div><b>Mission planners</b>compare sites and dates when the schedule moves.</div>
-      <div><b>Educators</b>show why the Moon's south pole is so hard to land at.</div>
-      <div><b>Everyone</b>try it now, in any browser.</div>
-    </div>
-    <div class="abs small in" style="left:96px;top:460px;width:1220px;--d:800ms"><b>Next:</b> finer terrain for any point, solar eclipses on the timeline, and export of a ribbon for mission reviews.</div>
+  <!-- 7. Try it -->
+  <section class="slide" data-n="7" aria-label="Try it">
+    <div class="abs h1 in" style="left:96px;top:96px;width:1240px">Try Ribbon in your browser</div>
+    <div class="abs url in" style="left:96px;top:206px;font-size:34px;--d:300ms">kakaman-kakaman.github.io/lunar-ribbon</div>
+    <div class="abs body in" style="left:96px;top:300px;width:1180px;--d:600ms">Mission planners can check a landing site when the date moves. Students can see why landing at the lunar south pole is so difficult.</div>
     <div class="abs qr in" style="--d:600ms">
       <img src="qr-live-app.svg" alt="QR code for the live app">
-      <div class="url">kakaman-kakaman.github.io/lunar-ribbon</div>
-      <div class="tiny" style="margin-top:10px">Source code</div><div class="tiny mono">github.com/Kakaman-Kakaman/lunar-ribbon</div>
+      <div class="tiny">Source code</div><div class="tiny mono">github.com/Kakaman-Kakaman/lunar-ribbon</div>
     </div>
   </section>
 
@@ -322,7 +308,7 @@ function view(x, y, w, az0, az1, elMin) {
   const pxAz = w / (az1 - az0), pxEl = pxAz * STRETCH;
   return { x, y, w, az0, az1, elMin, pxAz, pxEl };
 }
-const FULL = Object.assign(view(96, 590, 1728, -180, 180, -6), { h: 346 });
+const FULL = Object.assign(view(96, 590, 1728, -180, 180, -5), { h: 346 });
 const ZOOM = Object.assign(view(96, 440, 1728, -125, 45, -2.4), { h: 440 });
 const vx = (v, az) => v.x + (az - v.az0) * v.pxAz;
 const vy = (v, el) => v.y + v.h - (el - v.elMin) * v.pxEl;
@@ -388,7 +374,7 @@ function stateFor(n, t) {
     s.region = 0.55 * clamp((t - 2300) / 500); s.earthTrack = clamp((t - 2300) / 300);
     s.earthTo = lerp(0, TRACK_END, clamp((t - 2400) / 1200)); s.earthO = clamp((t - 2400) / 300); s.earthH = s.earthTo;
     s.spans = clamp((t - 5200) / 500);
-    if (n === 6) { Object.assign(s, stateFor(3, 1e9)); s.alpha = 0.42; }
+    if (n === 6) { Object.assign(s, stateFor(3, 1e9)); s.alpha = 0; }
   } else if (n === 4) {
     Object.assign(s, stateFor(3, 1e9)); s.alpha = 0;
   } else if (n === 5) {
@@ -421,19 +407,15 @@ function render(s) {
   E.all.setAttribute('opacity', s.alpha.toFixed(3));
   E.clip.setAttribute('x', v.x); E.clip.setAttribute('y', v.y); E.clip.setAttribute('width', v.w); E.clip.setAttribute('height', v.h);
   const elMax = v.elMin + v.h / v.pxEl;
-  // grid
+  // grid: the flat horizon and the four compass directions only
   E.grid.replaceChildren();
-  for (let e = Math.ceil(v.elMin / 2) * 2; e <= elMax; e += 2) {
-    const y = vy(v, e);
-    E.grid.appendChild(svgEl('line', { x1: v.x, x2: v.x + v.w, y1: y, y2: y, stroke: '#2b2f38', 'stroke-width': e === 0 ? 1.4 : 1, 'stroke-dasharray': e === 0 ? '6 6' : '', opacity: s.grid }));
-  }
-  for (let a = Math.ceil(v.az0 / 30) * 30; a <= v.az1; a += 30) {
-    const x = vx(v, a); E.grid.appendChild(svgEl('line', { x1: x, x2: x, y1: v.y, y2: v.y + v.h, stroke: '#2b2f38', 'stroke-width': 1, opacity: s.grid }));
+  { const y = vy(v, 0); E.grid.appendChild(svgEl('line', { x1: v.x, x2: v.x + v.w, y1: y, y2: y, stroke: '#3a3f4b', 'stroke-width': 1.2, 'stroke-dasharray': '6 6', opacity: s.grid })); }
+  for (let a = Math.ceil(v.az0 / 90) * 90; a <= v.az1; a += 90) {
+    const x = vx(v, a); E.grid.appendChild(svgEl('line', { x1: x, x2: x, y1: v.y, y2: v.y + v.h, stroke: '#20242b', 'stroke-width': 1, opacity: s.grid }));
   }
   // bands
-  E.band.setAttribute('d', bandPath(D.sunBand, v)); E.band.setAttribute('opacity', s.band / 0.6 * 1);
-  E.band.setAttribute('fill-opacity', 0.2 * clamp(s.band / 0.6));
-  E.region.setAttribute('d', bandPath(D.earthRegion, v)); E.region.setAttribute('fill-opacity', 0.28 * clamp(s.region / 0.55));
+  E.band.setAttribute('d', bandPath(D.sunBand, v)); E.band.setAttribute('opacity', clamp(s.band / 0.6));
+  E.region.setAttribute('d', bandPath(D.earthRegion, v)); E.region.setAttribute('opacity', clamp(s.region / 0.55));
   // Sun track and day ticks
   if (s.track > 0.001 && s.trackTo > 0) {
     const pts = SUN.filter((p) => p[0] <= s.trackTo).map((p) => [p[1], p[2]]);
@@ -458,11 +440,12 @@ function render(s) {
   E.bodies.replaceChildren();
   if (s.earthO > 0.001) {
     const p = at(EARTH, s.earthH, 2); const x = vx(v, p[1]), y = vy(v, p[2]);
-    E.bodies.appendChild(svgEl('circle', { cx: x, cy: y, r: 11, fill: '#4da3ff', stroke: '#0a0c10', 'stroke-width': 2, opacity: s.earthO }));
+    E.bodies.appendChild(svgEl('circle', { cx: x, cy: y, r: 10, fill: '#4da3ff', opacity: s.earthO }));
   }
   if (s.sunO > 0.001) {
     const p = at(SUN, s.sunH, 1); const x = vx(v, p[1]), y = vy(v, p[2]);
-    E.bodies.appendChild(svgEl('circle', { cx: x, cy: y, r: 10, fill: '#ffb020', stroke: '#0a0c10', 'stroke-width': 2, opacity: s.sunO }));
+    E.bodies.appendChild(svgEl('circle', { cx: x, cy: y, r: 15, fill: 'none', stroke: '#ffb020', 'stroke-width': 1.2, 'stroke-opacity': 0.45, opacity: s.sunO }));
+    E.bodies.appendChild(svgEl('circle', { cx: x, cy: y, r: 9, fill: '#ffb020', opacity: s.sunO }));
   }
   // Terrain
   const nTo = Math.round(clamp(s.reveal) * (SKY.length - 1));
@@ -490,17 +473,19 @@ function render(s) {
   // Stay window, plan A sliding to plan B (slide 5)
   E.win.replaceChildren(); E.over.replaceChildren();
   if (s.win > 0.001) drawWindow(s, v);
+  const halo = { stroke: '#0a0c10', 'stroke-width': 5, 'paint-order': 'stroke', 'font-family': 'Inter, sans-serif', 'font-size': 20, 'font-weight': 600 };
+  if (s.sunO > 0.5) { const p = at(SUN, s.sunH, 1); if (p[3] >= 0.5) E.over.appendChild(svgEl('text', Object.assign({ x: vx(v, p[1]) + 20, y: vy(v, p[2]) - 16, fill: '#ffb020', opacity: s.sunO * s.alpha }, halo), 'Sun')); }
+  if (s.earthO > 0.5) { const p = at(EARTH, s.earthH, 2); if (p[3] >= 0.5) E.over.appendChild(svgEl('text', Object.assign({ x: vx(v, p[1]) + 18, y: vy(v, p[2]) + 7, fill: '#4da3ff', opacity: s.earthO * s.alpha }, halo), 'Earth')); }
   // Axis
   E.axis.replaceChildren();
   const ay = v.y + v.h + 30;
-  const comp = { '-180': 'S', '-90': 'W', '0': 'N', '90': 'E', '180': 'S' };
-  for (let a = Math.ceil(v.az0 / 30) * 30; a <= v.az1 + 0.01; a += 30) {
-    const x = vx(v, a), key = String(Math.round(a));
-    const lab = (comp[key] ? comp[key] + ' ' : '') + (a > 0 ? '+' : '') + Math.round(a) + '°';
-    E.axis.appendChild(svgEl('text', { x, y: ay, 'text-anchor': a <= v.az0 + 1 ? 'start' : a >= v.az1 - 1 ? 'end' : 'middle', 'font-size': 18, 'font-family': 'JetBrains Mono, monospace', fill: comp[key] ? '#f2f4f7' : '#6f7684', 'font-weight': comp[key] ? 700 : 400 }, lab));
+  const comp = [[-180, 'S'], [-90, 'W'], [0, 'N'], [90, 'E'], [180, 'S']];
+  for (const [a, lab] of comp) {
+    if (a < v.az0 - 0.01 || a > v.az1 + 0.01) continue;
+    E.axis.appendChild(svgEl('text', { x: vx(v, a), y: ay, 'text-anchor': a <= v.az0 + 1 ? 'start' : a >= v.az1 - 1 ? 'end' : 'middle', 'font-size': 20, 'font-family': 'Inter, sans-serif', 'font-weight': 600, fill: '#f2f4f7' }, lab));
   }
-  E.axis.appendChild(svgEl('text', { x: v.x + v.w, y: ay + 30, 'text-anchor': 'end', 'font-size': 18, 'font-family': 'Inter, sans-serif', fill: '#a7adb8' }, 'Compass direction, north in the centre · vertical scale ×' + STRETCH + ' · Malapert Massif, 85.99° S · NASA LOLA terrain'));
-  E.axis.appendChild(svgEl('text', { x: v.x + 8, y: vy(v, 0) - 8, 'font-size': 18, 'font-family': 'JetBrains Mono, monospace', fill: '#6f7684', opacity: s.grid > 0.3 ? 1 : 0 }, 'level 0°'));
+  E.axis.appendChild(svgEl('text', { x: v.x + v.w, y: ay + 32, 'text-anchor': 'end', 'font-size': 18, 'font-family': 'Inter, sans-serif', fill: '#a7adb8' }, 'Malapert Massif, near the lunar south pole. Horizon from NASA LOLA elevation data. Heights drawn \u00d7' + STRETCH + '.'));
+  E.axis.appendChild(svgEl('text', { x: v.x + 8, y: vy(v, 0) - 8, 'font-size': 18, 'font-family': 'Inter, sans-serif', fill: '#6f7684', opacity: s.grid > 0.3 ? 1 : 0 }, 'flat horizon'));
   E.axis.setAttribute('opacity', s.axis);
 }
 function trackElAt(az) { // Sun track elevation at an azimuth (first pass of the lunation)
@@ -524,7 +509,7 @@ function drawWindow(s, v) {
     else { if (up.length) { up.push(pt); flushUp(); } hid.push(pt); }
   }
   flushUp(); flushHid();
-  const hc = $('hidCount'); if (hc && curSlide === 5) hc.innerHTML = hidden + '<span style="font-size:26px;font-weight:500"> hours</span>';
+  const hc = $('hidCount'); if (hc && curSlide === 5) hc.textContent = String(hidden);
   // Day ticks 0..6 of the stay
   for (let d = 0; d <= 6; d++) {
     const p = at(SUN, h0 + d * 24, 1); const x = vx(v, p[1]), y = vy(v, p[2]);
@@ -549,7 +534,7 @@ function drawWindow(s, v) {
     const sp = D.B.spans.find((q) => q.inStayHours > 0) || D.B.spans[0];
     const x0 = vx(v, sp.x0), x1 = vx(v, sp.x1), yb = v.y + v.h - 40;
     E.over.appendChild(svgEl('rect', { x: x0, y: yb, width: x1 - x0, height: 18, fill: 'url(#hatchAlert)', stroke: '#ff5a5f', 'stroke-width': 1.5, opacity: s.spanB }));
-    E.over.appendChild(svgEl('text', { x: (x0 + x1) / 2, y: yb - 12, 'text-anchor': 'middle', 'font-size': 20, 'font-family': 'JetBrains Mono, monospace', fill: '#f2f4f7', stroke: '#0a0c10', 'stroke-width': 5, 'paint-order': 'stroke', opacity: s.spanB }, 'Sun behind a ridge 2.3–4.6 km west: 42 h'));
+    E.over.appendChild(svgEl('text', { x: (x0 + x1) / 2, y: yb - 12, 'text-anchor': 'middle', 'font-size': 20, 'font-family': 'JetBrains Mono, monospace', fill: '#f2f4f7', stroke: '#0a0c10', 'stroke-width': 5, 'paint-order': 'stroke', opacity: s.spanB }, 'Ridge hides the Sun for 42 hours'));
   }
   // Next landing that works
   if (s.next > 0.001) {
@@ -558,56 +543,24 @@ function drawWindow(s, v) {
     const ring = svgEl('circle', { cx: x, cy: y, r: 10, fill: 'none', stroke: '#4cc38a', 'stroke-width': 2, opacity: s.next * 0.8 });
     if (!STILL) { ring.appendChild(svgEl('animate', { attributeName: 'r', values: '10;34', dur: '1.6s', repeatCount: '2', fill: 'freeze' })); ring.appendChild(svgEl('animate', { attributeName: 'stroke-opacity', values: '0.8;0', dur: '1.6s', repeatCount: '2', fill: 'freeze' })); }
     E.over.appendChild(ring);
-    E.over.appendChild(svgEl('text', { x: x - 18, y: y + 48, 'text-anchor': 'end', 'font-size': 22, 'font-family': 'Inter, sans-serif', 'font-weight': 600, fill: '#f2f4f7', stroke: '#0a0c10', 'stroke-width': 5, 'paint-order': 'stroke', opacity: s.next }, 'Next landing that works: 11 Nov 2027'));
-    E.over.appendChild(svgEl('text', { x: x - 18, y: y + 76, 'text-anchor': 'end', 'font-size': 20, 'font-family': 'Inter, sans-serif', fill: '#a7adb8', stroke: '#0a0c10', 'stroke-width': 5, 'paint-order': 'stroke', opacity: s.next }, '25.8 days after plan B, when the Sun clears the massif'));
+    E.over.appendChild(svgEl('text', { x: x - 18, y: y + 48, 'text-anchor': 'end', 'font-size': 22, 'font-family': 'Inter, sans-serif', 'font-weight': 600, fill: '#f2f4f7', stroke: '#0a0c10', 'stroke-width': 5, 'paint-order': 'stroke', opacity: s.next }, 'Next landing date that works: 11 Nov 2027'));
+    E.over.appendChild(svgEl('text', { x: x - 18, y: y + 76, 'text-anchor': 'end', 'font-size': 20, 'font-family': 'Inter, sans-serif', fill: '#a7adb8', stroke: '#0a0c10', 'stroke-width': 5, 'paint-order': 'stroke', opacity: s.next }, '25.8 days after plan B'));
   }
 }
 
-// ---------- Slide 3 span labels, slide 6 charts ----------
-function placeSpanLabels() {
+// ---------- Slide 3: labels placed on the strip ----------
+function placeS3Labels() {
   const v = FULL;
+  const put = (id, x, y, w, align) => { const el = $(id); el.style.left = x + 'px'; el.style.top = y + 'px'; el.style.width = w + 'px'; el.style.textAlign = align || 'left'; };
   D.A.spans.forEach((sp, i) => {
-    const el = $(i === 0 ? 's3spanA' : 's3spanB'); if (!el) return;
-    el.textContent = (sp.days < 2 ? sp.days.toFixed(2) : sp.days.toFixed(1)) + ' days without the Sun';
+    const id = i === 0 ? 's3spanA' : 's3spanB';
+    $(id).textContent = 'Sun hidden ' + (sp.days < 2 ? sp.days.toFixed(2) : sp.days.toFixed(1)) + ' days';
     const cx = (vx(v, sp.x0) + vx(v, sp.x1)) / 2;
-    el.style.left = (cx - 200) + 'px'; el.style.width = '400px'; el.style.textAlign = 'center';
-    el.style.top = (v.y + v.h - 64) + 'px'; el.style.color = '#f2f4f7';
+    put(id, cx - 160, v.y + v.h - 64, 320, 'center');
   });
-}
-const SCATTER = [["cabeus-crater",0,0],["chandrayaan-2-vikram",47.3,47.3],["de-gerlache-crater",0.1,0.1],["faustini-crater",0,0],["haworth-crater",0,0],["im-1-odysseus",35.6,39.0],["im-2-athena",45.1,46.4],["mons-malapert",38.3,39.6],["mons-mouton",31.6,31.4],["nobile-crater",35.6,35.8],["pgda-site01-connecting-ridge-crest",65.2,78.4],["pgda-site01-connecting-ridge",33.5,38.3],["pgda-site04-shackleton-rim-crest",85.2,83.1],["pgda-site04-shackleton-rim",10.8,11.2],["pgda-site07-peak-near-shackleton-crest",70.2,82.6],["pgda-site07-peak-near-shackleton",70.2,61.5],["pgda-site20-leibnitz-beta-plateau-crest",48.6,60.4],["pgda-site20-leibnitz-beta-plateau",17.7,22.3],["pgda-site23-malapert-massif-crest",55.6,57.4],["pgda-site23-malapert-massif",4.6,18.2],["shackleton-crater",0,0],["shackleton-de-gerlache-ridge-point",77.7,66.3],["shiv-shakti-chandrayaan-3",48.3,48.3]];
-function drawScatter() {
-  const g = $('scatter'); const L = 62, R = 306, T = 16, B = 226; // plot box
-  const sx = (p) => L + (p / 100) * (R - L), sy = (p) => B - (p / 100) * (B - T);
-  for (const p of [0, 50, 100]) {
-    g.appendChild(svgEl('line', { x1: L, x2: R, y1: sy(p), y2: sy(p), stroke: '#2b2f38', 'stroke-width': 1 }));
-    g.appendChild(svgEl('line', { x1: sx(p), x2: sx(p), y1: T, y2: B, stroke: '#2b2f38', 'stroke-width': 1 }));
-    g.appendChild(svgEl('text', { x: L - 8, y: sy(p) + 6, 'text-anchor': 'end', 'font-size': 18, fill: '#6f7684' }, p + '%'));
-    g.appendChild(svgEl('text', { x: sx(p), y: B + 24, 'text-anchor': p === 0 ? 'start' : p === 100 ? 'end' : 'middle', 'font-size': 18, fill: '#6f7684' }, p + '%'));
-  }
-  g.appendChild(svgEl('line', { x1: sx(0), y1: sy(0), x2: sx(100), y2: sy(100), stroke: '#6f7684', 'stroke-width': 1.5, 'stroke-dasharray': '4 5' }));
-  for (const [id, nasa, ours] of SCATTER) {
-    const hl = id === 'pgda-site23-malapert-massif';
-    const c = svgEl('circle', { cx: sx(nasa), cy: sy(ours), r: hl ? 6 : 5, fill: '#ffb020', stroke: hl ? '#f2f4f7' : '#1a1d23', 'stroke-width': 2 });
-    c.appendChild(svgEl('title', {}, id + ': NASA ' + nasa + '%, ours ' + ours + '%')); g.appendChild(c);
-  }
-  const m = SCATTER.find((r) => r[0] === 'pgda-site23-malapert-massif');
-  g.appendChild(svgEl('line', { x1: sx(m[1]), y1: sy(m[2]) - 8, x2: sx(m[1]), y2: sy(46), stroke: '#a7adb8', 'stroke-width': 1 }));
-  g.appendChild(svgEl('text', { x: sx(m[1]) - 4, y: sy(50), 'font-size': 18, fill: '#f2f4f7' }, 'story site'));
-  g.appendChild(svgEl('text', { x: L, y: B + 50, 'font-size': 18, fill: '#a7adb8', 'font-family': 'Inter, sans-serif' }, 'across: NASA map · up: ours'));
-}
-function drawBG1() {
-  const g = $('bg1'); const L = 10, R = 520, y = 64; const sx = (h) => L + (h / 400) * (R - L);
-  g.appendChild(svgEl('line', { x1: L, x2: R, y1: y, y2: y, stroke: '#2b2f38', 'stroke-width': 2 }));
-  for (const h of [0, 100, 200, 300, 400]) {
-    g.appendChild(svgEl('line', { x1: sx(h), x2: sx(h), y1: y - 6, y2: y + 6, stroke: '#6f7684', 'stroke-width': 1.5 }));
-    g.appendChild(svgEl('text', { x: sx(h), y: y + 30, 'text-anchor': h === 0 ? 'start' : h === 400 ? 'end' : 'middle', 'font-size': 18, fill: '#6f7684' }, h + ' h'));
-  }
-  g.appendChild(svgEl('rect', { x: sx(0), y: y - 5, width: sx(347.8) - sx(0), height: 10, rx: 3, fill: '#ffb020', 'fill-opacity': 0.35 }));
-  g.appendChild(svgEl('line', { x1: sx(346), x2: sx(346), y1: y - 22, y2: y + 8, stroke: '#a7adb8', 'stroke-width': 3 }));
-  g.appendChild(svgEl('line', { x1: sx(347.8), x2: sx(347.8), y1: y - 8, y2: y + 22, stroke: '#ffb020', 'stroke-width': 3 }));
-  g.appendChild(svgEl('text', { x: sx(346) - 6, y: y - 28, 'text-anchor': 'end', 'font-size': 18, fill: '#a7adb8' }, 'reported ≈346 h'));
-  g.appendChild(svgEl('text', { x: sx(0), y: y - 28, 'font-size': 18, fill: '#f2f4f7' }, 'landing → sunset'));
-  g.appendChild(svgEl('text', { x: sx(347.8) - 6, y: y + 54, 'text-anchor': 'end', 'font-size': 18, fill: '#f2f4f7' }, 'ours 347.8 h'));
+  put('s3sun', vx(v, -176), vy(v, 6.4), 540);
+  put('s3earth', vx(v, 11), vy(v, 12.4), 420);
+  put('s3hill', vx(v, 40), vy(v, 1.4), 420);
 }
 
 // ---------- Deck control ----------
@@ -657,7 +610,7 @@ let tx0 = null; addEventListener('touchstart', (e) => { tx0 = e.touches[0].clien
 addEventListener('touchend', (e) => { if (tx0 === null) return; const dx = e.changedTouches[0].clientX - tx0; if (Math.abs(dx) > 40) show(curSlide + (dx < 0 ? 1 : -1)); tx0 = null; }, { passive: true });
 addEventListener('hashchange', () => { const n = parseInt(location.hash.slice(1), 10); if (n && n !== curSlide) show(n); });
 
-placeSpanLabels(); drawScatter(); drawBG1();
+placeS3Labels();
 const start = parseInt(location.hash.slice(1), 10) || 1;
 show(start, true); cur = stateFor(start, STILL ? 1e9 : 0);
 requestAnimationFrame(frame);
