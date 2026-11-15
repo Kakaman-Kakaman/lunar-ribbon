@@ -695,6 +695,39 @@ if (forcedMs === null) {
   };
   const skyline: number[] = [];
   for (let d = -180; d <= 180; d += 0.5) skyline.push(r3(horizonAt(profileArr, mask.azStepDeg, d)));
+  // Sites the deck's title and closing slides cycle through: same lunation as plan A, real LOLA
+  // skylines that fit the strip's -5 to +13 degree range.
+  const DECK_SITES: [string, string][] = [
+    ['pgda-site23-malapert-massif', 'Malapert Massif'],
+    ['pgda-site07-peak-near-shackleton', 'Peak near Shackleton crater'],
+    ['pgda-site01-connecting-ridge', 'Connecting Ridge'],
+    ['mons-mouton', 'Mons Mouton'],
+    ['de-gerlache-crater', 'Floor of de Gerlache crater'],
+  ];
+  // Each site takes the next lunar day in turn, starting at plan A's landing, so the clock never runs backwards.
+  const deckFrames = new FrameCache();
+  let startMs = A.landingMs;
+  const sites = DECK_SITES.map(([id, label]) => {
+    const m: HorizonMask = JSON.parse(readFileSync(join(ROOT, 'public', 'masks', `${id}.json`), 'utf8'));
+    const series = computeSeries(m, HEIGHT, startMs - LEAD_DAYS * DAY, STEP_MS, SERIES_N, deckFrames);
+    const geom = seriesGeometry(series);
+    const view = planView(m, series, HEIGHT, startMs, profile, scanFor(series, profile));
+    const thisStart = startMs;
+    startMs += (Math.ceil(view.sunPath.length / 2) - 1) * 2 * HOUR;
+    const arr = m.horizonDeg[String(HEIGHT)];
+    const sky: number[] = [];
+    for (let d = -180; d <= 180; d += 0.5) sky.push(r2(horizonAt(arr, m.azStepDeg, d)));
+    const pts = (path: { az: number; el: number; frac: number }[], every: number) =>
+      path.filter((_, i) => i % every === 0).map((q) => [r2(displayAz(q.az)), r2(q.el), r2(q.frac)]);
+    const sunUpShare = view.sunPath.filter((q) => q.frac >= 0.5).length / view.sunPath.length;
+    return {
+      id, label, lat: m.lat, lon: m.lon, startMs: thisStart, startUtc: iso(thisStart), skyline: sky,
+      sunBand: bandRuns(geom.sunBand, view.sunRadiusDeg), earthRegion: bandRuns(geom.earthRegion, view.earthRadiusDeg),
+      sunStepH: 2, earthStepH: 4, sun: pts(view.sunPath, 2), earth: pts(view.earthPath, 2),
+      sunUpShareThisLunation: r2(sunUpShare),
+    };
+  });
+  for (const st of sites) console.log(`deck site ${st.id} from ${st.startUtc}: Sun up ${Math.round(st.sunUpShareThisLunation * 100)}% of this lunation, ${st.sun.length} Sun points, starts az ${st.sun[0][0]} ends az ${st.sun[st.sun.length - 1][0]}`);
   const deck = {
     generatedBy: 'npm run demo-assets (pipeline/export-demo-assets.ts), from src/engine and src/state; do not edit by hand',
     site: { id: SITE_ID, name: mask.name, lat: mask.lat, lon: mask.lon, observerHeightM: HEIGHT, profile: profile.label },
@@ -709,6 +742,7 @@ if (forcedMs === null) {
     A: planData(A),
     B: planData(B),
     next: nw ? { landingUtc: iso(nw), landingMs: nw, daysAfterB: r2((nw - B.landingMs) / DAY) } : null,
+    sites,
   };
   const deckDir = join(ROOT, 'public', 'deck');
   mkdirSync(deckDir, { recursive: true });
