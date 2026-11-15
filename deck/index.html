@@ -150,6 +150,8 @@ b, strong { font-weight: 600; color: var(--ink); }
     <g id="ribAll">
       <g clip-path="url(#plotclip)">
         <g id="gGrid"></g>
+        <path id="pBandPrev" fill="#ffb020" fill-opacity="0.1" stroke="#ffb020" stroke-opacity="0.45" stroke-width="1" stroke-linejoin="round"/>
+        <path id="pRegionPrev" fill="#4da3ff" fill-opacity="0.15" stroke="#4da3ff" stroke-opacity="0.75" stroke-width="1.2" stroke-linejoin="round"/>
         <path id="pBand" fill="#ffb020" fill-opacity="0.1" stroke="#ffb020" stroke-opacity="0.45" stroke-width="1" stroke-linejoin="round"/>
         <path id="pRegion" fill="#4da3ff" fill-opacity="0.15" stroke="#4da3ff" stroke-opacity="0.75" stroke-width="1.2" stroke-linejoin="round"/>
         <path id="pTrack" fill="none" stroke="#ffb020" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
@@ -174,9 +176,9 @@ b, strong { font-weight: 600; color: var(--ink); }
     <div class="abs lead in" style="left:96px;top:420px;width:1180px;--d:2900ms">A web app that shows whether a landing site near the lunar south pole keeps sunlight and a view of Earth, for any landing date.</div>
     <div class="abs team in" style="--d:3100ms">
       <div class="tn">Team Falcate</div>
+      <div class="name">Muhammad Asif</div>
       <div class="name">Muhammad Ahmad Qidwai</div>
       <div class="name">Syed Muzammil Hassan</div>
-      <div class="name">Muhammad Asif</div>
       <div class="name">Mohammad Hassan</div>
       <div class="name">Rameesha Sheeraz</div>
       <div class="name">Aqsa Awan</div>
@@ -214,12 +216,12 @@ b, strong { font-weight: 600; color: var(--ink); }
   <section class="slide" data-n="3" aria-label="How to read the strip">
     <div class="abs h1 in" style="left:96px;top:96px">How to read the strip</div>
     <div class="abs lead in" style="left:96px;top:196px;width:1500px;--d:200ms">The full circle of horizon around one landing site on Malapert Massif, laid flat. North is in the middle.</div>
-    <div class="abs body in" style="left:96px;top:330px;width:1560px;--d:5600ms">Where the hills rise above the Sun's path, the lander gets no sunlight. Count the day ticks a hill covers and you have the days of darkness.</div>
-    <div id="s3sun" class="abs lbl in fade" style="--d:600ms">The Sun's path over one lunar day (29.5 Earth days). Each tick is one day.</div>
-    <div id="s3earth" class="abs lbl in fade" style="--d:2500ms">Earth stays inside this patch of sky</div>
-    <div id="s3hill" class="abs lbl in fade" style="--d:4600ms">Hills, from NASA laser altimeter data</div>
-    <div id="s3spanA" class="abs lbl in fade" style="--d:5300ms"></div>
-    <div id="s3spanB" class="abs lbl in fade" style="--d:5300ms"></div>
+    <div class="abs body in" style="left:96px;top:330px;width:1560px;--d:6000ms">Where the hills rise above the Sun's path, the lander gets no sunlight. Count the day ticks a hill covers and you have the days of darkness.</div>
+    <div id="s3sun" class="abs lbl in fade" style="--d:500ms">The Sun's path over one lunar day (29.5 Earth days). Each tick is one day.</div>
+    <div id="s3earth" class="abs lbl in fade" style="--d:900ms">Earth stays inside this patch of sky</div>
+    <div id="s3hill" class="abs lbl in fade" style="--d:4800ms">Hills, from NASA laser altimeter data</div>
+    <div id="s3spanA" class="abs lbl in fade" style="--d:5700ms"></div>
+    <div id="s3spanB" class="abs lbl in fade" style="--d:5700ms"></div>
   </section>
 
   <!-- 4. The app -->
@@ -286,58 +288,125 @@ b, strong { font-weight: 600; color: var(--ink); }
 </div>
 <div id="nav"><button id="prev" aria-label="Previous slide">&#8592;</button><button id="next" aria-label="Next slide">&#8594;</button></div>
 
-<script src="ribbon-data.js"></script>
+<script src="ribbon-data.js?v=5"></script>
 <script>
 (() => {
 'use strict';
 const D = window.RIBBON_DATA;
-const STRETCH = 4; // vertical exaggeration, the same on every slide
+const STRETCH = 4;                 // vertical exaggeration, the same on every slide
 const NS = 'http://www.w3.org/2000/svg';
 const $ = (id) => document.getElementById(id);
 const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
 const lerp = (a, b, t) => a + (b - a) * t;
 const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
-const params = new URLSearchParams(location.search);
-const STILL = params.has('still') || matchMedia('(prefers-reduced-motion: reduce)').matches;
-if (STILL) document.documentElement.classList.add('still');
+const STILL = new URLSearchParams(location.search).has('still') || matchMedia('(prefers-reduced-motion: reduce)').matches;
 const stageEl = $('stage');
-if (STILL) stageEl.classList.add('still');
+if (STILL) { document.documentElement.classList.add('still'); stageEl.classList.add('still'); }
 
-// ---------- Views: plot rectangle + data window, stretch fixed ----------
-function view(x, y, w, az0, az1, elMin) {
+// ---------- Views: plot rectangle + data window; the stretch never changes ----------
+function view(x, y, w, h, az0, az1, elMin) {
   const pxAz = w / (az1 - az0), pxEl = pxAz * STRETCH;
-  return { x, y, w, az0, az1, elMin, pxAz, pxEl };
+  return { x, y, w, h, az0, az1, elMin, pxAz, pxEl };
 }
-const FULL = Object.assign(view(96, 590, 1728, -180, 180, -5), { h: 346 });
-const ZOOM = Object.assign(view(96, 440, 1728, -125, 45, -2.4), { h: 440 });
+const FULL = view(96, 590, 1728, 346, -180, 180, -5);
+const ZOOM = view(96, 440, 1728, 440, -125, 45, -2.4);
 const vx = (v, az) => v.x + (az - v.az0) * v.pxAz;
 const vy = (v, el) => v.y + v.h - (el - v.elMin) * v.pxEl;
 
-// ---------- Data ----------
-const SKY = D.skyline, SKY0 = -180, SKYSTEP = D.skylineStepDeg;
-const skyAt = (az) => { const f = (az - SKY0) / SKYSTEP; const i = Math.floor(f); const t = f - i; const a = SKY[Math.max(0, Math.min(SKY.length - 1, i))], b = SKY[Math.max(0, Math.min(SKY.length - 1, i + 1))]; return a + (b - a) * t; };
-const SUN = D.A.sun;          // hourly [h, az, el, frac] from plan A's landing, one lunation
-const EARTH = D.A.earth;      // two-hourly
-const TRACK_END = SUN[SUN.length - 1][0];
-const HB = D.slipDays * 24;   // plan B lands this many hours after plan A
-const STAY_H = D.B.stayEndHours; // 156
-const NEXT_H = (D.next.landingMs - D.A.landingMs) / 3600000;
-function at(arr, h, step) {
-  const f = h / step; const i = Math.max(0, Math.min(arr.length - 1, Math.floor(f))); const j = Math.min(arr.length - 1, i + 1); const t = clamp(f - i);
-  const a = arr[i], b = arr[j];
-  if (Math.abs(b[1] - a[1]) > 180) return t < 0.5 ? a : b;
-  return [h, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t, a[3] + (b[3] - a[3]) * t];
+// ---------- Sites: every shape comes from ribbon-data.js (npm run demo-assets) ----------
+const SKY0 = -180, SKYSTEP = D.skylineStepDeg;
+function site(label, lat, sunUp, sky, band, region, sun, sunStep, earth, earthStep, startMs) {
+  return { label, lat, sunUp, sky, band, region, sun, sunStep, earth, earthStep, startMs, end: (sun.length - 1) * sunStep };
 }
-// Earth rising over the skyline, for the last slide: first upward crossing of half the disc
-let EARTH_RISE_H = EARTH[0][0];
-for (let i = 1; i < EARTH.length; i++) if (EARTH[i - 1][3] < 0.5 && EARTH[i][3] >= 0.5) { EARTH_RISE_H = EARTH[i][0]; break; }
+// The story site at full time resolution (hourly Sun, two-hourly Earth)
+const STORY = site('Malapert Massif', D.site.lat, null, D.skyline, D.sunBand, D.earthRegion,
+  D.A.sun.map((p) => [p[1], p[2], p[3]]), 1, D.A.earth.map((p) => [p[1], p[2], p[3]]), 2, D.A.landingMs);
+// The sites the title and closing slides cycle through
+const SITES = D.sites.map((s) => site(s.label, s.lat, s.sunUpShareThisLunation, s.skyline, s.sunBand, s.earthRegion, s.sun, s.sunStepH, s.earth, s.earthStepH, s.startMs));
+const LANDING_MS = D.A.landingMs;
+const HB = D.slipDays * 24;                  // plan B lands this many hours after plan A
+const STAY_H = D.B.stayEndHours;             // 156
+const NEXT_H = (D.next.landingMs - LANDING_MS) / 3600000;
 
-// ---------- Path builders ----------
-function polyline(pts, v) { // pts [[az, el]], split where the azimuth wraps
+// Position of a body at hour h: [azimuth, elevation, fraction of disc above the skyline]
+function pos(arr, step, h) {
+  const f = clamp(h / step, 0, arr.length - 1); const i = Math.floor(f); const j = Math.min(arr.length - 1, i + 1); const t = f - i;
+  const a = arr[i], b = arr[j];
+  if (Math.abs(b[0] - a[0]) > 180) return t < 0.5 ? a : b;
+  return [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t];
+}
+
+// ---------- One clock for the Sun and Earth ----------
+const DAYS_PER_S = { ambient: 2.5, read: 8 };            // time-lapse rates, printed under the strip
+const hPerMs = (r) => r * 24 / 1000;
+const LAP_MS = SITES[0].end / hPerMs(DAYS_PER_S.ambient);
+const T0 = performance.now();
+function ambient(now) {           // runs continuously across slides 1, 2 and 7
+  if (STILL) return { site: SITES[0], prev: SITES[0], morph: 1, h: 120, o: 1 };
+  const t = Math.max(0, now - T0); const k = Math.floor(t / LAP_MS); const tau = t - k * LAP_MS;
+  const n = SITES.length; const cur = SITES[k % n], prev = SITES[(k - 1 + n) % n];
+  const h = tau * hPerMs(DAYS_PER_S.ambient);
+  const o = clamp(h / 8) * clamp((cur.end - h) / 8);      // fade over 8 hours at the lap's ends
+  return { site: cur, prev: k === 0 ? cur : prev, morph: k === 0 ? 1 : ease(clamp(tau / 1400)), h, o };
+}
+
+// ---------- State per slide (t = ms since the slide was entered) ----------
+const base = {
+  v: FULL, alpha: 1, grid: 0.6, band: 1, region: 1, sky: 1, rise: 1, reveal: 1,
+  track: 0, trackTo: 0, ticks: 0, earthTrack: 0, earthTo: 0, spans: 0,
+  sunO: 0, sunH: 0, earthO: 0, earthH: 0, win: 0, winH: 0, next: 0, spanB: 0, axis: 1,
+  site: STORY, prev: STORY, morph: 1, clock: null,
+};
+function stateFor(n, t, now) {
+  const s = Object.assign({}, base);
+  if (n === 1 || n === 2 || n === 7) {
+    const a = ambient(now);
+    Object.assign(s, { site: a.site, prev: a.prev, morph: a.morph, sunH: a.h, earthH: a.h, sunO: a.o, earthO: a.o, clock: { h: a.h, rate: DAYS_PER_S.ambient } });
+    if (n === 1 && !STILL) { s.reveal = clamp(t / 1300); s.band = clamp((t - 1100) / 700); s.region = clamp((t - 1300) / 700); s.sunO *= clamp((t - 1300) / 400); s.earthO *= clamp((t - 1300) / 400); }
+    if (n === 2) s.alpha = 0.5;
+  } else if (n === 3) {
+    // One clock: the Sun and Earth trace their paths together, then keep going
+    const h = STILL ? 120 : Math.max(0, t - 300) * hPerMs(DAYS_PER_S.read);
+    const hh = STILL ? 120 : h % STORY.end;
+    s.band = clamp(t / 400); s.region = clamp((t - 300) / 500);
+    s.track = 1; s.trackTo = STILL ? STORY.end : Math.min(h, STORY.end); s.ticks = 1;
+    s.earthTrack = 1; s.earthTo = s.trackTo;
+    const o = STILL ? 1 : clamp(hh / 10) * clamp((STORY.end - hh) / 10) * clamp((t - 300) / 200);
+    s.sunH = hh; s.earthH = hh; s.sunO = o; s.earthO = o;
+    s.rise = STILL ? 1 : ease(clamp((t - 4100) / 1500));
+    s.spans = STILL ? 1 : clamp((t - 5700) / 500);
+    s.clock = { h: hh, rate: DAYS_PER_S.read };
+  } else if (n === 4 || n === 6) {
+    Object.assign(s, stateFor(3, 1e9, now)); s.alpha = 0;
+  } else if (n === 5) {
+    s.v = ZOOM; s.track = 0.4; s.trackTo = STORY.end; s.win = clamp(t / 400);
+    s.winH = STILL ? HB : lerp(0, HB, clamp((t - 1000) / 2200));   // constant speed: three days in 2.2 s
+    s.spanB = STILL ? 1 : clamp((t - 3000) / 400); s.next = STILL ? 1 : clamp((t - 3700) / 400);
+  }
+  return s;
+}
+// Blend two states during a slide change. Sun and Earth never slide backwards: they fade.
+function mix(a, b, k) {
+  const o = {};
+  for (const key in b) {
+    const x = a[key], y = b[key];
+    if (typeof y === 'number' && typeof x === 'number') o[key] = lerp(x, y, k); else o[key] = y;
+  }
+  const va = a.v, vb = b.v;
+  o.v = view(lerp(va.x, vb.x, k), lerp(va.y, vb.y, k), lerp(va.w, vb.w, k), lerp(va.h, vb.h, k), lerp(va.az0, vb.az0, k), lerp(va.az1, vb.az1, k), lerp(va.elMin, vb.elMin, k));
+  if (a.site !== b.site) { o.site = b.site; o.prev = a.site; o.morph = k; } else { o.site = b.site; o.prev = b.prev; o.morph = b.morph; }
+  for (const [h, op] of [['sunH', 'sunO'], ['earthH', 'earthO']]) {
+    o[h] = b[h];
+    if (a.site !== b.site || Math.abs(a[h] - b[h]) > 6) o[op] = b[op] * k;
+  }
+  return o;
+}
+
+// ---------- Drawing ----------
+function polyline(pts, v) {         // [[az, el]], split where the azimuth wraps
   let d = '', prev = null;
   for (const p of pts) {
-    const move = !prev || Math.abs(p[0] - prev[0]) > 180;
-    d += (move ? 'M' : 'L') + vx(v, p[0]).toFixed(1) + ',' + vy(v, p[1]).toFixed(1);
+    d += (!prev || Math.abs(p[0] - prev[0]) > 180 ? 'M' : 'L') + vx(v, p[0]).toFixed(1) + ',' + vy(v, p[1]).toFixed(1);
     prev = p;
   }
   return d;
@@ -347,79 +416,35 @@ function bandPath(runs, v) {
   for (const r of runs) {
     const top = r.map((p, i) => [p[0] - (i === 0 ? 0.5 : 0), p[2]]);
     const bot = r.slice().reverse().map((p, i) => [p[0] + (i === 0 ? 0.5 : 0), p[1]]);
-    const all = top.concat(bot);
-    d += all.map((p, i) => (i ? 'L' : 'M') + vx(v, p[0]).toFixed(1) + ',' + vy(v, p[1]).toFixed(1)).join('') + 'Z';
+    d += top.concat(bot).map((p, i) => (i ? 'L' : 'M') + vx(v, p[0]).toFixed(1) + ',' + vy(v, p[1]).toFixed(1)).join('') + 'Z';
   }
   return d;
 }
 function svgEl(tag, attrs, text) { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (text != null) e.textContent = text; return e; }
-
-// ---------- State per slide (t = ms since the slide was entered) ----------
-const base = {
-  v: FULL, alpha: 1, grid: 0.6, band: 0.6, region: 0.55, sky: 1, rise: 1, reveal: 1,
-  track: 0, trackTo: 0, ticks: 0, earthTrack: 0, earthTo: 0, spans: 0,
-  sunO: 0, sunH: 0, earthO: 0, earthH: 0, win: 0, winH: 0, next: 0, spanB: 0, axis: 1,
-};
-function stateFor(n, t) {
-  const s = Object.assign({}, base);
-  if (n === 1 || n === 2) {
-    s.reveal = clamp(t / 1300); s.band = 0.6 * clamp((t - 1100) / 700); s.region = 0.55 * clamp((t - 1300) / 700);
-    const k = clamp((t - 1300) / 2300); s.sunH = lerp(0, 120, k); s.earthH = s.sunH;
-    s.sunO = clamp((t - 1300) / 300); s.earthO = clamp((t - 1500) / 500);
-    if (n === 2) { s.reveal = 1; s.band = 0.6; s.region = 0.55; s.sunH = 120; s.earthH = 120; s.sunO = 1; s.earthO = 1; s.alpha = 0.5; }
-  } else if (n === 3 || n === 6) {
-    s.rise = ease(clamp((t - 3700) / 1500)); s.band = 0.6 * clamp(t / 500);
-    s.track = 1; s.trackTo = lerp(0, TRACK_END, clamp((t - 300) / 1900)); s.ticks = 1;
-    s.sunO = 1; s.sunH = s.trackTo;
-    s.region = 0.55 * clamp((t - 2300) / 500); s.earthTrack = clamp((t - 2300) / 300);
-    s.earthTo = lerp(0, TRACK_END, clamp((t - 2400) / 1200)); s.earthO = clamp((t - 2400) / 300); s.earthH = s.earthTo;
-    s.spans = clamp((t - 5200) / 500);
-    if (n === 6) { Object.assign(s, stateFor(3, 1e9)); s.alpha = 0; }
-  } else if (n === 4) {
-    Object.assign(s, stateFor(3, 1e9)); s.alpha = 0;
-  } else if (n === 5) {
-    s.v = ZOOM; s.track = 0.4; s.trackTo = TRACK_END; s.win = clamp(t / 400);
-    s.winH = lerp(0, HB, clamp((t - 1000) / 2200)); // constant speed: three days in 2.2 s
-    s.spanB = clamp((t - 3000) / 400); s.next = clamp((t - 3700) / 400);
-  } else if (n === 7) {
-    s.band = 0.6; s.region = 0.55; s.earthO = 1;
-    s.earthH = lerp(EARTH_RISE_H - 30, EARTH_RISE_H + 30, clamp((t - 300) / 2200));
-  }
-  return s;
-}
-function mix(a, b, k) {
-  const o = {};
-  for (const key in b) {
-    if (key === 'v') {
-      const va = a.v, vb = b.v; const az0 = lerp(va.az0, vb.az0, k), az1 = lerp(va.az1, vb.az1, k);
-      const w = lerp(va.w, vb.w, k), x = lerp(va.x, vb.x, k), y = lerp(va.y, vb.y, k), h = lerp(va.h, vb.h, k);
-      o.v = Object.assign(view(x, y, w, az0, az1, lerp(va.elMin, vb.elMin, k)), { h });
-    } else o[key] = lerp(a[key], b[key], k);
-  }
-  return o;
-}
-
-// ---------- Render ----------
-const E = { all: $('ribAll'), grid: $('gGrid'), band: $('pBand'), region: $('pRegion'), track: $('pTrack'), ticks: $('gTicks'), et: $('pEarthTrack'), bodies: $('gBodies'), terrain: $('pTerrain'), edge: $('pEdge'), win: $('gWin'), spans: $('gSpans'), axis: $('gAxis'), over: $('gOver'), clip: $('cliprect') };
+const MONO = 'JetBrains Mono, monospace', SANS = 'Inter, sans-serif';
+const halo = (extra) => Object.assign({ stroke: '#0a0c10', 'stroke-width': 5, 'paint-order': 'stroke' }, extra);
+const E = { all: $('ribAll'), grid: $('gGrid'), band: $('pBand'), bandPrev: $('pBandPrev'), region: $('pRegion'), regionPrev: $('pRegionPrev'), track: $('pTrack'), ticks: $('gTicks'), et: $('pEarthTrack'), bodies: $('gBodies'), terrain: $('pTerrain'), edge: $('pEdge'), win: $('gWin'), spans: $('gSpans'), axis: $('gAxis'), over: $('gOver'), clip: $('cliprect') };
 let curSlide = 1;
+
 function render(s) {
-  const v = s.v;
+  const v = s.v, S = s.site, P = s.prev, m = clamp(s.morph);
   E.all.setAttribute('opacity', s.alpha.toFixed(3));
   E.clip.setAttribute('x', v.x); E.clip.setAttribute('y', v.y); E.clip.setAttribute('width', v.w); E.clip.setAttribute('height', v.h);
-  const elMax = v.elMin + v.h / v.pxEl;
-  // grid: the flat horizon and the four compass directions only
+  // the flat horizon and the four compass directions
   E.grid.replaceChildren();
   { const y = vy(v, 0); E.grid.appendChild(svgEl('line', { x1: v.x, x2: v.x + v.w, y1: y, y2: y, stroke: '#3a3f4b', 'stroke-width': 1.2, 'stroke-dasharray': '6 6', opacity: s.grid })); }
   for (let a = Math.ceil(v.az0 / 90) * 90; a <= v.az1; a += 90) {
     const x = vx(v, a); E.grid.appendChild(svgEl('line', { x1: x, x2: x, y1: v.y, y2: v.y + v.h, stroke: '#20242b', 'stroke-width': 1, opacity: s.grid }));
   }
-  // bands
-  E.band.setAttribute('d', bandPath(D.sunBand, v)); E.band.setAttribute('opacity', clamp(s.band / 0.6));
-  E.region.setAttribute('d', bandPath(D.earthRegion, v)); E.region.setAttribute('opacity', clamp(s.region / 0.55));
-  // Sun track and day ticks
+  // where the Sun and Earth can be: the new site fades in over the old one
+  E.band.setAttribute('d', bandPath(S.band, v)); E.band.setAttribute('opacity', clamp(s.band) * m);
+  E.region.setAttribute('d', bandPath(S.region, v)); E.region.setAttribute('opacity', clamp(s.region) * m);
+  E.bandPrev.setAttribute('d', m < 1 ? bandPath(P.band, v) : ''); E.bandPrev.setAttribute('opacity', clamp(s.band) * (1 - m));
+  E.regionPrev.setAttribute('d', m < 1 ? bandPath(P.region, v) : ''); E.regionPrev.setAttribute('opacity', clamp(s.region) * (1 - m));
+  // the story's Sun path and day ticks (slide 3, faint on slide 5)
   if (s.track > 0.001 && s.trackTo > 0) {
-    const pts = SUN.filter((p) => p[0] <= s.trackTo).map((p) => [p[1], p[2]]);
-    const end = at(SUN, s.trackTo, 1); pts.push([end[1], end[2]]);
+    const pts = []; for (let i = 0; i * STORY.sunStep <= s.trackTo; i++) pts.push(STORY.sun[i]);
+    const e = pos(STORY.sun, STORY.sunStep, s.trackTo); pts.push(e);
     E.track.setAttribute('d', polyline(pts, v)); E.track.setAttribute('stroke-opacity', s.track);
   } else E.track.setAttribute('d', '');
   E.ticks.replaceChildren();
@@ -428,28 +453,25 @@ function render(s) {
       if (tk[0] * 24 > s.trackTo + 0.01) continue;
       const x = vx(v, tk[1]), y = vy(v, tk[2]);
       E.ticks.appendChild(svgEl('line', { x1: x, x2: x, y1: y - 6, y2: y + 6, stroke: '#ffb020', 'stroke-width': 2, opacity: s.ticks }));
-      if (tk[0] % 2 === 0 || v.pxAz > 6) E.ticks.appendChild(svgEl('text', { x, y: y - 12, 'text-anchor': 'middle', 'font-size': 18, 'font-family': 'JetBrains Mono, monospace', fill: '#a7adb8', stroke: '#0a0c10', 'stroke-width': 4, 'paint-order': 'stroke', opacity: s.ticks }, String(tk[0])));
+      if (tk[0] % 2 === 0) E.ticks.appendChild(svgEl('text', halo({ x, y: y - 12, 'text-anchor': 'middle', 'font-size': 18, 'font-family': MONO, fill: '#a7adb8', 'stroke-width': 4, opacity: s.ticks }), String(tk[0])));
     }
   }
-  // Earth track
+  // the story's Earth track
   if (s.earthTrack > 0.001 && s.earthTo > 0) {
-    const pts = EARTH.filter((p) => p[0] <= s.earthTo).map((p) => [p[1], p[2]]);
+    const pts = []; for (let i = 0; i * STORY.earthStep <= s.earthTo; i++) pts.push(STORY.earth[i]);
     E.et.setAttribute('d', polyline(pts, v)); E.et.setAttribute('stroke-opacity', 0.9 * s.earthTrack);
   } else E.et.setAttribute('d', '');
-  // Sun and Earth symbols (under the terrain, so terrain hides them)
+  // Sun and Earth, drawn under the terrain so hills hide them
   E.bodies.replaceChildren();
-  if (s.earthO > 0.001) {
-    const p = at(EARTH, s.earthH, 2); const x = vx(v, p[1]), y = vy(v, p[2]);
-    E.bodies.appendChild(svgEl('circle', { cx: x, cy: y, r: 10, fill: '#4da3ff', opacity: s.earthO }));
-  }
+  const ep = pos(S.earth, S.earthStep, s.earthH), sp = pos(S.sun, S.sunStep, s.sunH);
+  if (s.earthO > 0.001) E.bodies.appendChild(svgEl('circle', { cx: vx(v, ep[0]), cy: vy(v, ep[1]), r: 10, fill: '#4da3ff', opacity: s.earthO }));
   if (s.sunO > 0.001) {
-    const p = at(SUN, s.sunH, 1); const x = vx(v, p[1]), y = vy(v, p[2]);
-    E.bodies.appendChild(svgEl('circle', { cx: x, cy: y, r: 15, fill: 'none', stroke: '#ffb020', 'stroke-width': 1.2, 'stroke-opacity': 0.45, opacity: s.sunO }));
-    E.bodies.appendChild(svgEl('circle', { cx: x, cy: y, r: 9, fill: '#ffb020', opacity: s.sunO }));
+    E.bodies.appendChild(svgEl('circle', { cx: vx(v, sp[0]), cy: vy(v, sp[1]), r: 15, fill: 'none', stroke: '#ffb020', 'stroke-width': 1.2, 'stroke-opacity': 0.45, opacity: s.sunO }));
+    E.bodies.appendChild(svgEl('circle', { cx: vx(v, sp[0]), cy: vy(v, sp[1]), r: 9, fill: '#ffb020', opacity: s.sunO }));
   }
-  // Terrain
-  const nTo = Math.round(clamp(s.reveal) * (SKY.length - 1));
-  const sk = []; for (let i = 0; i <= nTo; i++) sk.push([SKY0 + i * SKYSTEP, SKY[i] * s.rise]);
+  // terrain: the skyline morphs from the old site to the new one
+  const nTo = Math.round(clamp(s.reveal) * (S.sky.length - 1));
+  const sk = []; for (let i = 0; i <= nTo; i++) sk.push([SKY0 + i * SKYSTEP, lerp(P.sky[i], S.sky[i], m) * s.rise]);
   if (sk.length > 1) {
     const bottom = v.y + v.h + 4;
     const line = sk.map((p, i) => (i ? 'L' : 'M') + vx(v, p[0]).toFixed(1) + ',' + vy(v, p[1]).toFixed(1)).join('');
@@ -457,94 +479,88 @@ function render(s) {
     E.terrain.setAttribute('d', 'M' + vx(v, sk[0][0]).toFixed(1) + ',' + bottom + line.replace(/^M/, 'L') + 'L' + vx(v, sk[sk.length - 1][0]).toFixed(1) + ',' + bottom + 'Z');
   } else { E.edge.setAttribute('d', ''); E.terrain.setAttribute('d', ''); }
   E.terrain.setAttribute('opacity', s.sky); E.edge.setAttribute('opacity', s.sky);
-  // Dark spans (plan A's lunation) along the bottom of the plot
+  // dark spans in the story's lunation, along the bottom of the plot
   E.spans.replaceChildren();
   if (s.spans > 0.001) {
-    for (const sp of D.A.spans) {
-      const x0 = vx(v, sp.x0), x1 = vx(v, sp.x1), yb = v.y + v.h - 34;
+    for (const span of D.A.spans) {
+      const x0 = vx(v, span.x0), x1 = vx(v, span.x1), yb = v.y + v.h - 34;
       E.spans.appendChild(svgEl('rect', { x: x0, y: yb, width: Math.max(2, x1 - x0), height: 16, fill: 'url(#hatch)', stroke: '#a7adb8', 'stroke-width': 1.2, opacity: s.spans }));
-      for (const xx of [x0, x1]) {
-        const el = at(SUN, 0, 1); // only for the guide's top: Sun track height at that azimuth
-        const top = trackElAt(xx === x0 ? sp.x0 : sp.x1);
-        if (top !== null) E.spans.appendChild(svgEl('line', { x1: xx, x2: xx, y1: vy(v, top), y2: yb, stroke: '#a7adb8', 'stroke-width': 1, 'stroke-dasharray': '3 4', opacity: s.spans }));
+      for (const az of [span.x0, span.x1]) {
+        const top = trackElAt(az);
+        if (top !== null) E.spans.appendChild(svgEl('line', { x1: vx(v, az), x2: vx(v, az), y1: vy(v, top), y2: yb, stroke: '#a7adb8', 'stroke-width': 1, 'stroke-dasharray': '3 4', opacity: s.spans }));
       }
     }
   }
-  // Stay window, plan A sliding to plan B (slide 5)
   E.win.replaceChildren(); E.over.replaceChildren();
   if (s.win > 0.001) drawWindow(s, v);
-  const halo = { stroke: '#0a0c10', 'stroke-width': 5, 'paint-order': 'stroke', 'font-family': 'Inter, sans-serif', 'font-size': 20, 'font-weight': 600 };
-  if (s.sunO > 0.5) { const p = at(SUN, s.sunH, 1); if (p[3] >= 0.5) E.over.appendChild(svgEl('text', Object.assign({ x: vx(v, p[1]) + 20, y: vy(v, p[2]) - 16, fill: '#ffb020', opacity: s.sunO * s.alpha }, halo), 'Sun')); }
-  if (s.earthO > 0.5) { const p = at(EARTH, s.earthH, 2); if (p[3] >= 0.5) E.over.appendChild(svgEl('text', Object.assign({ x: vx(v, p[1]) + 18, y: vy(v, p[2]) + 7, fill: '#4da3ff', opacity: s.earthO * s.alpha }, halo), 'Earth')); }
-  // Axis
+  // names on the Sun and Earth while they are in view
+  if (s.sunO > 0.5 && sp[2] >= 0.5) E.over.appendChild(svgEl('text', halo({ x: vx(v, sp[0]) + 20, y: vy(v, sp[1]) - 16, fill: '#ffb020', 'font-family': SANS, 'font-size': 20, 'font-weight': 600, opacity: s.sunO * s.alpha }), 'Sun'));
+  if (s.earthO > 0.5 && ep[2] >= 0.5) E.over.appendChild(svgEl('text', halo({ x: vx(v, ep[0]) + 18, y: vy(v, ep[1]) + 7, fill: '#4da3ff', 'font-family': SANS, 'font-size': 20, 'font-weight': 600, opacity: s.earthO * s.alpha }), 'Earth'));
+  // compass letters, the clock, and the caption
   E.axis.replaceChildren();
   const ay = v.y + v.h + 30;
-  const comp = [[-180, 'S'], [-90, 'W'], [0, 'N'], [90, 'E'], [180, 'S']];
-  for (const [a, lab] of comp) {
+  for (const [a, lab] of [[-180, 'S'], [-90, 'W'], [0, 'N'], [90, 'E'], [180, 'S']]) {
     if (a < v.az0 - 0.01 || a > v.az1 + 0.01) continue;
-    E.axis.appendChild(svgEl('text', { x: vx(v, a), y: ay, 'text-anchor': a <= v.az0 + 1 ? 'start' : a >= v.az1 - 1 ? 'end' : 'middle', 'font-size': 20, 'font-family': 'Inter, sans-serif', 'font-weight': 600, fill: '#f2f4f7' }, lab));
+    E.axis.appendChild(svgEl('text', { x: vx(v, a), y: ay, 'text-anchor': a <= v.az0 + 1 ? 'start' : a >= v.az1 - 1 ? 'end' : 'middle', 'font-size': 20, 'font-family': SANS, 'font-weight': 600, fill: '#f2f4f7' }, lab));
   }
-  E.axis.appendChild(svgEl('text', { x: v.x + v.w, y: ay + 32, 'text-anchor': 'end', 'font-size': 18, 'font-family': 'Inter, sans-serif', fill: '#a7adb8' }, 'Malapert Massif, near the lunar south pole. Horizon from NASA LOLA elevation data. Heights drawn \u00d7' + STRETCH + '.'));
-  E.axis.appendChild(svgEl('text', { x: v.x + 8, y: vy(v, 0) - 8, 'font-size': 18, 'font-family': 'Inter, sans-serif', fill: '#6f7684', opacity: s.grid > 0.3 ? 1 : 0 }, 'flat horizon'));
+  const lat = Math.abs(S.lat).toFixed(1);
+  const lit = S.sunUp === null ? '' : ' Sun up ' + Math.round(S.sunUp * 100) + '% of this lunar day.';
+  E.axis.appendChild(svgEl('text', { x: v.x + v.w, y: ay + 32, 'text-anchor': 'end', 'font-size': 18, 'font-family': SANS, fill: '#a7adb8' }, S.label + ', ' + lat + '° S.' + lit + ' Horizon from NASA LOLA data. Heights ×' + STRETCH + '.'));
+  if (s.clock) {
+    const day = new Date(S.startMs + s.clock.h * 3600000).toISOString().slice(0, 10);
+    E.axis.appendChild(svgEl('text', { x: v.x, y: ay + 32, 'font-size': 18, 'font-family': MONO, fill: '#a7adb8' }, day + ' · time-lapse, ' + s.clock.rate + ' days per second'));
+  }
+  E.axis.appendChild(svgEl('text', { x: v.x + 8, y: vy(v, 0) - 8, 'font-size': 18, 'font-family': SANS, fill: '#6f7684', opacity: s.grid > 0.3 ? 1 : 0 }, 'flat horizon'));
   E.axis.setAttribute('opacity', s.axis);
 }
-function trackElAt(az) { // Sun track elevation at an azimuth (first pass of the lunation)
-  for (let i = 1; i < SUN.length; i++) {
-    const a = SUN[i - 1], b = SUN[i];
-    if (Math.abs(b[1] - a[1]) > 180) continue;
-    if ((a[1] - az) * (b[1] - az) <= 0) { const t = (az - a[1]) / ((b[1] - a[1]) || 1); return a[2] + (b[2] - a[2]) * t; }
+function trackElAt(az) {           // the story's Sun track elevation at an azimuth (first pass)
+  const A = STORY.sun;
+  for (let i = 1; i < A.length; i++) {
+    const a = A[i - 1], b = A[i];
+    if (Math.abs(b[0] - a[0]) > 180) continue;
+    if ((a[0] - az) * (b[0] - az) <= 0) { const t = (az - a[0]) / ((b[0] - a[0]) || 1); return a[1] + (b[1] - a[1]) * t; }
   }
   return null;
 }
 function drawWindow(s, v) {
-  const h0 = s.winH;
-  // Stay segment: thick where the Sun is up, red dots where terrain hides it
+  const h0 = s.winH, SUN = STORY.sun;
   let up = [], hid = [], hidden = 0;
   const flushUp = () => { if (up.length > 1) E.win.appendChild(svgEl('path', { d: polyline(up, v), fill: 'none', stroke: '#ffb020', 'stroke-width': 6, 'stroke-linecap': 'round', 'stroke-linejoin': 'round', opacity: s.win })); up = []; };
   const flushHid = () => { if (hid.length > 1) E.over.appendChild(svgEl('path', { d: polyline(hid, v), fill: 'none', stroke: '#ff5a5f', 'stroke-width': 5, 'stroke-dasharray': '0.1 10', 'stroke-linecap': 'round', opacity: s.win })); hid = []; };
   for (let k = 0; k <= STAY_H; k++) {
-    const p = at(SUN, h0 + k, 1); const pt = [p[1], p[2]];
-    if (k < STAY_H && Math.round(at(SUN, Math.round(h0 + k), 1)[3] * 100) / 100 < 0.5) hidden++;
-    if (p[3] >= 0.5) { if (hid.length) { hid.push(pt); flushHid(); } up.push(pt); }
-    else { if (up.length) { up.push(pt); flushUp(); } hid.push(pt); }
+    const p = pos(SUN, 1, h0 + k);
+    if (k < STAY_H && pos(SUN, 1, Math.round(h0 + k))[2] < 0.5) hidden++;
+    if (p[2] >= 0.5) { if (hid.length) { hid.push(p); flushHid(); } up.push(p); }
+    else { if (up.length) { up.push(p); flushUp(); } hid.push(p); }
   }
   flushUp(); flushHid();
   const hc = $('hidCount'); if (hc && curSlide === 5) hc.textContent = String(hidden);
-  // Day ticks 0..6 of the stay
   for (let d = 0; d <= 6; d++) {
-    const p = at(SUN, h0 + d * 24, 1); const x = vx(v, p[1]), y = vy(v, p[2]);
+    const p = pos(SUN, 1, h0 + d * 24); const x = vx(v, p[0]), y = vy(v, p[1]);
     E.over.appendChild(svgEl('line', { x1: x, x2: x, y1: y - 9, y2: y + 9, stroke: '#ffb020', 'stroke-width': 2.5, opacity: s.win }));
-    E.over.appendChild(svgEl('text', { x, y: y - 16, 'text-anchor': 'middle', 'font-size': 20, 'font-family': 'JetBrains Mono, monospace', fill: '#f2f4f7', stroke: '#0a0c10', 'stroke-width': 4, 'paint-order': 'stroke', opacity: s.win }, d === 0 ? '' : 'day ' + d));
+    if (d) E.over.appendChild(svgEl('text', halo({ x, y: y - 16, 'text-anchor': 'middle', 'font-size': 20, 'font-family': MONO, fill: '#f2f4f7', 'stroke-width': 4, opacity: s.win }), 'day ' + d));
   }
-  // Plan A's landing stays marked once the handle has moved
   if (h0 > 1) {
-    const A0 = at(SUN, 0, 1); const ax = vx(v, A0[1]), ay = vy(v, A0[2]); const k = s.win * clamp(h0 / 12);
+    const A0 = pos(SUN, 1, 0); const ax = vx(v, A0[0]), ay = vy(v, A0[1]); const k = s.win * clamp(h0 / 12);
     E.over.appendChild(svgEl('circle', { cx: ax, cy: ay, r: 8, fill: '#0a0c10', stroke: '#a7adb8', 'stroke-width': 2, opacity: k }));
-    E.over.appendChild(svgEl('text', { x: ax, y: ay - 18, 'text-anchor': 'middle', 'font-size': 20, 'font-family': 'JetBrains Mono, monospace', fill: '#a7adb8', stroke: '#0a0c10', 'stroke-width': 5, 'paint-order': 'stroke', opacity: k }, 'plan A'));
+    E.over.appendChild(svgEl('text', halo({ x: ax, y: ay - 18, 'text-anchor': 'middle', 'font-size': 20, 'font-family': MONO, fill: '#a7adb8', opacity: k }), 'plan A'));
   }
-  // Landing handle
-  const L = at(SUN, h0, 1); const lx = vx(v, L[1]), ly = vy(v, L[2]);
+  const L = pos(SUN, 1, h0); const lx = vx(v, L[0]), ly = vy(v, L[1]);
   E.over.appendChild(svgEl('line', { x1: lx, x2: lx, y1: ly, y2: ly - 70, stroke: '#f2f4f7', 'stroke-width': 2, opacity: s.win }));
   E.over.appendChild(svgEl('circle', { cx: lx, cy: ly, r: 9, fill: '#ffb020', stroke: '#f2f4f7', 'stroke-width': 2.5, opacity: s.win }));
-  const dt = new Date(D.A.landingMs + h0 * 3600000);
-  const stamp = dt.toISOString().slice(0, 13).replace('T', ' ') + ':00 UTC';
-  E.over.appendChild(svgEl('text', { x: lx + 10, y: ly - 56, 'font-size': 20, 'font-family': 'JetBrains Mono, monospace', fill: '#f2f4f7', stroke: '#0a0c10', 'stroke-width': 5, 'paint-order': 'stroke', opacity: s.win }, 'landing ' + stamp));
-  // Plan B's dark span, the cost
+  const stamp = new Date(LANDING_MS + h0 * 3600000).toISOString().slice(0, 13).replace('T', ' ') + ':00 UTC';
+  E.over.appendChild(svgEl('text', halo({ x: lx + 10, y: ly - 56, 'font-size': 20, 'font-family': MONO, fill: '#f2f4f7', opacity: s.win }), 'landing ' + stamp));
   if (s.spanB > 0.001) {
     const sp = D.B.spans.find((q) => q.inStayHours > 0) || D.B.spans[0];
     const x0 = vx(v, sp.x0), x1 = vx(v, sp.x1), yb = v.y + v.h - 40;
     E.over.appendChild(svgEl('rect', { x: x0, y: yb, width: x1 - x0, height: 18, fill: 'url(#hatchAlert)', stroke: '#ff5a5f', 'stroke-width': 1.5, opacity: s.spanB }));
-    E.over.appendChild(svgEl('text', { x: (x0 + x1) / 2, y: yb - 12, 'text-anchor': 'middle', 'font-size': 20, 'font-family': 'JetBrains Mono, monospace', fill: '#f2f4f7', stroke: '#0a0c10', 'stroke-width': 5, 'paint-order': 'stroke', opacity: s.spanB }, 'Ridge hides the Sun for 42 hours'));
+    E.over.appendChild(svgEl('text', halo({ x: (x0 + x1) / 2, y: yb - 12, 'text-anchor': 'middle', 'font-size': 20, 'font-family': MONO, fill: '#f2f4f7', opacity: s.spanB }), 'Ridge hides the Sun for 42 hours'));
   }
-  // Next landing that works
   if (s.next > 0.001) {
-    const p = at(SUN, NEXT_H, 1); const x = vx(v, p[1]), y = vy(v, p[2]);
+    const p = pos(SUN, 1, NEXT_H); const x = vx(v, p[0]), y = vy(v, p[1]);
     E.over.appendChild(svgEl('circle', { cx: x, cy: y, r: 10, fill: 'none', stroke: '#4cc38a', 'stroke-width': 3, opacity: s.next }));
-    const ring = svgEl('circle', { cx: x, cy: y, r: 10, fill: 'none', stroke: '#4cc38a', 'stroke-width': 2, opacity: s.next * 0.8 });
-    if (!STILL) { ring.appendChild(svgEl('animate', { attributeName: 'r', values: '10;34', dur: '1.6s', repeatCount: '2', fill: 'freeze' })); ring.appendChild(svgEl('animate', { attributeName: 'stroke-opacity', values: '0.8;0', dur: '1.6s', repeatCount: '2', fill: 'freeze' })); }
-    E.over.appendChild(ring);
-    E.over.appendChild(svgEl('text', { x: x - 18, y: y + 48, 'text-anchor': 'end', 'font-size': 22, 'font-family': 'Inter, sans-serif', 'font-weight': 600, fill: '#f2f4f7', stroke: '#0a0c10', 'stroke-width': 5, 'paint-order': 'stroke', opacity: s.next }, 'Next landing date that works: 11 Nov 2027'));
-    E.over.appendChild(svgEl('text', { x: x - 18, y: y + 76, 'text-anchor': 'end', 'font-size': 20, 'font-family': 'Inter, sans-serif', fill: '#a7adb8', stroke: '#0a0c10', 'stroke-width': 5, 'paint-order': 'stroke', opacity: s.next }, '25.8 days after plan B'));
+    E.over.appendChild(svgEl('text', halo({ x: x - 18, y: y + 48, 'text-anchor': 'end', 'font-size': 22, 'font-family': SANS, 'font-weight': 600, fill: '#f2f4f7', opacity: s.next }), 'Next landing date that works: 11 Nov 2027'));
+    E.over.appendChild(svgEl('text', halo({ x: x - 18, y: y + 76, 'text-anchor': 'end', 'font-size': 20, 'font-family': SANS, fill: '#a7adb8', opacity: s.next }), '25.8 days after plan B'));
   }
 }
 
@@ -555,8 +571,7 @@ function placeS3Labels() {
   D.A.spans.forEach((sp, i) => {
     const id = i === 0 ? 's3spanA' : 's3spanB';
     $(id).textContent = 'Sun hidden ' + (sp.days < 2 ? sp.days.toFixed(2) : sp.days.toFixed(1)) + ' days';
-    const cx = (vx(v, sp.x0) + vx(v, sp.x1)) / 2;
-    put(id, cx - 160, v.y + v.h - 64, 320, 'center');
+    put(id, (vx(v, sp.x0) + vx(v, sp.x1)) / 2 - 160, v.y + v.h - 64, 320, 'center');
   });
   put('s3sun', vx(v, -176), vy(v, 6.4), 540);
   put('s3earth', vx(v, 11), vy(v, 12.4), 420);
@@ -566,11 +581,10 @@ function placeS3Labels() {
 // ---------- Deck control ----------
 const slides = Array.from(document.querySelectorAll('.slide'));
 const N = slides.length;
-let t0 = performance.now(), from = null, cur = stateFor(1, STILL ? 1e9 : 0);
+let t0 = performance.now(), from = null, cur = null;
 function show(n, instant) {
   n = Math.max(1, Math.min(N, n));
-  const prevSlide = curSlide;
-  from = cur; curSlide = n; t0 = performance.now();
+  from = instant ? null : cur; curSlide = n; t0 = performance.now();
   slides.forEach((s, i) => {
     const on = i === n - 1;
     if (on && !s.classList.contains('on')) { s.classList.remove('on'); void s.offsetWidth; }
@@ -578,12 +592,12 @@ function show(n, instant) {
   });
   $('footN').textContent = n + ' / ' + N;
   $('bar').style.width = (n / N * 100) + '%';
-  if (instant) from = null;
   if (location.hash !== '#' + n) history.replaceState(null, '', location.pathname + location.search + '#' + n);
 }
 function frame(now) {
+  now = Math.max(now, t0);
   const t = STILL ? 1e9 : now - t0;
-  const target = stateFor(curSlide, t);
+  const target = stateFor(curSlide, t, now);
   const k = from ? ease(clamp((now - t0) / 650)) : 1;
   cur = from && k < 1 ? mix(from, target, k) : target;
   if (k >= 1) from = null;
@@ -611,8 +625,7 @@ addEventListener('touchend', (e) => { if (tx0 === null) return; const dx = e.cha
 addEventListener('hashchange', () => { const n = parseInt(location.hash.slice(1), 10); if (n && n !== curSlide) show(n); });
 
 placeS3Labels();
-const start = parseInt(location.hash.slice(1), 10) || 1;
-show(start, true); cur = stateFor(start, STILL ? 1e9 : 0);
+show(parseInt(location.hash.slice(1), 10) || 1, true);
 requestAnimationFrame(frame);
 })();
 </script>
