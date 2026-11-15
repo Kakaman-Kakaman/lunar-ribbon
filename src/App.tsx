@@ -4,7 +4,7 @@ import { compareSentence } from './engine/verdict';
 import { DEFAULT_RANGE, fitRange } from './state/plan';
 import { effectiveAnchor, useCatalog, usePlan, useScenario } from './state/hooks';
 import { DEFAULT_SITE, effectiveProfile, landingBMs } from './state/scenario';
-import { customSite, parseCustomId } from './state/custom';
+import { customId, customSite, parseCustomId } from './state/custom';
 import { Controls } from './ui/Controls';
 import { KeyNumbers, LandingDates } from './ui/Compare';
 import { HowToRead } from './ui/HowToRead';
@@ -12,6 +12,7 @@ import { Legend } from './ui/Legend';
 import { Credits, Validation } from './ui/Sections';
 import { PlanPanel } from './ui/PlanPanel';
 import { SitesCalendar } from './ui/SitesCalendar';
+import { RegionMap } from './ui/RegionMap';
 import { Replays } from './ui/Replays';
 import { useCursor, usePlotHeight } from './ui/hooks';
 
@@ -120,6 +121,10 @@ export default function App() {
           />
           <LandingDates planA={planA} planB={planB} onPickA={(ms) => api.setLandingA(ms, true)} onPickB={(ms) => api.setLandingB(ms, true)} />
           <KeyNumbers planA={planA} planB={planB} />
+          <RegionMap
+            site={siteA} heightM={s.heightM} landingMs={s.landingMs} stayDays={profile.stayDays}
+            onPickB={(lat, lon) => { api.setSiteB(customId(lat, lon)); document.getElementById('plan-b')?.scrollIntoView({ behavior: 'smooth' }); }}
+          />
           <SitesCalendar
             sites={sites} heightM={s.heightM} anchorMs={effectiveAnchor(anchors.a, s.landingMs)} profile={profile}
             onPick={(id, ms) => { api.setSiteB(id); api.setBMode('own'); api.setBOwn(ms); document.getElementById('plan-b')?.scrollIntoView({ behavior: 'smooth' }); }}
