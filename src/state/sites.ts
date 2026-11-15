@@ -4,6 +4,7 @@
 import sitesJson from '../data/sites.json';
 import { smoothSphereMask, type HorizonMask } from '../engine/horizon';
 import type { TerrainSource } from '../engine/verdict';
+import { CUSTOM_PREFIX, customMask } from './custom';
 
 export interface SiteInfo {
   id: string;
@@ -95,7 +96,9 @@ const maskCache = new Map<string, Promise<HorizonMask>>();
 export function loadMask(site: SiteInfo): Promise<HorizonMask> {
   let p = maskCache.get(site.id);
   if (!p) {
-    if (site.terrain === 'smooth-sphere') {
+    if (site.id.startsWith(CUSTOM_PREFIX)) {
+      p = customMask(site);
+    } else if (site.terrain === 'smooth-sphere') {
       p = Promise.resolve(smoothSphereMask(site.id, site.name, site.lat, site.lon, [2, 10]));
     } else {
       p = fetch(`${base()}masks/${site.id}.json`).then(async (r) => {

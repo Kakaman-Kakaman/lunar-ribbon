@@ -97,7 +97,7 @@ export function terrainLabel(t: TerrainSource): string {
 
 /** Short badge text. */
 export function terrainBadge(t: TerrainSource): string {
-  return t === 'smooth-sphere' ? 'No terrain: geometric estimate' : t === 'lola-80m+240m' ? 'NASA LOLA terrain, 80 m' : t === 'lola-240m' ? 'NASA LOLA terrain, 240 m' : 'NASA LOLA terrain, 480 m';
+  return t === 'smooth-sphere' ? 'No terrain: geometric estimate' : t === 'lola-80m+240m' ? 'NASA LOLA terrain, 80 m' : t === 'lola-240m' ? 'NASA LOLA terrain, 240 m' : 'NASA LOLA terrain, 480 m: indicative';
 }
 
 /** Distance to the terrain that sets the skyline at an azimuth, km; null if the mask has none. */

@@ -165,7 +165,7 @@ const pc = (v: number, dp = 1) => `${(100 * v).toFixed(dp)}%`;
     id: 'mission-blue-ghost-1',
     title: 'Blue Ghost Mission 1: length of the lunar day',
     reference: 'Firefly Aerospace mission report (about 346 hours of daylight operations)',
-    result: `Engine: sunset ${f(h)} hours after landing at 2025-03-02 08:34 UTC, 18.56 N, 61.81 E; the mission reported about 346 hours (difference ${f(diff)} hours, ${f(100 * diff / 346)}%).`,
+    result: `Engine: sunset ${f(h)} hours after landing at 2025-03-02 08:34 UTC, 18.56 N, 61.81 E; Firefly reported about 346 hours of daylight operations (difference ${f(diff)} hours, ${f(100 * diff / 346)}%).`,
     detail: `Smooth sphere with no terrain, observer 2 m above ground; "up" means at least half the Sun's disc above the horizon. The mission figure is rounded and counts operations, not the exact sunset time, so this is a plausibility check on the length of the lunar day, not a precision test.`,
     status: Math.abs(diff) <= 5 ? 'pass' : 'note',
   });

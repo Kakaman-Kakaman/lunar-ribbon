@@ -117,7 +117,7 @@ export const LIMITS = {
   minEarthShare: { min: 0, max: 1, step: 0.05 },
   plusDays: { min: 0, max: 365, step: 0.25 },
   /** Landing times are held to this range so the series stays a sensible length. */
-  landingMin: Date.UTC(2025, 0, 1),
+  landingMin: Date.UTC(2024, 0, 1),
   landingMax: Date.UTC(2040, 0, 1),
 } as const;
 

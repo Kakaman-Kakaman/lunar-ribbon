@@ -4,12 +4,14 @@ import { compareSentence } from './engine/verdict';
 import { DEFAULT_RANGE, fitRange } from './state/plan';
 import { effectiveAnchor, useCatalog, usePlan, useScenario } from './state/hooks';
 import { DEFAULT_SITE, effectiveProfile, landingBMs } from './state/scenario';
+import { customSite, parseCustomId } from './state/custom';
 import { Controls } from './ui/Controls';
 import { KeyNumbers, LandingDates } from './ui/Compare';
 import { HowToRead } from './ui/HowToRead';
 import { Legend } from './ui/Legend';
 import { Credits, Validation } from './ui/Sections';
 import { PlanPanel } from './ui/PlanPanel';
+import { Replays } from './ui/Replays';
 import { useCursor, usePlotHeight } from './ui/hooks';
 
 export default function App() {
@@ -26,13 +28,14 @@ export default function App() {
   // A shared link may name a site that does not exist: fall back to the default site.
   useEffect(() => {
     if (!sites) return;
-    if (!sites.some((x) => x.id === s.siteA)) api.setSiteA(DEFAULT_SITE);
-    if (!sites.some((x) => x.id === s.siteB)) api.setSiteB(DEFAULT_SITE);
+    const known = (id: string) => sites.some((x) => x.id === id) || parseCustomId(id) !== null;
+    if (!known(s.siteA)) api.setSiteA(DEFAULT_SITE);
+    if (!known(s.siteB)) api.setSiteB(DEFAULT_SITE);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sites, s.siteA, s.siteB]);
 
-  const siteA = sites?.find((x) => x.id === s.siteA);
-  const siteB = sites?.find((x) => x.id === s.siteB);
+  const siteA = useMemo(() => sites?.find((x) => x.id === s.siteA) ?? customSite(s.siteA) ?? undefined, [sites, s.siteA]);
+  const siteB = useMemo(() => sites?.find((x) => x.id === s.siteB) ?? customSite(s.siteB) ?? undefined, [sites, s.siteB]);
   const landingB = landingBMs(s);
   const planA = usePlan(siteA, s.heightM, effectiveAnchor(anchors.a, s.landingMs), s.landingMs, profile, retry);
   const planB = usePlan(siteB, s.heightM, effectiveAnchor(anchors.b, landingB), landingB, profile, retry);
@@ -92,6 +95,7 @@ export default function App() {
           </section>
 
           <Controls api={api} />
+          <Replays api={api} />
 
           <PlanPanel
             label="Plan A" sites={sites} siteId={s.siteA} onSite={api.setSiteA} plan={planA} heightM={s.heightM} range={range}

@@ -94,17 +94,27 @@ export function Credits() {
           <h3 className="mb-1.5 font-semibold text-ink">Data</h3>
           <ul className="space-y-2 text-ink2">
             <li>
-              <span className="text-ink">NASA LOLA (terrain).</span> Lunar Orbiter Laser Altimeter gridded elevation records
-              LDEM_80S_80M and LDEM_60S_240M from the Planetary Data System. The skylines are computed from these grids. Public
-              NASA data; citation requested.
+              <span className="text-ink">NASA LOLA (terrain).</span> Lunar Orbiter Laser Altimeter gridded data records
+              LDEM_80S_80M and LDEM_60S_240M. Neumann, G. A. (2011), LRO Moon Laser Altimeter 4 GDR V1.0, NASA Planetary Data
+              System, doi:10.17189/1520642. Every skyline is computed from these grids.
             </li>
             <li>
-              <span className="text-ink">NASA JPL Horizons (validation).</span> Used to check the Sun and Earth directions the
-              engine computes. Horizons cannot be called from a browser, so the app does not use it live.
+              <span className="text-ink">NASA JPL Horizons (check).</span> Reference tables for the Sun and Earth directions the
+              engine computes. NASA/JPL Solar System Dynamics, Horizons System, data retrieved 14 November 2026. Horizons cannot
+              be called from a browser, so the app does not use it live.
             </li>
             <li>
-              <span className="text-ink">Site coordinates.</span> Each site in the picker carries its own source, listed in the
-              project&apos;s site catalogue.
+              <span className="text-ink">NASA Moon Trek and NASA Goddard sunlight maps (check).</span> Ground heights and
+              Goddard&apos;s average Sun and Earth visibility maps (method of Mazarico et al. 2011, Icarus 211), read through Moon
+              Trek, are what the terrain and skylines were checked against.
+            </li>
+            <li>
+              <span className="text-ink">Sites.</span> The five NASA Goddard study sites come from the Planetary Geodesy Data
+              Archive. Every other site carries its own source in the project&apos;s site catalogue.
+            </li>
+            <li>
+              <span className="text-ink">When the Sun counts as up.</span> At least half the disc above the skyline, the
+              convention of ESA&apos;s lunar lander site study (De Rosa et al. 2012, Planetary and Space Science 74).
             </li>
           </ul>
         </div>

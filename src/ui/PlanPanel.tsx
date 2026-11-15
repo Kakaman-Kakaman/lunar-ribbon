@@ -5,6 +5,7 @@ import { fmtDateTimeUtc, fmtNum, terrainBadge } from '../engine/verdict';
 import type { PlanState } from '../state/hooks';
 import type { YRange } from '../state/plan';
 import { groupLabel, type SiteInfo } from '../state/sites';
+import { customId, customSite, parseCustomId } from '../state/custom';
 import { MissionStrip } from './MissionStrip';
 import { Ribbon, hoverReadout, ribbonHeight } from './Ribbon';
 import { useWidth, type Cursor } from './hooks';
@@ -123,13 +124,53 @@ function VerdictBox({ plan }: { plan: PlanState }) {
   );
 }
 
+function CustomPointForm(props: { accent: string; lat0: number; lon0: number; onPick(id: string): void }) {
+  const [lat, setLat] = useState(String(props.lat0));
+  const [lon, setLon] = useState(String(props.lon0));
+  const [err, setErr] = useState<string | null>(null);
+  const submit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const a = Number(lat), b = Number(lon);
+    if (lat.trim() === '' || !(a >= -90 && a <= 90)) return setErr('Latitude must be between -90 and 90; south is negative.');
+    if (lon.trim() === '' || !(b >= -180 && b <= 180)) return setErr('Longitude must be between -180 and 180; west is negative.');
+    setErr(null);
+    props.onPick(customId(a, b));
+  };
+  return (
+    <form onSubmit={submit} className="mt-2 flex flex-wrap items-end gap-2 text-xs" aria-label={`Custom point for plan ${props.accent}`}>
+      <label className="flex flex-col gap-0.5 text-ink2">
+        Latitude
+        <input type="text" inputMode="decimal" spellCheck={false} value={lat} onChange={(e) => setLat(e.target.value)} className="mono h-8 w-32 !min-h-0 !py-0" />
+      </label>
+      <label className="flex flex-col gap-0.5 text-ink2">
+        Longitude
+        <input type="text" inputMode="decimal" spellCheck={false} value={lon} onChange={(e) => setLon(e.target.value)} className="mono h-8 w-32 !min-h-0 !py-0" />
+      </label>
+      <button type="submit" className="h-8 rounded-md border border-[#454b57] px-3 text-ink hover:border-ink2">
+        Show this point
+      </button>
+      <span className="basis-full text-ink2">
+        Degrees; south and west are negative. Inside 80° S the skyline is computed from a 480 m NASA LOLA grid and is
+        indicative only. Elsewhere the app has no terrain and uses a smooth sphere.
+      </span>
+      {err && (
+        <span role="alert" className="basis-full text-alert">
+          {err}
+        </span>
+      )}
+    </form>
+  );
+}
+
 export function PlanPanel(p: Props) {
   const inner = useRef<HTMLDivElement>(null);
   const width = useWidth(inner);
   const groups = useMemo(() => groupSites(p.sites), [p.sites]);
   const [notesOpen, setNotesOpen] = useState(false);
+  const [typing, setTyping] = useState(false);
   const { plan } = p;
-  const site = p.sites.find((s) => s.id === p.siteId);
+  const site = p.sites.find((s) => s.id === p.siteId) ?? customSite(p.siteId) ?? undefined;
+  const isCustom = parseCustomId(p.siteId) !== null;
   const accent = p.label === 'Plan A' ? 'A' : 'B';
 
   return (
@@ -144,7 +185,12 @@ export function PlanPanel(p: Props) {
             <label htmlFor={`site-${accent}`} className="visually-hidden">
               {p.label} site
             </label>
-            <select id={`site-${accent}`} value={p.siteId} onChange={(e) => p.onSite(e.target.value)} className="h-8 min-w-0 max-w-[26rem] flex-1 !py-0">
+            <select id={`site-${accent}`} value={p.siteId} onChange={(e) => p.onSite(e.target.value)} className="h-8 min-w-0 flex-1 !py-0">
+              {isCustom && site && (
+                <optgroup label="Custom point">
+                  <option value={site.id}>{site.name}</option>
+                </optgroup>
+              )}
               {groups.map((g) => (
                 <optgroup key={g.label} label={g.label}>
                   {g.sites.map((s) => (
@@ -155,10 +201,10 @@ export function PlanPanel(p: Props) {
                 </optgroup>
               ))}
             </select>
-            {plan.status === 'ready' && <span className="mono shrink-0 text-xs text-ink2">lands {fmtDateTimeUtc(plan.view.landingMs)}</span>}
           </div>
           {site && (
             <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-ink2">
+              {plan.status === 'ready' && <span className="mono text-ink">lands {fmtDateTimeUtc(plan.view.landingMs)}</span>}
               <span className="mono">
                 {fmtLat(site.lat)}, {fmtLon(site.lon)}
                 {site.groundElevM !== null && <> | ground {fmtNum(site.groundElevM, 1)} m</>}
@@ -184,7 +230,26 @@ export function PlanPanel(p: Props) {
                   {notesOpen ? '▾' : '▸'} Site notes
                 </button>
               )}
+              <button
+                type="button"
+                aria-expanded={typing}
+                onClick={() => setTyping((o) => !o)}
+                className="text-ink underline decoration-ink2 underline-offset-2 hover:decoration-ink"
+              >
+                {typing ? '▾' : '▸'} Type coordinates
+              </button>
             </div>
+          )}
+          {typing && (
+            <CustomPointForm
+              accent={accent}
+              lat0={site?.lat ?? -89.5}
+              lon0={site?.lon ?? 0}
+              onPick={(id) => {
+                p.onSite(id);
+                setTyping(false);
+              }}
+            />
           )}
         </div>
 

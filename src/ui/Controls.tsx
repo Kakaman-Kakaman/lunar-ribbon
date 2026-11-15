@@ -32,7 +32,7 @@ export function parseIso(text: string): { ms: number } | { error: string } {
     return { error: 'Not a real date and time' };
   }
   if (mi !== 0) return { error: 'Whole hours only: use :00' };
-  if (ms < LIMITS.landingMin || ms >= LIMITS.landingMax) return { error: 'Use a date from 2025 to 2039' };
+  if (ms < LIMITS.landingMin || ms >= LIMITS.landingMax) return { error: 'Use a date from 2024 to 2039' };
   return { ms };
 }
 

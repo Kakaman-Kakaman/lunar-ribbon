@@ -37,7 +37,7 @@
       "id": "mission-blue-ghost-1",
       "title": "Blue Ghost Mission 1: length of the lunar day",
       "reference": "Firefly Aerospace mission report (about 346 hours of daylight operations)",
-      "result": "Engine: sunset 347.8 hours after landing at 2025-03-02 08:34 UTC, 18.56 N, 61.81 E; the mission reported about 346 hours (difference 1.8 hours, 0.5%).",
+      "result": "Engine: sunset 347.8 hours after landing at 2025-03-02 08:34 UTC, 18.56 N, 61.81 E; Firefly reported about 346 hours of daylight operations (difference 1.8 hours, 0.5%).",
       "detail": "Smooth sphere with no terrain, observer 2 m above ground; \"up\" means at least half the Sun's disc above the horizon. The mission figure is rounded and counts operations, not the exact sunset time, so this is a plausibility check on the length of the lunar day, not a precision test.",
       "status": "pass"
     },

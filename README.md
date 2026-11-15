@@ -46,7 +46,7 @@ next landing that works is about 26 days later.
 - Skylines against NASA Goddard's average Sun and Earth visibility maps at 23 sites: correlation
   0.975 (Sun) and 0.995 (Earth). On ridge crests Ribbon runs about 7.5 points sunnier than NASA's
   maps on average, because the 80 m grid cannot see smaller relief.
-- Blue Ghost Mission 1: sunset 347.8 hours after landing, against about 346 hours reported.
+- Blue Ghost Mission 1: sunset 347.8 hours after landing, against the 346 hours of daylight operations Firefly reported.
 
 The app's Validation section has the full results (`src/data/validation.json`).
 
